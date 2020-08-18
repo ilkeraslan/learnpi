@@ -19,9 +19,18 @@
 ","     { return COMMA; }
 "="     { return ASSIGN; }
 
-"OR"|"or"     { return OR_OPEPARTION; }
-"AND"|"and"   { return AND_OPEPARTION; }
-"NOT"|"not"   { return NOT_OPEPARTION; }
+"OR"|"or"     { return OR_OPERATION; }
+"AND"|"and"   { return AND_OPERATION; }
+"NOT"|"not"   { return NOT_OPERATION; }
+
+ /* Operatori di confronto */
+">"     { yylval.fn = 1; return CMP; }  /* Operatore maggiore */
+"<"     { yylval.fn = 2; return CMP; }  /* Operatore minore */
+"!="    { yylval.fn = 3; return CMP; }  /* Operatore di disuguaglianza */
+"="     { yylval.fn = 4; return CMP; }  /* Operatore di uguaglianza */
+">="    { yylval.fn = 5; return CMP; }  /* Operatore maggiore uguale */
+"<="    { yylval.fn = 6; return CMP; }  /* Operatore minore uguale */
+
 
 . { yyerror("Mystery character %c\n", *yytext); exit(1); }
 %%
