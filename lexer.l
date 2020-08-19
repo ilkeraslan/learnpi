@@ -1,6 +1,6 @@
 %option noyywrap nodefault yylineno
 %{
-
+#include "parser.tab.h"
 %}
 
 %%
@@ -24,13 +24,12 @@
 "NOT"|"not"   { return NOT_OPERATION; }
 
  /* Operatori di confronto */
-">"     { yylval.fn = 1; return CMP; }  /* Operatore maggiore */
-"<"     { yylval.fn = 2; return CMP; }  /* Operatore minore */
-"!="    { yylval.fn = 3; return CMP; }  /* Operatore di disuguaglianza */
-"="     { yylval.fn = 4; return CMP; }  /* Operatore di uguaglianza */
-">="    { yylval.fn = 5; return CMP; }  /* Operatore maggiore uguale */
-"<="    { yylval.fn = 6; return CMP; }  /* Operatore minore uguale */
-
+">"     { yylval.function_id = 1; return CMP; }  /* Operatore maggiore */
+"<"     { yylval.function_id = 2; return CMP; }  /* Operatore minore */
+"!="    { yylval.function_id = 3; return CMP; }  /* Operatore di disuguaglianza */
+"="     { yylval.function_id = 4; return CMP; }  /* Operatore di uguaglianza */
+">="    { yylval.function_id = 5; return CMP; }  /* Operatore maggiore uguale */
+"<="    { yylval.function_id = 6; return CMP; }  /* Operatore minore uguale */
 
 . { yyerror("Mystery character %c\n", *yytext); exit(1); }
 %%
@@ -43,7 +42,7 @@ int main(int argc, char **argv) {
 		}
 
         // Check file ending suffix
-		if(checkSuffix(, ".learnpi") == 1) {
+		if(checkSuffix(argv[1], ".learnpi") == 1) {
 			// TODO: passed a file with correct suffix
 
             yyparse();
@@ -53,7 +52,7 @@ int main(int argc, char **argv) {
         }
 		
 	} else if(argc == 2) {
-        if(checkSuffix(, ".learnpi") == 1) {
+        if(checkSuffix(argv[1], ".learnpi") == 1) {
 			// TODO: passed a file with correct suffix
 			if(!(yyin = fopen(argv[1], "r"))) {
 				fprintf(stderr, "Cannot open file: %s\n", argv[1]);

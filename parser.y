@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include "learnpi.h"
 #define YYDEBUG 1
 
 int yylex();   
@@ -37,7 +38,6 @@ int yylex();
 %%
 learnpi: /* nothing */
   | learnpi statement {
-      if(debug) dumpast($2, 0);
       struct value *value = eval($2);
       if(value) {
          treefree($2);

@@ -70,11 +70,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "learnpi.h"
 #define YYDEBUG 1
 
 int yylex();   
 
-#line 78 "parser.tab.c"
+#line 79 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -161,7 +162,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "parser.y"
+#line 11 "parser.y"
 
   struct ast *ast;
   struct symlist *symbol_list;
@@ -171,7 +172,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 175 "parser.tab.c"
+#line 176 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -549,7 +550,7 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    38,    38,    39,    46,    49,    52,    55,    56,    57,
+       0,    39,    39,    40,    46,    49,    52,    55,    56,    57,
       58,    59,    62,    63,    72,    73,    74,    75,    76,    77,
       78,    79,    80,    81,    82,    83,    84,    90,    91,    94,
       95
@@ -1403,9 +1404,8 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 39 "parser.y"
+#line 40 "parser.y"
                       {
-      if(debug) dumpast((yyvsp[0].ast), 0);
       struct value *value = eval((yyvsp[0].ast));
       if(value) {
          treefree((yyvsp[0].ast));
