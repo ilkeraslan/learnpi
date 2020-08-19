@@ -1927,35 +1927,48 @@ void yyfree (void * ptr )
 #line 35 "lexer.l"
 
 
+int newfile(char *fn) {
+  FILE *f;
+
+  if(strcmp(fn, "stdin")) {
+    // Found files
+    f = fopen(fn, "r");
+		is_file = 1;
+  } else {
+    // Use standard input
+    f = stdin;
+		is_file = 0;
+  }
+
+  if(!f) {
+    perror(fn);
+    return -1;
+  }
+
+  yyin = f;
+
+  return 1;
+}
+
 int main(int argc, char **argv) {
-	if(argc > 2) {
-		if(!(yyin = fopen(argv[1], "r"))) {
-			fprintf(stderr, "Cannot open file: %s\n", argv[1]);
-			exit(1);
-		}
 
-        // Check file ending suffix
-		if(checkSuffix(argv[1], ".learnpi") == 1) {
-			// TODO: passed a file with correct suffix
+	symstack = calloc(1, sizeof(struct symtable_stack));
+	symstack->next = NULL;
+	symstack->symtab = NULL;
 
-            yyparse();
-		    fclose(yyin);
-		    yyrestart(stdin);
-		    return yyparse();
-        }
-		
-	} else if(argc == 2) {
-        if(checkSuffix(argv[1], ".learnpi") == 1) {
-			// TODO: passed a file with correct suffix
-			if(!(yyin = fopen(argv[1], "r"))) {
-				fprintf(stderr, "Cannot open file: %s\n", argv[1]);
-				exit(1);
-			}
-			return yyparse();
+	inner_scope();
+
+	newfile("stdin");
+	for(int i = 1; i < argc; i++) {
+		if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[i])) {
+			yyparse();
+		} else {
+			fprintf(stderr, "Not a valid file.\n");
 		}
-	} else {
-		return yyparse();
 	}
+
+	outer_scope();
+
 }
 
 int checkSuffix(const char *str, const char *suffix) {

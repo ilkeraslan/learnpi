@@ -97,6 +97,7 @@ void define_function(char *function_name, struct symlist *symbol_list, struct as
 }
 
 // Valuta un'espressione, passata tramite struttura AST.
+// TODO
 struct val * eval(struct ast *a) {
   struct symbol *s = NULL;
   struct val * v = NULL;
@@ -431,50 +432,58 @@ struct val * eval(struct ast *a) {
   return v;
 }
 
-// Libera la memoria risalendo l'AST.
-void treefree(struct ast *a) {
-  switch(a->nodetype) {
-  case '+':
-  case '-':
-  case '*':
-  case '/':
-  case T_logicor:
-  case T_logicand:
-  case '1':  case '2':  case '3':  case '4':  case '5':  case '6':
-  case T_stmtlist:
-    treefree(a->r);
+// Function to free AST
+void treefree(struct ast *abstract_syntax_tree) {
+  switch(abstract_syntax_tree->nodetype) {
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case LOGICAL_OR:
+    case LOGICAL_AND:
+    case '1':  case '2':  case '3':  case '4':  case '5':  case '6':
+    case STATEMENT_LIST:
+      treefree(abstract_syntax_tree->r);
+      break;
+
+    case ABSOLUTE_VALUE: 
+    case UNARY_MINUS:
+    case USER_CALL:
+    case BUILTIN_TYPE:
+      if(abstract_syntax_tree->l) {
+        treefree(abstract_syntax_tree->l);
+      }
+      break;
+
+    case CONSTANT: 
+    case NEW_REFERENCE: 
+    case DELETION: 
+    case DECLARATION:
+      break;
+
+    case ASSIGNMENT:
+      free(((struct assign_symbol *)abstract_syntax_tree)->v);
+      break;
+
+    case IF_STATEMENT:
+    case LOOP: 
+    case DO_LOOP:
+      free(((struct flow *)abstract_syntax_tree)->condition);
+      if(((struct flow *)abstract_syntax_tree)->then_list) free(((struct flow *)abstract_syntax_tree)->then_list);
+      if(((struct flow *)abstract_syntax_tree)->else_list) free(((struct flow *)abstract_syntax_tree)->else_list);
+      break;
+
+    case DECLARATION_WITH_ASSIGNMENT: 
+    case COMPLEX_ASSIGNMENT:
+      if(((struct assign_and_declare_symbol *)abstract_syntax_tree)->value) {
+        treefree(((struct assign_and_declare_symbol *)abstract_syntax_tree)->value);
+      }
     break;
 
-  case T_absvalue: case T_unaryminus: case T_calluser: case T_builtin:
-    if(a->l) {
-      treefree(a->l);
-    }
-    break;
-
-  case T_constant: case T_newref: case T_newdel: case T_declaration:
-    break;
-
-  case T_assign:
-    free(((struct symasgn *)a)->v);
-    break;
-
-  case T_if: case T_loop: case T_doloop:
-    free(((struct flow *)a)->cond);
-    if(((struct flow *)a)->tl) free(((struct flow *)a)->tl);
-    if(((struct flow *)a)->el) free(((struct flow *)a)->el);
-    break;
-
-
-  case T_declarationassign: case T_cmpxassign:
-    if(((struct symdeclasgn *)a)->v) {
-      treefree(((struct symdeclasgn *)a)->v);
-    }
-  break;
-
-  default: yyerror("internal error: free bad node %d\n", a->nodetype);
+    default: yyerror("internal error: free bad node %d\n", abstract_syntax_tree->nodetype);
   }
   
-  free(a); /* always free the node itself */
+  free(abstract_syntax_tree); /* always free the node itself */
 }
 
 void initialize_symbol_table_stack() {
