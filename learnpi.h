@@ -1,4 +1,5 @@
 #define NHASH 9997
+#include <stdbool.h>
 
 // Expression types
 enum expression_type {
@@ -21,21 +22,34 @@ enum expression_type {
   USER_CALL
 };
 
-// Struttura che definisce il simbolo di una variabile.
+// Structure for a variable symbol
 struct symbol {
-  char *name;             // nome della variabile
-  struct val* v;          // valore primitivo immagazzinato nella variabile
-  struct ast *func;	      // statement per la funzione
-  struct symlist *syms;   // lista dei dummy arguments
+  char *name;
+  struct val *value;
+  struct ast *func;
+  struct symlist *syms;
 };
 
-// Struttura che definisce una lista di simboli (per una lista di argomenti).
+// Structure for value
+struct val {
+    int type;
+    union datavalue { // TODO: change this
+        int bit;
+        int integer;
+        double decimal;
+        char * string;
+        int * GPIO_PIN;
+    } datavalue;
+};
+
+
+// Structure for symbol list
 struct symlist {
   char *sym;
   struct symlist *next;
 };
 
-// Struttura che definisce l'AST.
+// Structure for Abstract Syntax Tree
 struct ast {
   int nodetype;
   struct ast *l;
@@ -55,6 +69,12 @@ struct flow {
   struct ast *condition;
   struct ast *then_list;
   struct ast *else_list;
+};
+
+// Structure for symbol reference
+struct symbol_reference {
+  int nodetype;
+  char *s;
 };
 
 // Symbol table stack structure
@@ -77,15 +97,31 @@ struct symbol *lookup(char*);
 // Symbol table stack reference
 struct symtable_stack * symstack;
 
+// Structure for constant values
+struct constant_value {
+  int nodetype;
+  struct val *v;
+};
+
+// Structure for value
+
 // Function to define a custom function
 void define_function(char *function_name, struct symlist *symbol_list, struct ast *function);
 
-// Prototipo della funzione che valuta l'AST.
+// Function to evaluate an AST
 struct val *eval(struct ast *);
 
-// Prototipo della funzione che elimina e libera un AST.
+// Function to free an AST
 void treefree(struct ast *);
 
+// Function to initialize symbol table stack
 void initialize_symbol_table_stack();
 
+// Function to free symbol table stack
 void free_symbol_table_stack();
+
+// Function to check if we have a primitive type
+bool is_primitive(int type);
+
+// Helper method to check value type
+int get_value_type(struct val *v);

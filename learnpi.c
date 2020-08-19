@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <string.h>
 #include "learnpi.h"
 
@@ -96,141 +97,180 @@ void define_function(char *function_name, struct symlist *symbol_list, struct as
   custom_function->func = function;
 }
 
-// Valuta un'espressione, passata tramite struttura AST.
-// TODO
-struct val * eval(struct ast *a) {
+// Function to evaluate an AST
+struct val * eval(struct ast *abstract_syntax_tree) {
   struct symbol *s = NULL;
-  struct val * v = NULL;
-  struct val *temp = NULL;
+  struct val *v = NULL;
+  struct val *helper_value = NULL;
 
-  if(!a) {
+  // Return null if no AST is found
+  if(!abstract_syntax_tree) {
     return NULL;
   }
 
-  switch(a->nodetype) {
-  // costante
-  case T_constant:
-    v = ((struct value_val *)a)->v;
+  switch(abstract_syntax_tree->nodetype) {
+    case CONSTANT:
+      v = ((struct constant_value *)abstract_syntax_tree)->v;
     break;
-  // riferimento al nome
-	case T_newref:
-		s = lookup(((struct symref *)a)->s);
-		if(!s) {
-			yyerror("variable %s not found.", ((struct symref *)a)->s);
-      free(a);
 
-      return NULL;
-		}
-	  v = s->v;
-    break;
-  case T_newdel: ;
-    struct symbol *symbol = lookup(((struct symref *)a)->s);
-    if(!symbol) {
-      yyerror("variable %s not found.", ((struct symref *)a)->s);
-      free(a);
+    case NEW_REFERENCE:
+      s = lookup(((struct symbol_reference *)abstract_syntax_tree)->s);
 
-      return NULL;
-    }
-    if(symbol->func) {
-      yyerror("cannot delete a function.");
-      free(a);
+      // Check if new reference is created correctly
+      if(!s) {
+        yyerror("variable %s not found.", ((struct symbol_reference *)abstract_syntax_tree)->s);
+        free(abstract_syntax_tree);
+        return NULL;
+      }
 
-      return NULL;
-    }
-    // libera la memoria e cancella la variabile
-    if(symbol->name) {
-      free(symbol->name);
-      symbol->name = NULL;
-    }
-    if(symbol->v) {
-      free(symbol->v);
-      symbol->v = NULL;
-    }
-    symbol = NULL;
-    break;
-    // assegnamento
-  case T_assign:
-    v = eval(((struct symasgn *)a)->v);
-    s = lookup(((struct symasgn *)a)->s);
-    if(!s) {
-      yyerror("symbol %s not instantiated\n", ((struct symasgn *)a)->s);
-      free(v);
-      free(a);
+      v = s->value;
+      break;
 
-      return NULL;
-    }
-    if(!is_primitivetype(s->v->type)) {
-      yyerror("cannot assign value to complex type");
-      free(v);
-      free(a);
+    case DELETION: ;
+      struct symbol *symbol = lookup(((struct symbol_reference *)abstract_syntax_tree)->s);
+      
+      // Check if symbol is created correctly
+      if(!symbol) {
+        yyerror("variable %s not found.", ((struct symbol_reference *)abstract_syntax_tree)->s);
+        free(abstract_syntax_tree);
+        return NULL;
+      }
 
-      return NULL;
-    }
-    s->v = v;
-  break;
+      // Check if trying to delete a function
+      if(symbol->func) {
+        yyerror("Function deletion is not permitted.");
+        free(abstract_syntax_tree);
+        return NULL;
+      }
 
-  // operazioni aritmetiche
-  case '+': v = sum(eval(a->l), eval(a->r)); break;
-  case '-': v = sub(eval(a->l), eval(a->r)); break;
-  case '*': v = mul(eval(a->l), eval(a->r)); break;
-  case '/': v = division(eval(a->l), eval(a->r)); break;
-  case T_absvalue: v = abs_value(eval(a->l)); break;
-  case T_unaryminus: v = sign(eval(a->l)); break;
+      // Delete the variable
+      if(symbol->name) {
+        free(symbol->name);
+        symbol->name = NULL;
+      }
 
-  // operazioni logiche
-  case T_logicand: v = logic_and(eval(a->l),eval(a->r)); break;
-  case T_logicor: v = logic_or(eval(a->l),eval(a->r)); break;
+      // Delete the value
+      if(symbol->value) {
+        free(symbol->value);
+        symbol->value = NULL;
+      }
 
-  // confronti
-  case '1': v = greater_than(eval(a->l), eval(a->r)); break;
-  case '2': v = less_than(eval(a->l), eval(a->r)); break;
-  case '3':
-    v = equal(eval(a->l), eval(a->r));
-    v->datavalue.bit = !v->datavalue.bit;
-  break;
-  case '4': v = equal(eval(a->l), eval(a->r)); break;
-  case '5': v = greater_equal_than(eval(a->l), eval(a->r)); break;
-  case '6': v = less_equal_than(eval(a->l), eval(a->r)); break;
+      // Set the reference to NULL
+      symbol = NULL;
+      break;
 
-  // flussi di controllo
-  // le espressioni nulle sono permesse nella grammatica, per cui controlla che le espressioni non siano nulle
-  // if/then/else
-  case T_if:
-    temp = (eval(((struct flow *)a)->cond));
-    if(typeof_value(temp) != D_bit) {
-      yyerror("invalid condition");
-      free(a);
+    case ASSIGNMENT:
+      v = eval(((struct assign_symbol *)abstract_syntax_tree)->v);
+      s = lookup(((struct assign_symbol *)abstract_syntax_tree)->s);
 
-      return NULL;
-    }
-    if(temp->datavalue.bit != 0) {
-      if(((struct flow *)a)->tl) {
-	      v = eval(((struct flow *)a)->tl);
+      // Check if symbol exists
+      if(!s) {
+        yyerror("Cannot find symbol %s.\n", ((struct assign_symbol *)abstract_syntax_tree)->s);
+        free(v);
+        free(abstract_syntax_tree);
+        return NULL;
+      }
+
+      // Check if we have primitive type
+      if(!is_primitive(s->value->type)) {
+        yyerror("cannot assign value to complex type");
+        free(v);
+        free(abstract_syntax_tree);
+        return NULL;
+      }
+
+      // Assign the symbol value to symbol
+      s->value = v;
+      break;
+
+    case '+': 
+      v = sum(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+    case '-': 
+      v = sub(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+    case '*': 
+      v = mul(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+    case '/': 
+      v = division(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+    case ABSOLUTE_VALUE: 
+      v = abs_value(eval(abstract_syntax_tree->l)); 
+      break;
+    case UNARY_MINUS: 
+      v = sign(eval(abstract_syntax_tree->l)); 
+      break;
+
+    case LOGICAL_AND: 
+      v = logic_and(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
+      break;
+    case LOGICAL_OR: 
+      v = logic_or(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
+      break;
+
+    case '1': 
+      v = greater_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+        break;
+    case '2': 
+      v = less_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+        break;
+    case '3':
+      v = equal(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
+      // v->datavalue.bit = !v->datavalue.bit; TODO: define datavalue
+      break;
+    case '4': 
+      v = equal(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+    case '5': 
+      v = greater_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+    case '6': 
+      v = less_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      break;
+
+    case IF_STATEMENT:
+      helper_value = (eval(((struct flow *)abstract_syntax_tree)->condition));
+
+      // Check if value type is null
+      if(get_value_type(helper_value) != 1) {
+        yyerror("invalid condition");
+        free(abstract_syntax_tree);
+        return NULL;
+      }
+
+      // Check if condition is met
+      if(helper_value->datavalue.bit != 0) {
+        if(((struct flow *)abstract_syntax_tree)->then_list) {
+          v = eval(((struct flow *)abstract_syntax_tree)->then_list);
+        } else {
+          v = NULL;
+        }   
       } else {
-        v = NULL;
-      }   
-    } else {
-      if(((struct flow *)a)->el) {
-        v = eval(((struct flow *)a)->el);
-      } else {
-        v = NULL;
-      }  
-    }
-    break;
+        // Else, create an AST with else list
+        if(((struct flow *)abstract_syntax_tree)->else_list) {
+          v = eval(((struct flow *)abstract_syntax_tree)->else_list);
+        } else {
+          v = NULL;
+        }  
+      }
+
+      break;
+
   // loop
   case T_loop:
     v = NULL;
     if(((struct flow *)a)->tl) {
-      temp = (eval(((struct flow *)a)->cond));
-      if(typeof_value(temp) != D_bit) {
+      helper_value = (eval(((struct flow *)a)->cond));
+      if(get_value_type(helper_value) != D_bit) {
         yyerror("invalid condition");
         free(a);
         
         return NULL;
       }
-      while(temp->datavalue.bit != 0) {
+      while(helper_value->datavalue.bit != 0) {
 	      v = eval(((struct flow *)a)->tl);
-        temp = (eval(((struct flow *)a)->cond));
+        helper_value = (eval(((struct flow *)a)->cond));
       }
     }
   break;
@@ -239,16 +279,16 @@ struct val * eval(struct ast *a) {
     if(((struct flow *)a)->tl) {
       // esegui le espressioni prima di valutare la condizione
       v = eval(((struct flow *)a)->tl);
-      temp = (eval(((struct flow *)a)->cond));
-      if(typeof_value(temp) != D_bit) {
+      helper_value = (eval(((struct flow *)a)->cond));
+      if(get_value_type(helper_value) != D_bit) {
         yyerror("invalid condition");
         free(a);
         
         return NULL;
       }
-      while(temp->datavalue.bit != 0) {
+      while(helper_value->datavalue.bit != 0) {
 	      v = eval(((struct flow *)a)->tl);
-        temp = (eval(((struct flow *)a)->cond));
+        helper_value = (eval(((struct flow *)a)->cond));
       }
     }
   break;
@@ -512,4 +552,19 @@ void free_symbol_table_stack() {
   // Free allocated memories
 	free(inner->symtab);
 	free(inner);
+}
+
+// Function to check if we have a primitive type
+bool is_primitive(int type) {
+  // TODO: check primitive types here
+  return true;
+}
+
+// Helper method to check value type, returns -1 if null
+int get_value_type(struct val *v) {
+  if(v != NULL) {
+    return v->type;
+  }
+  yyerror("Value is null.");
+  return -1;
 }
