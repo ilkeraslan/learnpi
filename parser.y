@@ -43,12 +43,8 @@ learnpi: /* nothing */
          treefree($2);
       }
     }
-   | learnpi ACTION NAME PARAM symlist START list ENDACTION {
-                                                      dodef($3, $5, $7);
-                                                   }
-   | learnpi ACTION NAME START list ENDACTION {
-                                                      dodef($3, NULL, $5);
-                                                   }
+   | learnpi ACTION NAME PARAM symlist START list ENDACTION {define_function($3, $5, $7);}
+   | learnpi ACTION NAME START list ENDACTION {define_function($3, NULL, $5);}
    | learnpi error { yyerrok; yyparse(); }
 ;
 

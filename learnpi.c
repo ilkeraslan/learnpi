@@ -11,6 +11,48 @@
 extern int yydebug;
 extern FILE *yyin;
 
+// Hash a symbol using its string
+static unsigned symhash(char *sym) {
+  unsigned int hash = 0;
+  unsigned c;
+  while((c = *sym++)) {
+    hash = hash*9 ^ c;
+  }
+
+  return hash;
+}
+
+// Cerca il simbolo che identifica la variabile nella tabella contenente i simboli già dichiarati.
+struct symbol * lookup(char* sym) {
+  struct symbol * symtab;
+  struct symtable_stack * curr_scope = symstack;
+  struct symbol *sp;
+  int scount = NHASH;		// numero di simboli controllati
+
+  while(curr_scope && curr_scope->symtab) {
+    symtab = curr_scope->symtab;
+    sp = &symtab[symhash(sym)%NHASH];
+    
+    while(--scount >= 0) {
+      if(sp->name && !strcmp(sp->name, sym)) {
+        return sp;
+      }
+
+      // Caso in cui il simbolo non è ancora stato dichiarato, quindi si tratta di una entry nuova
+      if(!sp->name) {
+        break;
+      }
+
+      if(++sp >= symtab+NHASH) { 
+        sp = symtab; // prova la prossima entry
+      }
+    }
+    curr_scope = curr_scope->next;
+  }
+
+  return NULL;
+}
+
 struct symbol * insert_symbol(char* sym) {
   struct symbol * symtab;
   struct symtable_stack * curr_scope = symstack;
@@ -433,4 +475,32 @@ void treefree(struct ast *a) {
   }
   
   free(a); /* always free the node itself */
+}
+
+void initialize_symbol_table_stack() {
+  // Initialize a new symbol table stack
+	struct symtable_stack * new_scope = calloc(1, sizeof(struct symtable_stack));
+	new_scope->next = symstack;
+	new_scope->symtab = calloc(NHASH, sizeof(struct symbol));
+
+  // Check if allocated space correctly
+	if(!new_scope->symtab){
+    yyerror("No memory.");
+    exit(0);
+	}
+
+  // Assign the created symbol table stack reference
+	symstack = new_scope;
+}
+
+void free_symbol_table_stack() {
+  // Get the symbol table stack reference
+	struct symtable_stack * inner = symstack;
+  
+  // Assign the next node to symbol stack 
+	symstack = symstack->next;
+
+  // Free allocated memories
+	free(inner->symtab);
+	free(inner);
 }
