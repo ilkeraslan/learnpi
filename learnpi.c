@@ -232,7 +232,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     case IF_STATEMENT:
       helper_value = (eval(((struct flow *)abstract_syntax_tree)->condition));
 
-      // Check if value type is null
+      // Check if value type is 1
       if(get_value_type(helper_value) != 1) {
         yyerror("invalid condition");
         free(abstract_syntax_tree);
@@ -254,54 +254,38 @@ struct val * eval(struct ast *abstract_syntax_tree) {
           v = NULL;
         }  
       }
-
       break;
 
-  // loop
-  case T_loop:
-    v = NULL;
-    if(((struct flow *)a)->tl) {
-      helper_value = (eval(((struct flow *)a)->cond));
-      if(get_value_type(helper_value) != D_bit) {
-        yyerror("invalid condition");
-        free(a);
-        
-        return NULL;
-      }
-      while(helper_value->datavalue.bit != 0) {
-	      v = eval(((struct flow *)a)->tl);
-        helper_value = (eval(((struct flow *)a)->cond));
-      }
-    }
-  break;
-  case T_doloop:
-    v = NULL;
-    if(((struct flow *)a)->tl) {
-      // esegui le espressioni prima di valutare la condizione
-      v = eval(((struct flow *)a)->tl);
-      helper_value = (eval(((struct flow *)a)->cond));
-      if(get_value_type(helper_value) != D_bit) {
-        yyerror("invalid condition");
-        free(a);
-        
-        return NULL;
-      }
-      while(helper_value->datavalue.bit != 0) {
-	      v = eval(((struct flow *)a)->tl);
-        helper_value = (eval(((struct flow *)a)->cond));
-      }
-    }
-  break;
+    case LOOP:
+      v = NULL;
 
-  // valore
-  case T_stmtlist:
-    eval(a->l);
-    v = eval(a->r);
-    break;
+      // Check if we have then list in AST
+      if(((struct flow *)abstract_syntax_tree)->then_list) {
+        helper_value = (eval(((struct flow *)abstract_syntax_tree)->condition));
 
-  case T_builtin:
-    v = callbuiltin((struct fncall *)a);
-    break;
+        // Check if value type is 1
+        if(get_value_type(helper_value) != 1) {
+          yyerror("invalid condition");
+          free(abstract_syntax_tree);
+          return NULL;
+        }
+
+        // Loop while condition is met
+        while(helper_value->datavalue.bit != 0) {
+          v = eval(((struct flow *)abstract_syntax_tree)->then_list);
+          helper_value = (eval(((struct flow *)abstract_syntax_tree)->condition));
+        }
+      }
+      break;
+  
+    case STATEMENT_LIST:
+      eval(abstract_syntax_tree->l);
+      v = eval(abstract_syntax_tree->r);
+      break;
+
+    case BUILTIN_TYPE:
+      v = callbuiltin((struct fncall *)abstract_syntax_tree);
+      break;
 
   case T_calluser:
     calluser((struct ufncall *)a);
@@ -507,7 +491,6 @@ void treefree(struct ast *abstract_syntax_tree) {
 
     case IF_STATEMENT:
     case LOOP: 
-    case DO_LOOP:
       free(((struct flow *)abstract_syntax_tree)->condition);
       if(((struct flow *)abstract_syntax_tree)->then_list) free(((struct flow *)abstract_syntax_tree)->then_list);
       if(((struct flow *)abstract_syntax_tree)->else_list) free(((struct flow *)abstract_syntax_tree)->else_list);

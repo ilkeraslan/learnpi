@@ -15,7 +15,6 @@ enum expression_type {
   LOGICAL_OR,
   IF_STATEMENT,
   LOOP,
-  DO_LOOP,
   DECLARATION,
   DECLARATION_WITH_ASSIGNMENT,
   BUILTIN_TYPE,
@@ -103,7 +102,13 @@ struct constant_value {
   struct val *v;
 };
 
-// Structure for value
+// Structure for function
+struct function {
+  int nodetype;			    // nodetype F
+  struct ast *l;
+  enum bifs functype;   // built-in function
+  char *s;
+};
 
 // Function to define a custom function
 void define_function(char *function_name, struct symlist *symbol_list, struct ast *function);
