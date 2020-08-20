@@ -72,7 +72,7 @@ struct symbol * insert_symbol(char* sym) {
     // Caso in cui il simbolo non è ancora stato dichiarato, quindi si tratta di una entry nuova
     if (!sp->name) {
       sp->name = strdup(sym);
-      sp->v = NULL;
+      sp->value = NULL;
       sp->func = NULL;
       sp->syms = NULL;
 
@@ -256,7 +256,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
       break;
 
-    case LOOP:
+    case LOOP_STATEMENT:
       v = NULL;
 
       // Check if we have then list in AST
@@ -371,7 +371,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     //       newval[nargs] = eval(args);
     //       args = NULL;
     //     }
-    
+
     //     if(newval[nargs]->type != D_integer) {
     //       yyerror("pin value must be an integer");
     //       free(symdeclasgncmpx->s);
@@ -459,8 +459,8 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     // break;
       
   default:
-    yyerror("internal error: bad node %d\n", a->nodetype);
-    free(a);
+    yyerror("internal error: bad node %d\n", abstract_syntax_tree->nodetype);
+    free(abstract_syntax_tree);
     break;
   }
   
@@ -502,7 +502,7 @@ void treefree(struct ast *abstract_syntax_tree) {
       break;
 
     case IF_STATEMENT:
-    case LOOP: 
+    case LOOP_STATEMENT: 
       free(((struct flow *)abstract_syntax_tree)->condition);
       if(((struct flow *)abstract_syntax_tree)->then_list) free(((struct flow *)abstract_syntax_tree)->then_list);
       if(((struct flow *)abstract_syntax_tree)->else_list) free(((struct flow *)abstract_syntax_tree)->else_list);

@@ -15,7 +15,7 @@ enum expression_type {
   LOGICAL_AND,
   LOGICAL_OR,
   IF_STATEMENT,
-  LOOP,
+  LOOP_STATEMENT,
   DECLARATION,
   DECLARATION_WITH_ASSIGNMENT,
   BUILTIN_TYPE,
@@ -101,8 +101,8 @@ struct assign_and_declare_symbol {
 // Lookup function
 struct symbol *lookup(char*);
 
-// Symbol table stack reference
-struct symtable_stack * symstack;
+// Symbol table stack reference to use in main function
+struct symtable_stack *symstack;
 
 // Structure for constant values
 struct constant_value {

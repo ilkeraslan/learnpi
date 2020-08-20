@@ -18,6 +18,7 @@ int yylex();
   int type;
 }
 
+%token <type> TYPE COMPLEX_TYPE COMPLEX_TYPE_NOPIN // TODO: change this
 %token <integer> INTEGER
 %token <str> NAME
 %token IF THEN ELSE ENDIF LOOP START UNTIL ENDLOOP

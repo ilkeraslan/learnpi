@@ -1,6 +1,10 @@
 %option noyywrap nodefault yylineno
 %{
 #include "parser.tab.h"
+#include "learnpi.h"
+#include "types.h"
+
+char is_file = '0';
 %}
 
 %%
@@ -46,11 +50,11 @@ int newfile(char *fn) {
   if(strcmp(fn, "stdin")) {
     // Found files
     f = fopen(fn, "r");
-		is_file = 1;
+		is_file = '1';
   } else {
     // Use standard input
     f = stdin;
-		is_file = 0;
+		is_file = '0';
   }
 
   if(!f) {
@@ -69,7 +73,7 @@ int main(int argc, char **argv) {
 	symstack->next = NULL;
 	symstack->symtab = NULL;
 
-	inner_scope();
+	initialize_symbol_table_stack();
 
 	newfile("stdin");
 	for(int i = 1; i < argc; i++) {
@@ -80,8 +84,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	outer_scope();
-
+	free_symbol_table_stack();
 }
 
 int checkSuffix(const char *str, const char *suffix) {

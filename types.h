@@ -1,3 +1,6 @@
+#ifndef TYPES_H
+#define TYPES_H
+
 enum built_in_function_types { // TODO: Decide builtin functions
   B_on = 1,
   B_off,
@@ -23,3 +26,5 @@ enum type {
     DECIMAL_TYPE,
     STRING_TYPE
 };
+
+#endif

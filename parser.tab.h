@@ -49,38 +49,41 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INTEGER = 258,
-    NAME = 259,
-    IF = 260,
-    THEN = 261,
-    ELSE = 262,
-    ENDIF = 263,
-    LOOP = 264,
-    START = 265,
-    UNTIL = 266,
-    ENDLOOP = 267,
-    ADDITION = 268,
-    SUBTRACTION = 269,
-    MULTIPLICATION = 270,
-    DIVISION = 271,
-    MODULUS = 272,
-    OR_OPERATION = 273,
-    AND_OPERATION = 274,
-    NOT_OPERATION = 275,
-    OPEN_PARANTHESIS = 276,
-    CLOSE_PARANTHESIS = 277,
-    OPEN_BRACKET = 278,
-    CLOSE_BRACKET = 279,
-    OPEN_BRACE = 280,
-    CLOSE_BRACE = 281,
-    DOT = 282,
-    COMMA = 283,
-    ASSIGN = 284,
-    ACTION = 285,
-    PARAM = 286,
-    ENDACTION = 287,
-    CMP = 288,
-    UMINUS = 289
+    TYPE = 258,
+    COMPLEX_TYPE = 259,
+    COMPLEX_TYPE_NOPIN = 260,
+    INTEGER = 261,
+    NAME = 262,
+    IF = 263,
+    THEN = 264,
+    ELSE = 265,
+    ENDIF = 266,
+    LOOP = 267,
+    START = 268,
+    UNTIL = 269,
+    ENDLOOP = 270,
+    ADDITION = 271,
+    SUBTRACTION = 272,
+    MULTIPLICATION = 273,
+    DIVISION = 274,
+    MODULUS = 275,
+    OR_OPERATION = 276,
+    AND_OPERATION = 277,
+    NOT_OPERATION = 278,
+    OPEN_PARANTHESIS = 279,
+    CLOSE_PARANTHESIS = 280,
+    OPEN_BRACKET = 281,
+    CLOSE_BRACKET = 282,
+    OPEN_BRACE = 283,
+    CLOSE_BRACE = 284,
+    DOT = 285,
+    COMMA = 286,
+    ASSIGN = 287,
+    ACTION = 288,
+    PARAM = 289,
+    ENDACTION = 290,
+    CMP = 291,
+    UMINUS = 292
   };
 #endif
 
@@ -98,7 +101,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 102 "parser.tab.h"
+#line 105 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
