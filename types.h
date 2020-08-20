@@ -20,11 +20,13 @@ enum built_in_function_types { // TODO: Decide builtin functions
   B_delay
 };
 
+// Primitive types
 enum type {
     BIT_TYPE,
     INTEGER_TYPE,
     DECIMAL_TYPE,
-    STRING_TYPE
+    STRING_TYPE,
+    LED
 };
 
 #endif
