@@ -284,175 +284,187 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
 
     case BUILTIN_TYPE:
-      v = callbuiltin((struct fncall *)abstract_syntax_tree);
+      v = builtin_function_call((struct function *)abstract_syntax_tree);
       break;
 
-  case T_calluser:
-    calluser((struct ufncall *)a);
-  break;
+    case USER_CALL:
+      calluser((struct user_function_call *)abstract_syntax_tree);
+    break;
 
-  // dichiarazione di variabile
-  case T_declaration: ;
-      struct symdecl *symdecl = (struct symdecl *)a;
-      s = insert_symbol(symdecl->s);
+    case DECLARATION: ;
+        struct declare_symbol *declare_symbol = (struct declare_symbol *)abstract_syntax_tree;
+        s = insert_symbol(declare_symbol->s);
+
+        // Control if variable is inserted as symbol
+        if(!s) {
+          free(declare_symbol->s);
+          free(declare_symbol);
+          return NULL;
+        }
+
+        // Check symbol declaration types to assign symbol value
+        switch(declare_symbol->type) {
+          case BIT_TYPE:
+            s->value = create_bit(0); // TODO: create this function
+            break;
+          case INTEGER_TYPE:
+            s->value = create_integer(0); // TODO: create this function
+            break;
+          case DECIMAL_TYPE:
+            s->value = create_decimal(0.0); // TODO: create this function
+            break;
+          case STRING_TYPE:
+            s->value = create_string(""); // TODO: create this function
+            break;
+          default:
+            yyerror("Type not recognized.");
+            free(declare_symbol->s);
+            free(declare_symbol);
+            free(s->name);
+            s = NULL;
+            break;
+        }
+    break;
+
+    case DECLARATION_WITH_ASSIGNMENT: ;
+      struct assign_and_declare_symbol * assign_and_declare_symbol = (struct assign_and_declare_symbol *)abstract_syntax_tree;
+      v = eval(assign_and_declare_symbol->value);
+
+      // Control if variable is inserted as symbol
+      if (v && assign_and_declare_symbol->type != v->type) {
+        yyerror("Type not recognized.");
+        free(assign_and_declare_symbol);
+        free(v);
+        return NULL;
+      }
+
+      // Insert the new declaration and do sanity check
+      struct symbol * s = insert_symbol(assign_and_declare_symbol->s);
       if(!s) {
-        free(symdecl->s);
-        free(symdecl);
-				return NULL;
-			}
-      switch(symdecl->type) {
-        case D_bit:
-          s->v = create_bit(0);
-        break;
-        case D_integer:
-          s->v = create_integer(0);
-        break;
-        case D_decimal:
-          s->v = create_decimal(0.0);
-        break;
-        case D_string:
-          s->v = create_string("");
-        break;
-        default:
-          yyerror("invalid type value");
-          free(symdecl->s);
-          free(symdecl);
-          free(s->name);
-          s = NULL;
-        break;
-      }
-  break;
-  // dichiarazione e assegnamento
-  case T_declarationassign: ;
-    struct symdeclasgn * symdeclasgn = (struct symdeclasgn *)a;
-    v = eval(symdeclasgn->v);
-    if (v && symdeclasgn->type != v->type) {
-      yyerror("invalid type value");
-      free(symdeclasgn);
-      free(v);
-
-      return NULL;
-    }
-    struct symbol * s = insert_symbol(symdeclasgn->s);
-    if(!s) {
-      free(symdeclasgn);
-      free(v);
-      return NULL;
-    }
-    s->v = v;
-  break;
-
-  case T_cmpxassign: ;
-    struct symdeclasgncmpx * symdeclasgncmpx = (struct symdeclasgncmpx *)a;
-    struct ast *args = symdeclasgncmpx->l;
-    int nargs = 0;
-    // conto il numero di argomenti
-    while(args) {
-      args = args->r;
-      nargs++;
-    }
-    struct val ** newval = (struct val **)malloc(nargs * sizeof(struct val));
-    args = symdeclasgncmpx->l;
-    // inserisco gli argomenti nell'array
-    for(nargs = 0; args; nargs++) {
-      if(args->nodetype == T_stmtlist) {	/* if this is a list node */
-        newval[nargs] = eval(args->l);
-        args = args->r;
-      } else {			/* if it's the end of the list */
-        newval[nargs] = eval(args);
-        args = NULL;
-      }
-      if(newval[nargs]->type != D_integer) {
-        yyerror("pin value must be an integer");
-        free(symdeclasgncmpx->s);
-        free(symdeclasgncmpx->l);
-        free(symdeclasgncmpx);
-        free(newval);
-
+        free(assign_and_declare_symbol);
+        free(v);
         return NULL;
       }
-    }
-    switch(symdeclasgncmpx->type) {
-        case D_LED:
-          if(!check_pin_no(nargs, 1)) {
-            return NULL;
-          }
-          v = create_LED(newval);
-        break;
-        case D_DISPLAY_1DIGIT:
-          if(!check_pin_no(nargs, 7)) {
-            return NULL;
-          }
-          v = create_DISPLAY_1DIGIT(newval);
-        break;
-        case D_DISPLAY_LCD:
-          v = create_DISPLAY_LCD();
-        break;
-        case D_BUTTON:
-          if(!check_pin_no(nargs, 1)) {
-            return NULL;
-          }
-          v = create_BUTTON(newval);
-        break;
-        case D_KEYPAD:
-          if(!check_pin_no(nargs, 8)) {
-            return NULL;
-          }
-          v = create_KEYPAD(newval);
-        break;
-        case D_BUZZER:
-          if(!check_pin_no(nargs, 1)) {
-            return NULL;
-          }
-          v = create_BUZZER(newval);
-        break;
-        case D_THERMISTOR:
-          v = create_THERMISTOR();
-        break;
-        case D_PHOTORESISTOR:
-          v = create_PHOTORESISTOR();
-        break;
-        case D_SERVO:
-          if(!check_pin_no(nargs, 1)) {
-            return NULL;
-          }
-          v = create_SERVO(newval);
-        break;
-        case D_RFID:
-          v = create_RFID();
-        break;
-        default:
-          yyerror("invalid type value");
-          free(symdeclasgncmpx->s);
-          free(symdeclasgncmpx->l);
-          free(symdeclasgncmpx);
-          free(newval);
-        return NULL;
-    }
-    if (v && symdeclasgncmpx->type != v->type) {
-      yyerror("invalid type value");
-      free(symdeclasgncmpx->s);
-      free(symdeclasgncmpx->l);
-      free(symdeclasgncmpx);
-      free(newval);
-      return NULL;
-    }
-    s = insert_symbol(symdeclasgncmpx->s);
-    if(!s) {
-      free(symdeclasgncmpx->s);
-      free(symdeclasgncmpx->l);
-      free(symdeclasgncmpx);
-      free(newval);
-      return NULL;
-    }
-    s->v = v;
-  break;
+      s->value = v;
+    break;
+
+    // case COMPLEX_ASSIGNMENT: ;
+    //   struct symdeclasgncmpx * symdeclasgncmpx = (struct symdeclasgncmpx *)a;
+    //   struct ast *args = symdeclasgncmpx->l;
+    //   int nargs = 0;
+
+    //   // conto il numero di argomenti
+    //   while(args) {
+    //     args = args->r;
+    //     nargs++;
+    //   }
+
+    //   struct val ** newval = (struct val **)malloc(nargs * sizeof(struct val));
+    //   args = symdeclasgncmpx->l;
+
+    //   // inserisco gli argomenti nell'array
+    //   for(nargs = 0; args; nargs++) {
+    //     if(args->nodetype == T_stmtlist) {	/* if this is a list node */
+    //       newval[nargs] = eval(args->l);
+    //       args = args->r;
+    //     } else {			/* if it's the end of the list */
+    //       newval[nargs] = eval(args);
+    //       args = NULL;
+    //     }
+    
+    //     if(newval[nargs]->type != D_integer) {
+    //       yyerror("pin value must be an integer");
+    //       free(symdeclasgncmpx->s);
+    //       free(symdeclasgncmpx->l);
+    //       free(symdeclasgncmpx);
+    //       free(newval);
+
+    //       return NULL;
+    //     }
+    //   }
+    //   switch(symdeclasgncmpx->type) {
+    //       case D_LED:
+    //         if(!check_pin_no(nargs, 1)) {
+    //           return NULL;
+    //         }
+    //         v = create_LED(newval);
+    //       break;
+    //       case D_DISPLAY_1DIGIT:
+    //         if(!check_pin_no(nargs, 7)) {
+    //           return NULL;
+    //         }
+    //         v = create_DISPLAY_1DIGIT(newval);
+    //       break;
+    //       case D_DISPLAY_LCD:
+    //         v = create_DISPLAY_LCD();
+    //       break;
+    //       case D_BUTTON:
+    //         if(!check_pin_no(nargs, 1)) {
+    //           return NULL;
+    //         }
+    //         v = create_BUTTON(newval);
+    //       break;
+    //       case D_KEYPAD:
+    //         if(!check_pin_no(nargs, 8)) {
+    //           return NULL;
+    //         }
+    //         v = create_KEYPAD(newval);
+    //       break;
+    //       case D_BUZZER:
+    //         if(!check_pin_no(nargs, 1)) {
+    //           return NULL;
+    //         }
+    //         v = create_BUZZER(newval);
+    //       break;
+    //       case D_THERMISTOR:
+    //         v = create_THERMISTOR();
+    //       break;
+    //       case D_PHOTORESISTOR:
+    //         v = create_PHOTORESISTOR();
+    //       break;
+    //       case D_SERVO:
+    //         if(!check_pin_no(nargs, 1)) {
+    //           return NULL;
+    //         }
+    //         v = create_SERVO(newval);
+    //       break;
+    //       case D_RFID:
+    //         v = create_RFID();
+    //       break;
+    //       default:
+    //         yyerror("invalid type value");
+    //         free(symdeclasgncmpx->s);
+    //         free(symdeclasgncmpx->l);
+    //         free(symdeclasgncmpx);
+    //         free(newval);
+    //       return NULL;
+    //   }
+    //   if (v && symdeclasgncmpx->type != v->type) {
+    //     yyerror("invalid type value");
+    //     free(symdeclasgncmpx->s);
+    //     free(symdeclasgncmpx->l);
+    //     free(symdeclasgncmpx);
+    //     free(newval);
+    //     return NULL;
+    //   }
+    //   s = insert_symbol(symdeclasgncmpx->s);
+    //   if(!s) {
+    //     free(symdeclasgncmpx->s);
+    //     free(symdeclasgncmpx->l);
+    //     free(symdeclasgncmpx);
+    //     free(newval);
+    //     return NULL;
+    //   }
+    //   s->v = v;
+    // break;
       
   default:
     yyerror("internal error: bad node %d\n", a->nodetype);
     free(a);
     break;
   }
+  
+  // Return the evaluated value
   return v;
 }
 
@@ -550,4 +562,14 @@ int get_value_type(struct val *v) {
   }
   yyerror("Value is null.");
   return -1;
+}
+
+// Function to store function call value into a structure
+struct val * builtin_function_call(struct function *foo) {
+  return NULL; // TODO: return the structure
+}
+
+// Function to call custom functions
+void calluser(struct user_function_call *foo) {
+  // TODO: Implement user function call
 }

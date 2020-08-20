@@ -31,6 +31,12 @@
 ">="    { yylval.function_id = 5; return CMP; }  /* Operatore maggiore uguale */
 "<="    { yylval.function_id = 6; return CMP; }  /* Operatore minore uguale */
 
+ /* Primitive types */
+"bit"               { yylval.type = BIT_TYPE; return TYPE; }
+"integer"   		    { yylval.type = INTEGER_TYPE; return TYPE; }
+"decimal"           { yylval.type = DECIMAL_TYPE; return TYPE; }
+"string"            { yylval.type = STRING_TYPE; return TYPE; }
+
 . { yyerror("Mystery character %c\n", *yytext); exit(1); }
 %%
 

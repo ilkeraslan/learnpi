@@ -1,5 +1,6 @@
 #define NHASH 9997
 #include <stdbool.h>
+#include "types.h"
 
 // Expression types
 enum expression_type {
@@ -82,7 +83,14 @@ struct symtable_stack{
 	struct symtable_stack * next;
 };
 
-// Structure for declaration with assignment
+// Structure for variable declaration
+struct declare_symbol {
+  int nodetype;
+  int type;
+  char *s;
+};
+
+// Structure for variable declaration with assignment
 struct assign_and_declare_symbol {
   int nodetype;
   int type;
@@ -105,8 +113,15 @@ struct constant_value {
 // Structure for function
 struct function {
   int nodetype;			    // nodetype F
-  struct ast *l;
-  enum bifs functype;   // built-in function
+  struct ast *l; // TODO: change to argument_list
+  enum built_in_function_types function_type;
+  char *s;
+};
+
+// Structure for user function call
+struct user_function_call {
+  int nodetype;
+  struct ast *argument_list;
   char *s;
 };
 
@@ -130,3 +145,9 @@ bool is_primitive(int type);
 
 // Helper method to check value type
 int get_value_type(struct val *v);
+
+// Function to store function call value into a structure
+struct val * builtin_function_call(struct function *);
+
+// Function to call custom functions
+void calluser(struct user_function_call *);
