@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "learnpi.h"
+#include "functions.h"
 
 extern int yydebug;
 extern FILE *yyin;
@@ -291,7 +292,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       calluser((struct user_function_call *)abstract_syntax_tree);
     break;
 
-    case DECLARATION: ;
+    case DECLARATION:
         struct declare_symbol *declare_symbol = (struct declare_symbol *)abstract_syntax_tree;
         s = insert_symbol(declare_symbol->s);
 
@@ -324,10 +325,11 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             s = NULL;
             break;
         }
-    break;
+      break;
 
-    case DECLARATION_WITH_ASSIGNMENT: ;
-      struct assign_and_declare_symbol * assign_and_declare_symbol = (struct assign_and_declare_symbol *)abstract_syntax_tree;
+    case DECLARATION_WITH_ASSIGNMENT:
+      struct assign_and_declare_symbol * assign_and_declare_symbol = NULL;
+      assign_and_declare_symbol = ((struct assign_and_declare_symbol *)abstract_syntax_tree);
       v = eval(assign_and_declare_symbol->value);
 
       // Control if variable is inserted as symbol
@@ -349,8 +351,8 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     break;
 
     case COMPLEX_ASSIGNMENT:
-      struct assign_and_declare_symbol * assign_and_declare_symbol = (struct assign_and_declare_symbol *)abstract_syntax_tree;
-      struct ast *args = assign_and_declare_symbol->value;
+      struct assign_and_declare_complex_symbol *assign_and_declare_complex_symbol = (struct assign_and_declare_complex_symbol *)abstract_syntax_tree;
+      struct ast *args = assign_and_declare_complex_symbol->value;
 
       for(int i=0; args!=NULL; i++) {
         // Create an helper structure
@@ -360,7 +362,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         args = eval(args->l);
 
         // Switch the result
-        switch(assign_and_declare_symbol->type) {
+        switch(assign_and_declare_complex_symbol->type) {
           case LED:
             v = create_LED(args);
             break;
@@ -371,6 +373,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
       
       // TODO: free memory
+      break;
 
   default:
     yyerror("internal error: bad node %d\n", abstract_syntax_tree->nodetype);

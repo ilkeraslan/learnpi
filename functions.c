@@ -1,15 +1,15 @@
 #include "learnpi.h"
+#include "functions.h"
 #include <pigpio.h>
 
 struct val *create_LED(struct val ** pin) {
     struct val * result;
     result = create_COMPLEXTYPE(pin, 1, LED);
     pinMode(result->datavalue.GPIO_PIN[0], PI_OUTPUT);
-
     return result;
 }
 
-struct val * create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
+struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
     // Allocate memory 
     struct val *result = malloc(sizeof(struct val));
 

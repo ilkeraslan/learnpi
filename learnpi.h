@@ -1,3 +1,6 @@
+#ifndef LEARNPI_H
+#define LEARNPI_H
+
 #define NHASH 9997
 #include <stdbool.h>
 #include "types.h"
@@ -97,6 +100,15 @@ struct assign_and_declare_symbol {
   struct ast *value;
 };
 
+// Structure for variable declaration with assignment
+struct assign_and_declare_complex_symbol {
+  int nodetype;
+  int type;
+  char *s;
+  struct ast *value;
+};
+
+
 // Lookup function
 struct symbol *lookup(char*);
 
@@ -150,3 +162,5 @@ struct val * builtin_function_call(struct function *);
 
 // Function to call custom functions
 void calluser(struct user_function_call *);
+
+#endif
