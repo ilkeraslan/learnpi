@@ -42,7 +42,6 @@ struct val {
     } datavalue;
 };
 
-
 // Structure for symbol list
 struct symlist {
   char *sym;

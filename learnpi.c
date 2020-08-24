@@ -348,87 +348,30 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       s->value = v;
     break;
 
-    case COMPLEX_ASSIGNMENT: ;
+    case COMPLEX_ASSIGNMENT:
       struct assign_and_declare_symbol * assign_and_declare_symbol = (struct assign_and_declare_symbol *)abstract_syntax_tree;
       struct ast *args = assign_and_declare_symbol->value;
-      int argument_numbers = 0;
 
-      switch(assign_and_declare_symbol->type) {
-        case LED:
-          if(!check_pin_no(nargs, 1)) {
-            return NULL;
-          }
-          v = create_LED(newval);
-        break;
-    //       case D_DISPLAY_1DIGIT:
-    //         if(!check_pin_no(nargs, 7)) {
-    //           return NULL;
-    //         }
-    //         v = create_DISPLAY_1DIGIT(newval);
-    //       break;
-    //       case D_DISPLAY_LCD:
-    //         v = create_DISPLAY_LCD();
-    //       break;
-    //       case D_BUTTON:
-    //         if(!check_pin_no(nargs, 1)) {
-    //           return NULL;
-    //         }
-    //         v = create_BUTTON(newval);
-    //       break;
-    //       case D_KEYPAD:
-    //         if(!check_pin_no(nargs, 8)) {
-    //           return NULL;
-    //         }
-    //         v = create_KEYPAD(newval);
-    //       break;
-    //       case D_BUZZER:
-    //         if(!check_pin_no(nargs, 1)) {
-    //           return NULL;
-    //         }
-    //         v = create_BUZZER(newval);
-    //       break;
-    //       case D_THERMISTOR:
-    //         v = create_THERMISTOR();
-    //       break;
-    //       case D_PHOTORESISTOR:
-    //         v = create_PHOTORESISTOR();
-    //       break;
-    //       case D_SERVO:
-    //         if(!check_pin_no(nargs, 1)) {
-    //           return NULL;
-    //         }
-    //         v = create_SERVO(newval);
-    //       break;
-    //       case D_RFID:
-    //         v = create_RFID();
-    //       break;
-          default:
-            yyerror("invalid type value");
-            free(symdeclasgncmpx->s);
-            free(symdeclasgncmpx->l);
-            free(symdeclasgncmpx);
-            free(newval);
-          return NULL;
-    //   }
-    //   if (v && symdeclasgncmpx->type != v->type) {
-    //     yyerror("invalid type value");
-    //     free(symdeclasgncmpx->s);
-    //     free(symdeclasgncmpx->l);
-    //     free(symdeclasgncmpx);
-    //     free(newval);
-    //     return NULL;
-    //   }
-    //   s = insert_symbol(symdeclasgncmpx->s);
-    //   if(!s) {
-    //     free(symdeclasgncmpx->s);
-    //     free(symdeclasgncmpx->l);
-    //     free(symdeclasgncmpx);
-    //     free(newval);
-    //     return NULL;
-    //   }
-    //   s->v = v;
-    // break;
+      for(int i=0; args!=NULL; i++) {
+        // Create an helper structure
+        struct ast *helper = args->r;
+
+        // Evaluate the left node pointing the result
+        args = eval(args->l);
+
+        // Switch the result
+        switch(assign_and_declare_symbol->type) {
+          case LED:
+            v = create_LED(args);
+            break;
+        }
+
+        // Point to right node previosuly memorized in helper structure
+        args = helper;
+      }
       
+      // TODO: free memory
+
   default:
     yyerror("internal error: bad node %d\n", abstract_syntax_tree->nodetype);
     free(abstract_syntax_tree);
