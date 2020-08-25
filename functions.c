@@ -1,8 +1,9 @@
 #include "learnpi.h"
 #include "functions.h"
 #include <pigpio.h>
+#include <stdlib.h>
 
-struct val *create_LED(struct val ** pin) {
+struct val *create_LED(struct val **pin) {
     struct val * result;
     result = create_COMPLEXTYPE(pin, 1, LED);
     pinMode(result->datavalue.GPIO_PIN[0], PI_OUTPUT);
