@@ -889,36 +889,36 @@ YY_RULE_SETUP
 #line 28 "lexer.l"
 { return NOT_OPERATION; }
 	YY_BREAK
-/* Operatori di confronto */
+/* Comparision operators */
 case 18:
 YY_RULE_SETUP
 #line 31 "lexer.l"
-{ yylval.function_id = 1; return CMP; }  /* Operatore maggiore */
+{ yylval.function_id = 1; return CMP; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 32 "lexer.l"
-{ yylval.function_id = 2; return CMP; }  /* Operatore minore */
+{ yylval.function_id = 2; return CMP; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 33 "lexer.l"
-{ yylval.function_id = 3; return CMP; }  /* Operatore di disuguaglianza */
+{ yylval.function_id = 3; return CMP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 34 "lexer.l"
-{ yylval.function_id = 4; return CMP; }  /* Operatore di uguaglianza */
+{ yylval.function_id = 4; return CMP; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 35 "lexer.l"
-{ yylval.function_id = 5; return CMP; }  /* Operatore maggiore uguale */
+{ yylval.function_id = 5; return CMP; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 36 "lexer.l"
-{ yylval.function_id = 6; return CMP; }  /* Operatore minore uguale */
+{ yylval.function_id = 6; return CMP; }
 	YY_BREAK
 /* Primitive types */
 case 24:
@@ -1969,5 +1969,4 @@ void yyfree (void * ptr )
 #define YYTABLES_NAME "yytables"
 
 #line 45 "lexer.l"
-
 

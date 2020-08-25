@@ -93,3 +93,5 @@ explist: exp
 symbol_list: NAME       { $$ = create_symbol_list($1, NULL); }
  | NAME ',' symbol_list { $$ = create_symbol_list($1, $3); }
 ;
+
+%%
