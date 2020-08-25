@@ -90,12 +90,18 @@ struct symbol * insert_symbol(char* sym) {
 }
 
 // Function to define a custom function
-void define_function(char *function_name, struct symlist *symbol_list, struct ast *function) {
+void define_function(char *function_name, struct symbol_list *symbol_list, struct ast *function) {
   struct symbol * custom_function = insert_symbol(function_name);
 
   // Assign symbol list and function
   custom_function->syms = symbol_list;
   custom_function->func = function;
+}
+
+// Function to create a new symbol list
+struct symbol_list *create_symbol_list(char *symbol, struct symbol_list *next) {
+  struct symbol_list *new_symbol_list = NULL;
+  return new_symbol_list; // TODO: implement newsymlist
 }
 
 // Function to evaluate an AST
@@ -190,49 +196,49 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
 
     case '+': 
-      v = sum(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = sum(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '-': 
-      v = sub(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = subtract(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
     case '*': 
-      v = mul(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = multiply(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
     case '/': 
-      v = division(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = divide(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
     case ABSOLUTE_VALUE: 
-      v = abs_value(eval(abstract_syntax_tree->l)); 
+      v = get_absolute_value(eval(abstract_syntax_tree->l)); 
       break;
     case UNARY_MINUS: 
       v = sign(eval(abstract_syntax_tree->l)); 
       break;
 
     case LOGICAL_AND: 
-      v = logic_and(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
+      v = calculate_logical_and(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
       break;
     case LOGICAL_OR: 
-      v = logic_or(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
+      v = calculate_logical_or(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
       break;
 
     case '1': 
-      v = greater_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = calculate_greater_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
         break;
     case '2': 
-      v = less_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = calculate_less_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
         break;
     case '3':
-      v = equal(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
+      v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       // v->datavalue.bit = !v->datavalue.bit; TODO: define datavalue
       break;
     case '4': 
-      v = equal(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
     case '5': 
-      v = greater_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = calculate_greater_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
     case '6': 
-      v = less_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = calculate_less_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
 
     case IF_STATEMENT:

@@ -168,7 +168,7 @@ union YYSTYPE
 #line 11 "parser.y"
 
   struct ast *ast;
-  struct symlist *symbol_list;
+  struct symbol_list *symbol_list;
   struct value *value;
   int integer;
   int function_id;
@@ -574,7 +574,7 @@ static const char *const yytname[] =
   "CLOSE_BRACKET", "OPEN_BRACE", "CLOSE_BRACE", "DOT", "COMMA", "ASSIGN",
   "ACTION", "PARAM", "ENDACTION", "CMP", "';'", "'+'", "'-'", "'*'", "'/'",
   "'|'", "'('", "')'", "UMINUS", "','", "$accept", "learnpi", "statement",
-  "list", "exp", "explist", "symlist", YY_NULLPTR
+  "list", "exp", "explist", "symbol_list", YY_NULLPTR
 };
 #endif
 
@@ -1419,7 +1419,7 @@ yyreduce:
 
   case 4:
 #line 47 "parser.y"
-                                                            {define_function((yyvsp[-5].str), (yyvsp[-3].symbol_list), (yyvsp[-1].ast));}
+                                                                {define_function((yyvsp[-5].str), (yyvsp[-3].symbol_list), (yyvsp[-1].ast));}
 #line 1424 "parser.tab.c"
     break;
 
@@ -1563,13 +1563,13 @@ yyreduce:
 
   case 29:
 #line 91 "parser.y"
-                    { (yyval.symbol_list) = newsymlist((yyvsp[0].str), NULL); }
+                        { (yyval.symbol_list) = create_symbol_list((yyvsp[0].str), NULL); }
 #line 1568 "parser.tab.c"
     break;
 
   case 30:
 #line 92 "parser.y"
-                    { (yyval.symbol_list) = newsymlist((yyvsp[-2].str), (yyvsp[0].symbol_list)); }
+                        { (yyval.symbol_list) = create_symbol_list((yyvsp[-2].str), (yyvsp[0].symbol_list)); }
 #line 1574 "parser.tab.c"
     break;
 

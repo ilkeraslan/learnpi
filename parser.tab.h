@@ -94,7 +94,7 @@ union YYSTYPE
 #line 11 "parser.y"
 
   struct ast *ast;
-  struct symlist *symbol_list;
+  struct symbol_list *symbol_list;
   struct value *value;
   int integer;
   int function_id;

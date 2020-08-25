@@ -2,6 +2,14 @@
 #include "functions.h"
 #include <pigpio.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+int yylineno;
+int yyparse();
+
+void yyerror(char *s, ...) {
+  fprintf(stderr, "Error: %d \n", yylineno);
+}
 
 struct val *create_LED(struct val **pin) {
     struct val * result;
@@ -32,4 +40,56 @@ struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
         i =+ 1;
     }
     return result;
+}
+
+struct val *sum(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *subtract(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *multiply(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *divide(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *get_absolute_value(struct val *ast) {
+    return NULL;
+}
+
+struct val *sign(struct val *ast) { // TODO: change name
+    return NULL;
+}
+
+struct val *calculate_logical_and(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *calculate_logical_or(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *calculate_greater_than(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *calculate_less_than(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *calculate_equals(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *calculate_greater_equal_than(struct val *first, struct val *second) {
+    return NULL;
+}
+
+struct val *calculate_less_equal_than(struct val *first, struct val *second) {
+    return NULL;
 }

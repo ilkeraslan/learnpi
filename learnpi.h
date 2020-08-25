@@ -30,7 +30,7 @@ struct symbol {
   char *name;
   struct val *value;
   struct ast *func;
-  struct symlist *syms;
+  struct symbol_list *syms;
 };
 
 // Structure for value
@@ -46,9 +46,9 @@ struct val {
 };
 
 // Structure for symbol list
-struct symlist {
+struct symbol_list {
   char *sym;
-  struct symlist *next;
+  struct symbol_list *next;
 };
 
 // Structure for Abstract Syntax Tree
@@ -137,7 +137,10 @@ struct user_function_call {
 };
 
 // Function to define a custom function
-void define_function(char *function_name, struct symlist *symbol_list, struct ast *function);
+void define_function(char *function_name, struct symbol_list *symbol_list, struct ast *function);
+
+// Function to create a new symbol list
+struct symbol_list *create_symbol_list(char *symbol, struct symbol_list *next);
 
 // Function to evaluate an AST
 struct val *eval(struct ast *);

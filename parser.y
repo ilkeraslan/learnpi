@@ -10,7 +10,7 @@ int yylex();
 // Types used in parser
 %union {
   struct ast *ast;
-  struct symlist *symbol_list;
+  struct symbol_list *symbol_list;
   struct value *value;
   int integer;
   int function_id;
@@ -31,7 +31,7 @@ int yylex();
 %nonassoc <function_id> CMP
 
 %type <ast> statement list
-%type <symbol_list> symlist
+%type <symbol_list> symbol_list
 
 // Parser initial point
 %start learnpi
@@ -44,7 +44,7 @@ learnpi: /* nothing */
          treefree($2);
       }
     }
-   | learnpi ACTION NAME PARAM symlist START list ENDACTION {define_function($3, $5, $7);}
+   | learnpi ACTION NAME PARAM symbol_list START list ENDACTION {define_function($3, $5, $7);}
    | learnpi ACTION NAME START list ENDACTION {define_function($3, NULL, $5);}
    | learnpi error { yyerrok; yyparse(); }
 ;
@@ -88,6 +88,6 @@ explist: exp
  | exp ',' explist               { /* nothing */ }
 ;
 
-symlist: NAME       { $$ = newsymlist($1, NULL); }
- | NAME ',' symlist { $$ = newsymlist($1, $3); }
+symbol_list: NAME       { $$ = create_symbol_list($1, NULL); }
+ | NAME ',' symbol_list { $$ = create_symbol_list($1, $3); }
 ;
