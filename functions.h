@@ -9,8 +9,8 @@ struct val *sum(struct val *first, struct val *second);
 struct val *subtract(struct val *first, struct val *second);
 struct val *multiply(struct val *first, struct val *second);
 struct val *divide(struct val *first, struct val *second);
-struct val *get_absolute_value(struct val *ast);
-struct val *sign(struct val *ast); //TODO: change name
+struct val *get_absolute_value(struct val *value);
+struct val *change_sign(struct val *value);
 struct val *calculate_logical_and(struct val *first, struct val *second);
 struct val *calculate_logical_or(struct val *first, struct val *second);
 struct val *calculate_greater_than(struct val *first, struct val *second);

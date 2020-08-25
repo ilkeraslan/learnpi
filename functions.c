@@ -179,40 +179,283 @@ struct val *divide(struct val *first, struct val *second) {
     return result;
 }
 
-struct val *get_absolute_value(struct val *ast) {
-    return NULL;
+struct val *get_absolute_value(struct val *value) {
+    struct val *result = malloc(sizeof(struct val));
+
+    switch (typeof_value(value)) {
+        case INTEGER_TYPE:
+            if(value->datavalue.integer < 0) {
+                result->datavalue.integer = -(value->datavalue.integer);
+            } else {
+                result->datavalue.integer = value->datavalue.integer;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(value->datavalue.integer < 0) {
+                result->datavalue.decimal = -(value->datavalue.decimal);
+            } else {
+                result->datavalue.decimal = value->datavalue.decimal;
+            }
+            break;
+        default:
+            yyerror("Absolute value error");
+            free(result);
+    }
+
+    result->type = typeof_value(value);
+    return result;
 }
 
-struct val *sign(struct val *ast) { // TODO: change name
-    return NULL;
+struct val *change_sign(struct val *value) {
+    struct val *result = malloc(sizeof(struct val));
+    
+    switch (typeof_value(value)) {
+        case INTEGER_TYPE:
+            result->datavalue.integer = -(value->datavalue.integer);
+            break;
+        case DECIMAL_TYPE:
+            result->datavalue.decimal = -(value->datavalue.decimal);
+            break;
+        default:
+            yyerror("Sign change error");
+            free(result);
+    }
+
+    result->type = typeof_value(value);
+    return result;
 }
 
 struct val *calculate_logical_and(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+
+    if(typeof_value(first) == BIT_TYPE && typeof_value(second) == BIT_TYPE) {
+        result->type = BIT_TYPE;
+        result->datavalue.bit = first->datavalue.bit && second->datavalue.bit;
+    } else {
+        yyerror("Logical AND error");
+        free(result);
+    }
+
+    return result;  
 }
 
 struct val *calculate_logical_or(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+
+    if(typeof_value(first) == BIT_TYPE && typeof_value(second) == BIT_TYPE) {
+        result->type = BIT_TYPE;
+        result->datavalue.bit = first->datavalue.bit || second->datavalue.bit;
+    } else {
+        yyerror("Logical OR error");
+        free(result);
+    }
+
+    return result; 
 }
 
 struct val *calculate_greater_than(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+    int helper;
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.bit = first->datavalue.integer > second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.decimal = first->datavalue.integer > second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.decimal = first->datavalue.decimal > second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.bit = first->datavalue.decimal > second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(typeof_value(second) == STRING_TYPE) {
+                // String comparision
+                helper = strcmp(first->datavalue.string, second->datavalue.string);
+
+                // Check if strings are equal
+                if(helper == 1) {
+                    result->datavalue.bit = 1;
+                } else {
+                    result->datavalue.bit = 0;
+                }
+            }
+            break;
+        default:
+            yyerror("Cannot calculate if greater than.");
+            free(result);
+    }
+
+    result->type = BIT_TYPE;
+    return result;
 }
 
 struct val *calculate_less_than(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+    int helper;
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.bit = first->datavalue.integer < second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.decimal = first->datavalue.integer < second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.decimal = first->datavalue.decimal < second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.bit = first->datavalue.decimal < second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(typeof_value(second) == STRING_TYPE) {
+                // String comparision
+                helper = strcmp(first->datavalue.string, second->datavalue.string);
+
+                // Check if strings are equal
+                if(helper == -1) {
+                    result->datavalue.bit = 1;
+                } else {
+                    result->datavalue.bit = 0;
+                }
+            }
+            break;
+        default:
+            yyerror("Cannot calculate if less than.");
+            free(result);
+    }
+
+    result->type = BIT_TYPE;
+    return result;
 }
 
 struct val *calculate_equals(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+    int helper;
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.bit = first->datavalue.integer == second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.decimal = first->datavalue.integer == second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.decimal = first->datavalue.decimal == second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.bit = first->datavalue.decimal == second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(typeof_value(second) == STRING_TYPE) {
+                // String comparision
+                helper = strcmp(first->datavalue.string, second->datavalue.string);
+
+                // Check if strings are equal
+                if(helper == 0) {
+                    result->datavalue.bit = 1;
+                } else {
+                    result->datavalue.bit = 0;
+                }
+            }
+            break;
+        default:
+            yyerror("Cannot calculate if equals.");
+            free(result);
+    }
+
+    result->type = BIT_TYPE;
+    return result;
 }
 
 struct val *calculate_greater_equal_than(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+    int helper;
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.bit = first->datavalue.integer >= second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.decimal = first->datavalue.integer >= second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.decimal = first->datavalue.decimal >= second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.bit = first->datavalue.decimal >= second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(typeof_value(second) == STRING_TYPE) {
+                // String comparision
+                helper = strcmp(first->datavalue.string, second->datavalue.string);
+
+                // Check if strings are equal
+                if(helper == 0 || helper == 1) {
+                    result->datavalue.bit = 1;
+                } else {
+                    result->datavalue.bit = 0;
+                }
+            }
+            break;
+        default:
+            yyerror("Cannot calculate if greater equal than.");
+            free(result);
+    }
+
+    result->type = BIT_TYPE;
+    return result;
 }
 
 struct val *calculate_less_equal_than(struct val *first, struct val *second) {
-    return NULL;
+    struct val * result = malloc(sizeof(struct val));
+    int helper;
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.bit = first->datavalue.integer <= second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.decimal = first->datavalue.integer <= second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->datavalue.decimal = first->datavalue.decimal <= second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->datavalue.bit = first->datavalue.decimal <= second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(typeof_value(second) == STRING_TYPE) {
+                // String comparision
+                helper = strcmp(first->datavalue.string, second->datavalue.string);
+
+                // Check if strings are equal
+                if(helper == 0 || helper == -1) {
+                    result->datavalue.bit = 1;
+                } else {
+                    result->datavalue.bit = 0;
+                }
+            }
+            break;
+        default:
+            yyerror("Cannot calculate if less equal than.");
+            free(result);
+    }
+
+    result->type = BIT_TYPE;
+    return result;
 }
 
 struct val *create_bit_value(int bit_value) {
