@@ -13,10 +13,18 @@ void yyerror(char *s, ...) {
   fprintf(stderr, "Error: %d \n", yylineno);
 }
 
+int get_value_type(struct val *value) {
+	if(value) {
+  	    return value->type;
+	} else {
+		return -1;
+	}
+}
+
 struct val *create_LED(struct val **pin) {
     struct val * result;
     result = create_COMPLEXTYPE(pin, 1, LED);
-    pinMode(result->datavalue.GPIO_PIN[0], PI_OUTPUT);
+    int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
     return result;
 }
 
@@ -47,27 +55,27 @@ struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
 struct val *sum(struct val *first, struct val *second) {
     struct val *result = malloc(sizeof(struct val));
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->type = INTEGER_TYPE;
                 result->datavalue.integer = first->datavalue.integer + second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.integer + second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal + second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal + second->datavalue.decimal;
             }
             break;
         case STRING_TYPE:
-            if(typeof_value(second) == STRING_TYPE) {
+            if(get_value_type(second) == STRING_TYPE) {
                 result->type = STRING_TYPE;
                 asprintf(&result->datavalue.string, "%s%s", first->datavalue.string, second->datavalue.string);
             }
@@ -84,21 +92,21 @@ struct val *sum(struct val *first, struct val *second) {
 struct val *subtract(struct val *first, struct val *second) {
     struct val *result = malloc(sizeof(struct val));
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->type = INTEGER_TYPE;
                 result->datavalue.integer = first->datavalue.integer - second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.integer - second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal - second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal - second->datavalue.decimal;
             }
@@ -115,21 +123,21 @@ struct val *subtract(struct val *first, struct val *second) {
 struct val *multiply(struct val *first, struct val *second) {
     struct val *result = malloc(sizeof(struct val));
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->type = INTEGER_TYPE;
                 result->datavalue.integer = first->datavalue.integer * second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.integer * second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal * second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal * second->datavalue.decimal;
             }
@@ -146,9 +154,9 @@ struct val *multiply(struct val *first, struct val *second) {
 struct val *divide(struct val *first, struct val *second) {
     struct val *result = malloc(sizeof(struct val));
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE && second->datavalue.integer != 0) {
+            if(get_value_type(second) == INTEGER_TYPE && second->datavalue.integer != 0) {
                 if(first->datavalue.integer % second->datavalue.integer == 0) {
                     result->type = INTEGER_TYPE;
                     result->datavalue.integer = first->datavalue.integer / second->datavalue.integer;
@@ -156,16 +164,16 @@ struct val *divide(struct val *first, struct val *second) {
                     result->type = DECIMAL_TYPE;
                     result->datavalue.decimal = (double)first->datavalue.integer / (double)second->datavalue.integer;
                 }
-            } else if(typeof_value(second) == DECIMAL_TYPE  && second->datavalue.decimal != 0) {
+            } else if(get_value_type(second) == DECIMAL_TYPE  && second->datavalue.decimal != 0) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = (double)first->datavalue.integer / second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE  && second->datavalue.integer != 0) {
+            if(get_value_type(second) == INTEGER_TYPE  && second->datavalue.integer != 0) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal / (double)second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE  && second->datavalue.decimal != 0) {
+            } else if(get_value_type(second) == DECIMAL_TYPE  && second->datavalue.decimal != 0) {
                 result->type = DECIMAL_TYPE;
                 result->datavalue.decimal = first->datavalue.decimal / second->datavalue.decimal;
             }
@@ -182,7 +190,7 @@ struct val *divide(struct val *first, struct val *second) {
 struct val *get_absolute_value(struct val *value) {
     struct val *result = malloc(sizeof(struct val));
 
-    switch (typeof_value(value)) {
+    switch (get_value_type(value)) {
         case INTEGER_TYPE:
             if(value->datavalue.integer < 0) {
                 result->datavalue.integer = -(value->datavalue.integer);
@@ -202,14 +210,14 @@ struct val *get_absolute_value(struct val *value) {
             free(result);
     }
 
-    result->type = typeof_value(value);
+    result->type = get_value_type(value);
     return result;
 }
 
 struct val *change_sign(struct val *value) {
     struct val *result = malloc(sizeof(struct val));
     
-    switch (typeof_value(value)) {
+    switch (get_value_type(value)) {
         case INTEGER_TYPE:
             result->datavalue.integer = -(value->datavalue.integer);
             break;
@@ -221,14 +229,14 @@ struct val *change_sign(struct val *value) {
             free(result);
     }
 
-    result->type = typeof_value(value);
+    result->type = get_value_type(value);
     return result;
 }
 
 struct val *calculate_logical_and(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
 
-    if(typeof_value(first) == BIT_TYPE && typeof_value(second) == BIT_TYPE) {
+    if(get_value_type(first) == BIT_TYPE && get_value_type(second) == BIT_TYPE) {
         result->type = BIT_TYPE;
         result->datavalue.bit = first->datavalue.bit && second->datavalue.bit;
     } else {
@@ -242,7 +250,7 @@ struct val *calculate_logical_and(struct val *first, struct val *second) {
 struct val *calculate_logical_or(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
 
-    if(typeof_value(first) == BIT_TYPE && typeof_value(second) == BIT_TYPE) {
+    if(get_value_type(first) == BIT_TYPE && get_value_type(second) == BIT_TYPE) {
         result->type = BIT_TYPE;
         result->datavalue.bit = first->datavalue.bit || second->datavalue.bit;
     } else {
@@ -257,23 +265,23 @@ struct val *calculate_greater_than(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
     int helper;
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer > second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.decimal = first->datavalue.integer > second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.decimal = first->datavalue.decimal > second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal > second->datavalue.decimal;
             }
             break;
         case STRING_TYPE:
-            if(typeof_value(second) == STRING_TYPE) {
+            if(get_value_type(second) == STRING_TYPE) {
                 // String comparision
                 helper = strcmp(first->datavalue.string, second->datavalue.string);
 
@@ -298,23 +306,23 @@ struct val *calculate_less_than(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
     int helper;
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer < second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.decimal = first->datavalue.integer < second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.decimal = first->datavalue.decimal < second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal < second->datavalue.decimal;
             }
             break;
         case STRING_TYPE:
-            if(typeof_value(second) == STRING_TYPE) {
+            if(get_value_type(second) == STRING_TYPE) {
                 // String comparision
                 helper = strcmp(first->datavalue.string, second->datavalue.string);
 
@@ -339,23 +347,23 @@ struct val *calculate_equals(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
     int helper;
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer == second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.decimal = first->datavalue.integer == second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.decimal = first->datavalue.decimal == second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal == second->datavalue.decimal;
             }
             break;
         case STRING_TYPE:
-            if(typeof_value(second) == STRING_TYPE) {
+            if(get_value_type(second) == STRING_TYPE) {
                 // String comparision
                 helper = strcmp(first->datavalue.string, second->datavalue.string);
 
@@ -380,23 +388,23 @@ struct val *calculate_greater_equal_than(struct val *first, struct val *second) 
     struct val * result = malloc(sizeof(struct val));
     int helper;
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer >= second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.decimal = first->datavalue.integer >= second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.decimal = first->datavalue.decimal >= second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal >= second->datavalue.decimal;
             }
             break;
         case STRING_TYPE:
-            if(typeof_value(second) == STRING_TYPE) {
+            if(get_value_type(second) == STRING_TYPE) {
                 // String comparision
                 helper = strcmp(first->datavalue.string, second->datavalue.string);
 
@@ -421,23 +429,23 @@ struct val *calculate_less_equal_than(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
     int helper;
 
-    switch(typeof_value(first)) {
+    switch(get_value_type(first)) {
         case INTEGER_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer <= second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.decimal = first->datavalue.integer <= second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
-            if(typeof_value(second) == INTEGER_TYPE) {
+            if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.decimal = first->datavalue.decimal <= second->datavalue.integer;
-            } else if(typeof_value(second) == DECIMAL_TYPE) {
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal <= second->datavalue.decimal;
             }
             break;
         case STRING_TYPE:
-            if(typeof_value(second) == STRING_TYPE) {
+            if(get_value_type(second) == STRING_TYPE) {
                 // String comparision
                 helper = strcmp(first->datavalue.string, second->datavalue.string);
 

@@ -7,11 +7,13 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
+#include <pigpio.h>
 #include "learnpi.h"
 #include "functions.h"
 
 extern int yydebug;
 extern FILE *yyin;
+char is_file = '0';
 
 // Hash a symbol using its string
 static unsigned symhash(char *sym) {
@@ -211,7 +213,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       v = get_absolute_value(eval(abstract_syntax_tree->l)); 
       break;
     case UNARY_MINUS: 
-      v = sign(eval(abstract_syntax_tree->l)); 
+      v = change_sign(eval(abstract_syntax_tree->l)); 
       break;
 
     case LOGICAL_AND: 
@@ -483,15 +485,6 @@ bool is_primitive(int type) {
   return true;
 }
 
-// Helper method to check value type, returns -1 if null
-int get_value_type(struct val *v) {
-  if(v != NULL) {
-    return v->type;
-  }
-  yyerror("Value is null.");
-  return -1;
-}
-
 // Function to store function call value into a structure
 struct val * builtin_function_call(struct function *foo) {
   return NULL; // TODO: return the structure
@@ -500,4 +493,59 @@ struct val * builtin_function_call(struct function *foo) {
 // Function to call custom functions
 void calluser(struct user_function_call *foo) {
   // TODO: Implement user function call
+}
+
+int newfile(char *fn) {
+  FILE *f;
+
+  if(strcmp(fn, "stdin")) {
+    // Found files
+    f = fopen(fn, "r");
+		is_file = '1';
+  } else {
+    // Use standard input
+    f = stdin;
+		is_file = '0';
+  }
+
+  if(!f) {
+    perror(fn);
+    return -1;
+  }
+
+  yyin = f;
+
+  return 1;
+}
+
+int main(int argc, char **argv) {
+
+  if (gpioInitialise()<0) return 1;
+
+	symstack = calloc(1, sizeof(struct symtable_stack));
+	symstack->next = NULL;
+	symstack->symtab = NULL;
+
+	initialize_symbol_table_stack();
+
+	newfile("stdin");
+	for(int i = 1; i < argc; i++) {
+		if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[i])) {
+			yyparse();
+		} else {
+			fprintf(stderr, "Not a valid file.\n");
+		}
+	}
+
+	free_symbol_table_stack();
+}
+
+int checkSuffix(const char *str, const char *suffix) {
+    if (!str || !suffix)
+        return 0;
+    size_t lenstr = strlen(str);
+    size_t lensuffix = strlen(suffix);
+    if (lensuffix >  lenstr)
+        return 0;
+    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }

@@ -41,7 +41,7 @@ struct val {
         int integer;
         double decimal;
         char * string;
-        int * GPIO_PIN;
+        unsigned * GPIO_PIN;
     } datavalue;
 };
 
