@@ -1,8 +1,10 @@
+#define _GNU_SOURCE
 #include "learnpi.h"
 #include "functions.h"
 #include <pigpio.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int yylineno;
 int yyparse();
@@ -43,19 +45,138 @@ struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
 }
 
 struct val *sum(struct val *first, struct val *second) {
-    return NULL;
+    struct val *result = malloc(sizeof(struct val));
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->type = INTEGER_TYPE;
+                result->datavalue.integer = first->datavalue.integer + second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.integer + second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal + second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal + second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(typeof_value(second) == STRING_TYPE) {
+                result->type = STRING_TYPE;
+                asprintf(&result->datavalue.string, "%s%s", first->datavalue.string, second->datavalue.string);
+            }
+            break;
+        default:
+            yyerror("Sum error between types.");
+            free(result);
+            return NULL;
+    }
+
+    return result;
 }
 
 struct val *subtract(struct val *first, struct val *second) {
-    return NULL;
+    struct val *result = malloc(sizeof(struct val));
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->type = INTEGER_TYPE;
+                result->datavalue.integer = first->datavalue.integer - second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.integer - second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal - second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal - second->datavalue.decimal;
+            }
+            break;
+        default:
+            yyerror("Subtraction error between types.");
+            free(result);
+            return NULL;
+    }
+
+    return result;
 }
 
 struct val *multiply(struct val *first, struct val *second) {
-    return NULL;
+    struct val *result = malloc(sizeof(struct val));
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->type = INTEGER_TYPE;
+                result->datavalue.integer = first->datavalue.integer * second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.integer * second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal * second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal * second->datavalue.decimal;
+            }
+            break;
+        default:
+            yyerror("Multiplication error between types.");
+            free(result);
+            return NULL;
+    }
+
+    return result;
 }
 
 struct val *divide(struct val *first, struct val *second) {
-    return NULL;
+    struct val *result = malloc(sizeof(struct val));
+
+    switch(typeof_value(first)) {
+        case INTEGER_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE && second->datavalue.integer != 0) {
+                if(first->datavalue.integer % second->datavalue.integer == 0) {
+                    result->type = INTEGER_TYPE;
+                    result->datavalue.integer = first->datavalue.integer / second->datavalue.integer;
+                } else {
+                    result->type = DECIMAL_TYPE;
+                    result->datavalue.decimal = (double)first->datavalue.integer / (double)second->datavalue.integer;
+                }
+            } else if(typeof_value(second) == DECIMAL_TYPE  && second->datavalue.decimal != 0) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = (double)first->datavalue.integer / second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(typeof_value(second) == INTEGER_TYPE  && second->datavalue.integer != 0) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal / (double)second->datavalue.integer;
+            } else if(typeof_value(second) == DECIMAL_TYPE  && second->datavalue.decimal != 0) {
+                result->type = DECIMAL_TYPE;
+                result->datavalue.decimal = first->datavalue.decimal / second->datavalue.decimal;
+            }
+            break;
+        default:
+            yyerror("Division error between types.");
+            free(result);
+            return NULL;
+    }
+
+    return result;
 }
 
 struct val *get_absolute_value(struct val *ast) {
