@@ -3,6 +3,7 @@
 #include "parser.tab.h"
 #include "learnpi.h"
 #include "types.h"
+#include "functions.h"
 
 char is_file = '0';
 %}

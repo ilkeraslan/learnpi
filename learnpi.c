@@ -317,16 +317,16 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         // Check symbol declaration types to assign symbol value
         switch(declare_symbol->type) {
           case BIT_TYPE:
-            s->value = create_bit(0); // TODO: create this function
+            s->value = create_bit_value(0);
             break;
           case INTEGER_TYPE:
-            s->value = create_integer(0); // TODO: create this function
+            s->value = create_integer_value(0);
             break;
           case DECIMAL_TYPE:
-            s->value = create_decimal(0.0); // TODO: create this function
+            s->value = create_decimal_value(0.0);
             break;
           case STRING_TYPE:
-            s->value = create_string(""); // TODO: create this function
+            s->value = create_string_value("");
             break;
           default:
             yyerror("Type not recognized.");

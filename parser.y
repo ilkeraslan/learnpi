@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "learnpi.h"
+#include "functions.h"
+
 #define YYDEBUG 1
 
 int yylex();   

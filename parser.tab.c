@@ -71,11 +71,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "learnpi.h"
+#include "functions.h"
+
 #define YYDEBUG 1
 
 int yylex();   
 
-#line 79 "parser.tab.c"
+#line 81 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -165,7 +167,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "parser.y"
+#line 13 "parser.y"
 
   struct ast *ast;
   struct symbol_list *symbol_list;
@@ -175,7 +177,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 179 "parser.tab.c"
+#line 181 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -554,10 +556,10 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    40,    40,    41,    47,    48,    49,    52,    53,    54,
-      55,    56,    59,    60,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78,    79,    80,    81,    87,    88,    91,
-      92
+       0,    42,    42,    43,    49,    50,    51,    54,    55,    56,
+      57,    58,    61,    62,    71,    72,    73,    74,    75,    76,
+      77,    78,    79,    80,    81,    82,    83,    89,    90,    93,
+      94
 };
 #endif
 
@@ -1407,66 +1409,66 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 41 "parser.y"
+#line 43 "parser.y"
                       {
       struct value *value = eval((yyvsp[0].ast));
       if(value) {
          treefree((yyvsp[0].ast));
       }
     }
-#line 1418 "parser.tab.c"
+#line 1420 "parser.tab.c"
     break;
 
   case 4:
-#line 47 "parser.y"
+#line 49 "parser.y"
                                                                 {define_function((yyvsp[-5].str), (yyvsp[-3].symbol_list), (yyvsp[-1].ast));}
-#line 1424 "parser.tab.c"
+#line 1426 "parser.tab.c"
     break;
 
   case 5:
-#line 48 "parser.y"
+#line 50 "parser.y"
                                               {define_function((yyvsp[-3].str), NULL, (yyvsp[-1].ast));}
-#line 1430 "parser.tab.c"
+#line 1432 "parser.tab.c"
     break;
 
   case 6:
-#line 49 "parser.y"
+#line 51 "parser.y"
                    { yyerrok; yyparse(); }
-#line 1436 "parser.tab.c"
+#line 1438 "parser.tab.c"
     break;
 
   case 7:
-#line 52 "parser.y"
+#line 54 "parser.y"
                                        { /* nothing */ }
-#line 1442 "parser.tab.c"
+#line 1444 "parser.tab.c"
     break;
 
   case 8:
-#line 53 "parser.y"
+#line 55 "parser.y"
                                        { /* nothing */ }
-#line 1448 "parser.tab.c"
+#line 1450 "parser.tab.c"
     break;
 
   case 9:
-#line 54 "parser.y"
+#line 56 "parser.y"
                                        { /* nothing */ }
-#line 1454 "parser.tab.c"
+#line 1456 "parser.tab.c"
     break;
 
   case 10:
-#line 55 "parser.y"
+#line 57 "parser.y"
                                        { /* nothing */ }
-#line 1460 "parser.tab.c"
+#line 1462 "parser.tab.c"
     break;
 
   case 12:
-#line 59 "parser.y"
+#line 61 "parser.y"
                     { (yyval.ast) = NULL; }
-#line 1466 "parser.tab.c"
+#line 1468 "parser.tab.c"
     break;
 
   case 13:
-#line 60 "parser.y"
+#line 62 "parser.y"
                     {
                   if ((yyvsp[0].ast) == NULL) {
                         (yyval.ast) = (yyvsp[-1].ast);
@@ -1474,107 +1476,107 @@ yyreduce:
                         (yyval.ast) = (yyvsp[-1].ast);//newast(T_stmtlist, $1, $2);
                   }
                }
-#line 1478 "parser.tab.c"
+#line 1480 "parser.tab.c"
     break;
 
   case 14:
-#line 69 "parser.y"
+#line 71 "parser.y"
                                  { /* nothing */ }
-#line 1484 "parser.tab.c"
+#line 1486 "parser.tab.c"
     break;
 
   case 15:
-#line 70 "parser.y"
+#line 72 "parser.y"
                                  { /* nothing */ }
-#line 1490 "parser.tab.c"
+#line 1492 "parser.tab.c"
     break;
 
   case 16:
-#line 71 "parser.y"
+#line 73 "parser.y"
                                  { /* nothing */ }
-#line 1496 "parser.tab.c"
+#line 1498 "parser.tab.c"
     break;
 
   case 17:
-#line 72 "parser.y"
+#line 74 "parser.y"
                                  { /* nothing */ }
-#line 1502 "parser.tab.c"
+#line 1504 "parser.tab.c"
     break;
 
   case 18:
-#line 73 "parser.y"
+#line 75 "parser.y"
                                  { /* nothing */ }
-#line 1508 "parser.tab.c"
+#line 1510 "parser.tab.c"
     break;
 
   case 19:
-#line 74 "parser.y"
+#line 76 "parser.y"
                                  { /* nothing */ }
-#line 1514 "parser.tab.c"
+#line 1516 "parser.tab.c"
     break;
 
   case 20:
-#line 75 "parser.y"
+#line 77 "parser.y"
                                  { /* nothing */ }
-#line 1520 "parser.tab.c"
+#line 1522 "parser.tab.c"
     break;
 
   case 21:
-#line 76 "parser.y"
+#line 78 "parser.y"
                                  { /* nothing */ }
-#line 1526 "parser.tab.c"
+#line 1528 "parser.tab.c"
     break;
 
   case 22:
-#line 77 "parser.y"
+#line 79 "parser.y"
                                  { /* nothing */ }
-#line 1532 "parser.tab.c"
+#line 1534 "parser.tab.c"
     break;
 
   case 23:
-#line 78 "parser.y"
+#line 80 "parser.y"
                                  { /* nothing */ }
-#line 1538 "parser.tab.c"
+#line 1540 "parser.tab.c"
     break;
 
   case 24:
-#line 79 "parser.y"
+#line 81 "parser.y"
                                  { /* nothing */ }
-#line 1544 "parser.tab.c"
+#line 1546 "parser.tab.c"
     break;
 
   case 25:
-#line 80 "parser.y"
+#line 82 "parser.y"
                                  { /* nothing */ }
-#line 1550 "parser.tab.c"
+#line 1552 "parser.tab.c"
     break;
 
   case 26:
-#line 81 "parser.y"
+#line 83 "parser.y"
                                  { /* nothing */ }
-#line 1556 "parser.tab.c"
+#line 1558 "parser.tab.c"
     break;
 
   case 28:
-#line 88 "parser.y"
+#line 90 "parser.y"
                                  { /* nothing */ }
-#line 1562 "parser.tab.c"
+#line 1564 "parser.tab.c"
     break;
 
   case 29:
-#line 91 "parser.y"
+#line 93 "parser.y"
                         { (yyval.symbol_list) = create_symbol_list((yyvsp[0].str), NULL); }
-#line 1568 "parser.tab.c"
+#line 1570 "parser.tab.c"
     break;
 
   case 30:
-#line 92 "parser.y"
+#line 94 "parser.y"
                         { (yyval.symbol_list) = create_symbol_list((yyvsp[-2].str), (yyvsp[0].symbol_list)); }
-#line 1574 "parser.tab.c"
+#line 1576 "parser.tab.c"
     break;
 
 
-#line 1578 "parser.tab.c"
+#line 1580 "parser.tab.c"
 
       default: break;
     }

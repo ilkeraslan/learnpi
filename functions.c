@@ -93,3 +93,35 @@ struct val *calculate_greater_equal_than(struct val *first, struct val *second) 
 struct val *calculate_less_equal_than(struct val *first, struct val *second) {
     return NULL;
 }
+
+struct val *create_bit_value(int bit_value) {
+    if(bit_value != 0 && bit_value != 1) {
+        return NULL;
+    }
+
+    struct val *bit_val = malloc(sizeof(struct val));
+    bit_val->type = BIT_TYPE;
+    bit_val->datavalue.bit = bit_value;
+    return bit_val;
+}
+
+struct val *create_integer_value(int integer_value) {
+    struct val *integer_val = malloc(sizeof(struct val));
+    integer_val->type = INTEGER_TYPE;
+    integer_val->datavalue.integer = integer_value;
+    return integer_val;
+}
+
+struct val *create_decimal_value(double decimal_value) {
+    struct val *decimal_val = malloc(sizeof(struct val));
+    decimal_val->type = DECIMAL_TYPE;
+    decimal_val->datavalue.decimal = decimal_value;
+    return decimal_val;
+}
+
+struct val *create_string_value(char *string_value) {
+    struct val *string_val = malloc(sizeof(struct val));
+	string_val->type = STRING_TYPE;
+    string_val->datavalue.string = strdup(string_value);
+    return string_val;
+}

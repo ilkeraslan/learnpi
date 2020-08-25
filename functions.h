@@ -18,3 +18,8 @@ struct val *calculate_less_than(struct val *first, struct val *second);
 struct val *calculate_equals(struct val *first, struct val *second);
 struct val *calculate_greater_equal_than(struct val *first, struct val *second);
 struct val *calculate_less_equal_than(struct val *first, struct val *second);
+
+struct val *create_bit_value(int bit_value);
+struct val *create_integer_value(int integer_value);
+struct val *create_decimal_value(double decimal_value);
+struct val *create_string_value(char *string_value);
