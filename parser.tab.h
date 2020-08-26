@@ -79,11 +79,8 @@ extern int yydebug;
     DOT = 285,
     COMMA = 286,
     ASSIGN = 287,
-    ACTION = 288,
-    PARAM = 289,
-    ENDACTION = 290,
-    CMP = 291,
-    UMINUS = 292
+    CMP = 288,
+    UMINUS = 289
   };
 #endif
 
@@ -101,7 +98,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 105 "parser.tab.h"
+#line 102 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

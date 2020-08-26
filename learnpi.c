@@ -518,6 +518,16 @@ int newfile(char *fn) {
   return 1;
 }
 
+int checkSuffix(const char *str, const char *suffix) {
+    if (!str || !suffix)
+        return 0;
+    size_t lenstr = strlen(str);
+    size_t lensuffix = strlen(suffix);
+    if (lensuffix >  lenstr)
+        return 0;
+    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+}
+
 int main(int argc, char **argv) {
 
   if (gpioInitialise()<0) return 1;
@@ -529,6 +539,7 @@ int main(int argc, char **argv) {
 	initialize_symbol_table_stack();
 
 	newfile("stdin");
+
 	for(int i = 1; i < argc; i++) {
 		if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[i])) {
 			yyparse();
@@ -538,14 +549,6 @@ int main(int argc, char **argv) {
 	}
 
 	free_symbol_table_stack();
-}
 
-int checkSuffix(const char *str, const char *suffix) {
-    if (!str || !suffix)
-        return 0;
-    size_t lenstr = strlen(str);
-    size_t lensuffix = strlen(suffix);
-    if (lensuffix >  lenstr)
-        return 0;
-    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+  return 0;
 }

@@ -28,47 +28,34 @@ int yylex();
 %token <integer> ADDITION SUBTRACTION MULTIPLICATION DIVISION MODULUS OR_OPERATION AND_OPERATION NOT_OPERATION
 %token <integer> OPEN_PARANTHESIS CLOSE_PARANTHESIS OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE DOT COMMA ASSIGN
 
-%token ACTION PARAM ENDACTION
-
-%nonassoc <function_id> CMP
+%nonassoc <function_id> COMPARISION
 
 %type <ast> statement list
-%type <symbol_list> symbol_list
+%type <symbol_list> list_of_symbol
 
 // Parser initial point
 %start learnpi
 
 %%
 learnpi: /* nothing */
-  | learnpi statement {
+   | learnpi statement {
       struct value *value = eval($2);
       if(value) {
          treefree($2);
       }
     }
-   | learnpi ACTION NAME PARAM symbol_list START list ENDACTION {define_function($3, $5, $7);}
-   | learnpi ACTION NAME START list ENDACTION {define_function($3, NULL, $5);}
    | learnpi error { yyerrok; yyparse(); }
 ;
 
 statement: IF exp THEN list ENDIF      { /* nothing */ }
    | IF exp THEN list ELSE list ENDIF  { /* nothing */ }
-   | LOOP exp START list ENDLOOP       { /* nothing */ }
-   | LOOP START list UNTIL exp ENDLOOP { /* nothing */ }
+   | IF exp THEN list ELIF exp THEN list ELSE list ENDIF { /* nothing */ }
+   | WHILE exp list { /* nothing */ }
+   | WHILE list DO exp { /* nothing */ }
    | exp ';'
 ;
 
-list: /* nothing */ { $$ = NULL; }
-   | statement list {
-                  if ($2 == NULL) {
-                        $$ = $1;
-                  } else {
-                        $$ = $1;//newast(T_stmtlist, $1, $2);
-                  }
-               }
-;
-
-exp: exp CMP exp                 { /* nothing */ }
+exp: exp COMPARISION exp         { /* nothing */ }
    | exp '+' exp                 { /* nothing */ }
    | exp '-' exp                 { /* nothing */ }
    | exp '*' exp                 { /* nothing */ }
@@ -83,6 +70,16 @@ exp: exp CMP exp                 { /* nothing */ }
    | NAME '(' ')'                { /* nothing */ }
 ;
 
+list: /* nothing */ { $$ = NULL; }
+   | statement list {
+                  if ($2 == NULL) {
+                        $$ = $1;
+                  } else {
+                        $$ = $1;//newast(T_stmtlist, $1, $2);
+                  }
+               }
+;
+
 action: /* nothing */
 ;
 
@@ -90,7 +87,7 @@ explist: exp
  | exp ',' explist               { /* nothing */ }
 ;
 
-symbol_list: NAME       { $$ = create_symbol_list($1, NULL); }
+list_of_symbol: NAME       { $$ = create_symbol_list($1, NULL); }
  | NAME ',' symbol_list { $$ = create_symbol_list($1, $3); }
 ;
 
