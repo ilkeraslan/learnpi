@@ -9,7 +9,6 @@
 int yylex();   
 %}
 
-// Types used in parser
 %union {
   struct ast *ast;
   struct symbol_list *symbol_list;
@@ -20,22 +19,22 @@ int yylex();
   int type;
 }
 
-%token <type> TYPE COMPLEX_TYPE COMPLEX_TYPE_NOPIN // TODO: change this
+%token <type> TYPE COMPLEX_TYPE COMPLEX_TYPE_NOPIN
 %token <integer> INTEGER
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF THEN ELSE ENDIF LOOP START UNTIL ENDLOOP EOL
+%token IF THEN ELSE ENDIF START UNTIL EOL ELIF WHILE DO
 
 %token <integer> ADDITION SUBTRACTION MULTIPLICATION DIVISION MODULUS OR_OPERATION AND_OPERATION NOT_OPERATION
 %token <integer> OPEN_PARANTHESIS CLOSE_PARANTHESIS OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE DOT COMMA ASSIGN
 
 %nonassoc <function_id> COMPARISION
+%nonassoc UMINUS
 
-%type <ast> statement list
-%type <symbol_list> list_of_symbol
+%type <ast> statement exp list action explist
+%type <symbol_list> sym_list
 
-// Parser initial point
 %start learnpi
 
 %%
@@ -54,7 +53,6 @@ statement: IF exp EOL list ENDIF      { /* nothing */ }
    | IF exp EOL list ELIF exp EOL list ELSE list ENDIF { /* nothing */ }
    | WHILE exp list { /* nothing */ }
    | WHILE list DO exp { /* nothing */ }
-   | exp ';'
 ;
 
 exp: exp COMPARISION exp                     { $$ = new_comparision($2, $1, $3); }
@@ -66,7 +64,7 @@ exp: exp COMPARISION exp                     { $$ = new_comparision($2, $1, $3);
    | exp AND_OPERATION exp                   { $$ = new_ast_with_children(LOGICAL_AND, $1, $3); }
    | exp OR_OPERATION exp                    { $$ = new_ast_with_children(LOGICAL_OR, $1, $3); }
    | '(' exp ')'                             { $$ = $2; }
-   | '-' exp %prec UMINUS                    { $$ = new_ast_with_child(UNARY_MINUS, $2); }
+   | '-' exp UMINUS                          { $$ = new_ast_with_child(UNARY_MINUS, $2); }
    | VALUE                                   { $$ = new_value($1); }
    | NAME                                    { $$ = new_reference($1); }
    | NAME BUILT_IN_FUNCTION '(' ')'          { $$ = new_builtin_function($2, $1, NULL); } /* Node for builtin function without parameters*/
@@ -81,7 +79,7 @@ list: /* nothing */ { $$ = NULL; }
                   if ($2 == NULL) {
                         $$ = $1;
                   } else {
-                        $$ = $1;//newast(T_stmtlist, $1, $2);
+                        $$ = $1;
                   }
                }
 ;
@@ -93,8 +91,8 @@ explist: exp
  | exp ',' explist               { /* nothing */ }
 ;
 
-list_of_symbol: NAME       { $$ = create_symbol_list($1, NULL); }
- | NAME ',' symbol_list { $$ = create_symbol_list($1, $3); }
+sym_list: NAME       { $$ = create_symbol_list($1, NULL); }
+ | NAME ',' sym_list { $$ = create_symbol_list($1, $3); }
 ;
 
 %%

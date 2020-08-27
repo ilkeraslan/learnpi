@@ -54,33 +54,37 @@ extern int yydebug;
     COMPLEX_TYPE_NOPIN = 260,
     INTEGER = 261,
     NAME = 262,
-    IF = 263,
-    THEN = 264,
-    ELSE = 265,
-    ENDIF = 266,
-    LOOP = 267,
-    START = 268,
-    UNTIL = 269,
-    ENDLOOP = 270,
-    ADDITION = 271,
-    SUBTRACTION = 272,
-    MULTIPLICATION = 273,
-    DIVISION = 274,
-    MODULUS = 275,
-    OR_OPERATION = 276,
-    AND_OPERATION = 277,
-    NOT_OPERATION = 278,
-    OPEN_PARANTHESIS = 279,
-    CLOSE_PARANTHESIS = 280,
-    OPEN_BRACKET = 281,
-    CLOSE_BRACKET = 282,
-    OPEN_BRACE = 283,
-    CLOSE_BRACE = 284,
-    DOT = 285,
-    COMMA = 286,
-    ASSIGN = 287,
-    CMP = 288,
-    UMINUS = 289
+    VALUE = 263,
+    BUILT_IN_FUNCTION = 264,
+    IF = 265,
+    THEN = 266,
+    ELSE = 267,
+    ENDIF = 268,
+    START = 269,
+    UNTIL = 270,
+    EOL = 271,
+    ELIF = 272,
+    WHILE = 273,
+    DO = 274,
+    ADDITION = 275,
+    SUBTRACTION = 276,
+    MULTIPLICATION = 277,
+    DIVISION = 278,
+    MODULUS = 279,
+    OR_OPERATION = 280,
+    AND_OPERATION = 281,
+    NOT_OPERATION = 282,
+    OPEN_PARANTHESIS = 283,
+    CLOSE_PARANTHESIS = 284,
+    OPEN_BRACKET = 285,
+    CLOSE_BRACKET = 286,
+    OPEN_BRACE = 287,
+    CLOSE_BRACE = 288,
+    DOT = 289,
+    COMMA = 290,
+    ASSIGN = 291,
+    COMPARISION = 292,
+    UMINUS = 293
   };
 #endif
 
@@ -88,7 +92,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "parser.y"
+#line 12 "parser.y"
 
   struct ast *ast;
   struct symbol_list *symbol_list;
@@ -98,7 +102,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 102 "parser.tab.h"
+#line 106 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
