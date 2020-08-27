@@ -373,8 +373,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 29
-#define YY_END_OF_BUFFER 30
+#define YY_NUM_RULES 30
+#define YY_END_OF_BUFFER 31
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -384,9 +384,9 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[63] =
     {   0,
-        0,    0,   30,   28,   29,   28,    5,    6,    7,    3,
-        1,   13,    2,   12,    4,   19,   14,   18,   28,   28,
-       28,    8,    9,   28,   28,   28,   28,   28,   28,   28,
+        0,    0,   31,   29,   28,   29,    5,    6,    7,    3,
+        1,   13,    2,   12,    4,   19,   14,   18,   29,   29,
+       29,    8,    9,   29,   29,   29,   29,   29,   29,   29,
        10,   11,   20,   23,   22,    0,    0,   15,    0,    0,
         0,    0,    0,    0,   16,   17,   24,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,   27,   26,
@@ -490,10 +490,10 @@ static const flex_int16_t yy_chk[113] =
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[30] =
+static const flex_int32_t yy_rule_can_match_eol[31] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -941,16 +941,22 @@ YY_RULE_SETUP
 { yylval.type = STRING_TYPE; return TYPE; }
 	YY_BREAK
 case 28:
+/* rule 28 can match eol */
 YY_RULE_SETUP
 #line 44 "lexer.l"
-{ yyerror("Mystery character %c\n", *yytext); exit(1); }
+{ return EOL; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 45 "lexer.l"
+#line 46 "lexer.l"
+{ yyerror("Mystery character %c\n", *yytext); exit(1); }
+	YY_BREAK
+case 30:
+YY_RULE_SETUP
+#line 47 "lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 954 "lex.yy.c"
+#line 960 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1967,5 +1973,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 45 "lexer.l"
+#line 47 "lexer.l"
 

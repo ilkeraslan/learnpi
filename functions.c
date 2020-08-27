@@ -497,3 +497,21 @@ struct val *create_string_value(char *string_value) {
     string_val->datavalue.string = strdup(string_value);
     return string_val;
 }
+
+/*
+* Sets the GPIO level to on.
+* gpio: 0-53
+* level: 0-1
+*/
+int led_on(struct val * value) {
+    return gpioWrite(value->datavalue.GPIO_PIN[0], 1);
+}
+
+/*
+* Sets the GPIO level to off.
+* gpio: 0-53
+* level: 0-1
+*/
+int led_off(struct val * value) {
+    return gpioWrite(value->datavalue.GPIO_PIN[0], 0);
+}

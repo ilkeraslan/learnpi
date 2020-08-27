@@ -69,11 +69,11 @@ exp: exp COMPARISION exp                     { $$ = new_comparision($2, $1, $3);
    | '-' exp %prec UMINUS                    { $$ = new_ast_with_child(UNARY_MINUS, $2); }
    | VALUE                                   { $$ = new_value($1); }
    | NAME                                    { $$ = new_reference($1); }
-   | NAME BUILT_IN_FUNCTION '(' ')'          { $$ = new_builtin_function($2, $1, NULL); }
-   | NAME BUILT_IN_FUNCTION '(' explist ')'  { $$ = new_builtin_function($2, $1, $4); }
-   | BUILT_IN_FUNCTION '(' explist ')'       { $$ = new_builtin_function($1, NULL, $3); }
-   | NAME '(' explist ')'                    { $$ = newcall($1, $3); }
-   | NAME '(' ')'                            { $$ = newcall($1, NULL); }
+   | NAME BUILT_IN_FUNCTION '(' ')'          { $$ = new_builtin_function($2, $1, NULL); } /* Node for builtin function without parameters*/
+   | NAME BUILT_IN_FUNCTION '(' explist ')'  { $$ = new_builtin_function($2, $1, $4); } /* Node for builtin function with parameters */
+   | BUILT_IN_FUNCTION '(' explist ')'       { $$ = new_builtin_function($1, NULL, $3); } /* Node for builtin function without name */
+   | NAME '(' ')'                            { $$ = new_user_function($1, NULL); } /* Node for user function call without parameters */
+   | NAME '(' explist ')'                    { $$ = new_user_function($1, $3); } /* Node for user function call with parameters */
 ;
 
 list: /* nothing */ { $$ = NULL; }

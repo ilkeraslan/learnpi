@@ -153,6 +153,9 @@ struct symtable_stack *symstack;
 // Function to create a built in function
 struct ast *new_builtin_function(int function_type, char *s, struct ast *l);
 
+// Function to create a node for user defined function in the AST
+struct ast *new_user_function(char *s, struct ast *argument_list);
+
 // Function to define a custom function
 void define_function(char *function_name, struct symbol_list *symbol_list, struct ast *function);
 
@@ -177,7 +180,7 @@ bool is_primitive(int type);
 // Helper method to check value type
 int get_value_type(struct val *v);
 
-// Function to create a built in function
+// Function to create a node for built in function in the AST
 struct ast *new_builtin_function(int function_type, char *s, struct ast *l);
 
 // Function to call built in functions

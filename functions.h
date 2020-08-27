@@ -24,3 +24,6 @@ struct val *create_bit_value(int bit_value);
 struct val *create_integer_value(int integer_value);
 struct val *create_decimal_value(double decimal_value);
 struct val *create_string_value(char *string_value);
+
+int led_on(struct val * value);
+int led_off(struct val * value);

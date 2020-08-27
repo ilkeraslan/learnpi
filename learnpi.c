@@ -564,7 +564,7 @@ bool is_primitive(int type) {
   return true;
 }
 
-// Function to create a built in function
+// Function to create a node for built in function in the AST
 struct ast *new_builtin_function(int function_type, char *s, struct ast *argument_list) {
   struct builtin_function_call *ast = malloc(sizeof(struct builtin_function_call));
   
@@ -581,7 +581,7 @@ struct ast *new_builtin_function(int function_type, char *s, struct ast *argumen
   return (struct ast *)ast;
 }
 
-// Function to call a built in functions
+// Function to call built in functions
 struct val *builtin_function_call(struct builtin_function_call *builtin_function) {
   struct val *result = NULL;
   struct symbol *variable = NULL;
@@ -653,7 +653,10 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         free(newval);
         break;
       }
-      led_on(value);
+      int res = led_on(value);
+      if(res != 0) {
+        yyerror("Bad GPIO level.");
+      }
       break;
 
     case BUILT_IN_LED_OFF:
@@ -670,7 +673,10 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         free(newval);
         break;
       }
-      led_off(value);
+      int res = led_off(value);
+      if(res != 0) {
+        yyerror("Bad GPIO level.");
+      }
       break;
     
     default:
@@ -681,6 +687,22 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   }
 
   return result;
+}
+
+// Function to create a node for user defined function in the AST
+struct ast *new_user_function(char *s, struct ast *argument_list) {
+  struct builtin_function_call *ast = malloc(sizeof(struct builtin_function_call));
+  
+  if(!ast) {
+    yyerror("No space.");
+    exit(0);
+  }
+
+  ast->nodetype = BUILTIN_TYPE;
+  ast->argument_list = argument_list;
+  ast->s = s;
+
+  return (struct ast *)ast;
 }
 
 // Function to call custom functions
