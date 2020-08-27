@@ -108,23 +108,16 @@ struct assign_and_declare_complex_symbol {
   struct ast *value;
 };
 
-
-// Lookup function
-struct symbol *lookup(char*);
-
-// Symbol table stack reference to use in main function
-struct symtable_stack *symstack;
-
 // Structure for constant values
 struct constant_value {
   int nodetype;
   struct val *v;
 };
 
-// Structure for function
-struct function {
-  int nodetype;			    // nodetype F
-  struct ast *l; // TODO: change to argument_list
+// Structure for builtin function call
+struct builtin_function_call {
+  int nodetype;
+  struct ast *argument_list;
   enum built_in_function_types function_type;
   char *s;
 };
@@ -135,6 +128,30 @@ struct user_function_call {
   struct ast *argument_list;
   char *s;
 };
+
+// Lookup function
+struct symbol *lookup(char*);
+
+// Function to insert a symbol
+struct symbol *insert_symbol(char* sym);
+
+// Function to create an AST with generic node type and one child
+struct ast *new_ast_with_child(int type, struct ast *l);
+
+// Function to create an AST with generic node type and two children
+struct ast *new_ast_with_children(int type, struct ast *l, struct ast *r);
+
+// Function to create a new reference
+struct ast *new_reference(char *s);
+
+// Function to create a new value
+struct ast *new_value(struct val *value);
+
+// Symbol table stack reference to use in main function
+struct symtable_stack *symstack;
+
+// Function to create a built in function
+struct ast *new_builtin_function(int function_type, char *s, struct ast *l);
 
 // Function to define a custom function
 void define_function(char *function_name, struct symbol_list *symbol_list, struct ast *function);
@@ -160,10 +177,13 @@ bool is_primitive(int type);
 // Helper method to check value type
 int get_value_type(struct val *v);
 
-// Function to store function call value into a structure
-struct val * builtin_function_call(struct function *);
+// Function to create a built in function
+struct ast *new_builtin_function(int function_type, char *s, struct ast *l);
+
+// Function to call built in functions
+struct val *builtin_function_call(struct builtin_function_call *builtin_function);
 
 // Function to call custom functions
-void calluser(struct user_function_call *);
+void calluser(struct user_function_call *user_function);
 
 #endif

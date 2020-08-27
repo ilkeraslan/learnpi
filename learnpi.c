@@ -27,7 +27,7 @@ static unsigned symhash(char *sym) {
 }
 
 // Cerca il simbolo che identifica la variabile nella tabella contenente i simboli già dichiarati.
-struct symbol * lookup(char* sym) {
+struct symbol *lookup(char* sym) {
   struct symbol * symtab;
   struct symtable_stack * curr_scope = symstack;
   struct symbol *sp;
@@ -57,7 +57,7 @@ struct symbol * lookup(char* sym) {
   return NULL;
 }
 
-struct symbol * insert_symbol(char* sym) {
+struct symbol *insert_symbol(char* sym) {
   struct symbol * symtab;
   struct symtable_stack * curr_scope = symstack;
   struct symbol *sp;
@@ -89,6 +89,83 @@ struct symbol * insert_symbol(char* sym) {
 
   yyerror("symbol table overflow\n");
   abort(); /* tried them all, table is full */
+}
+
+// Function to create an AST with generic node type and one child
+struct ast *new_ast_with_child(int type, struct ast *l) {
+  struct ast *ast = malloc(sizeof(struct ast));
+
+  if(!ast) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  ast->nodetype = type;
+  ast->l = l;
+  ast->r = NULL;
+  return ast;
+}
+
+// Function to create an AST with generic node type and two children
+struct ast *new_ast_with_children(int type, struct ast *l, struct ast *r) {
+  struct ast *ast = malloc(sizeof(struct ast));
+
+  if(!ast) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  ast->nodetype = type;
+  ast->l = l;
+  ast->r = r;
+
+  return ast;
+}
+
+// Function to create a new value
+struct ast *new_value(struct val *value) {
+  struct constant_value *ast = malloc(sizeof(struct constant_value));
+
+  if(!ast) {
+    yyerror("No space.");
+    exit(0);
+  }
+
+  ast->nodetype = CONSTANT;
+  ast->v = value;
+
+  return (struct ast *)ast;
+}
+
+// Function to create a new reference
+struct ast *new_reference(char *s) {
+  struct symbol_reference *ast = malloc(sizeof(struct symbol_reference));
+
+  if(!ast) {
+    yyerror("No space.");
+    exit(0);
+  }
+
+  ast->nodetype = NEW_REFERENCE;
+  ast->s = s;
+
+  return (struct ast *)ast;
+}
+
+// Function to create an AST with comparision type
+struct ast *new_comparision(int type, struct ast *l, struct ast *r) {
+  struct ast *ast = malloc(sizeof(struct ast));
+
+    if(!ast) {
+      yyerror("No space");
+      exit(0);
+    }
+
+    ast->nodetype = '0' + type;
+    ast->l = l;
+    ast->r = r;
+
+  return ast;
 }
 
 // Function to define a custom function
@@ -451,6 +528,7 @@ void treefree(struct ast *abstract_syntax_tree) {
   free(abstract_syntax_tree); /* always free the node itself */
 }
 
+// Function to initialize symbol table stack
 void initialize_symbol_table_stack() {
   // Initialize a new symbol table stack
 	struct symtable_stack * new_scope = calloc(1, sizeof(struct symtable_stack));
@@ -467,6 +545,7 @@ void initialize_symbol_table_stack() {
 	symstack = new_scope;
 }
 
+// Function to free symbol table stack
 void free_symbol_table_stack() {
   // Get the symbol table stack reference
 	struct symtable_stack * inner = symstack;
@@ -485,9 +564,123 @@ bool is_primitive(int type) {
   return true;
 }
 
-// Function to store function call value into a structure
-struct val * builtin_function_call(struct function *foo) {
-  return NULL; // TODO: return the structure
+// Function to create a built in function
+struct ast *new_builtin_function(int function_type, char *s, struct ast *argument_list) {
+  struct builtin_function_call *ast = malloc(sizeof(struct builtin_function_call));
+  
+  if(!ast) {
+    yyerror("No space.");
+    exit(0);
+  }
+
+  ast->nodetype = BUILTIN_TYPE;
+  ast->function_type = function_type;
+  ast->argument_list = argument_list;
+  ast->s = s;
+
+  return (struct ast *)ast;
+}
+
+// Function to call a built in functions
+struct val *builtin_function_call(struct builtin_function_call *builtin_function) {
+  struct val *result = NULL;
+  struct symbol *variable = NULL;
+  struct val *value = NULL;
+
+  int is_terminal = 0;
+
+  // Check if the function names are different
+  if(builtin_function->s && strcmp(builtin_function->s, "terminal")) {
+    variable = lookup(builtin_function->s);
+    if(!variable) {
+      yyerror("variable %s not found.", builtin_function->s);
+      free(builtin_function->s);
+      free(builtin_function);
+      return NULL;
+    }
+    value = variable->value;
+  } else {
+      is_terminal = 1;
+  }
+
+  if(builtin_function->function_type != BUILT_IN_DELAY && !value && !is_terminal) {
+    yyerror("cannot call function without complex type");
+    return NULL;
+  }
+
+  struct ast *args = builtin_function->argument_list;
+  int nargs = 0;
+
+  /* count the arguments */
+  while(args) {
+    args = args->r;
+    nargs++;
+  }
+
+  // Define a val structure to store the new value
+  struct val ** newval = (struct val **)malloc(nargs * sizeof(struct val));
+
+  // Memorize the argument list
+  args = builtin_function->argument_list;
+
+  /* evaluate the arguments */
+  for(nargs = 0; args; nargs++) {
+    if(args->nodetype == STATEMENT_LIST) {
+      /* List node */
+      newval[nargs] = eval(args->l);
+      args = args->r;
+    } else {			
+      /* End of the list */
+      newval[nargs] = eval(args);
+      args = NULL;
+    }
+  }
+
+  int args_no = 0;
+  
+  switch(builtin_function->function_type) {
+    case BUILT_IN_LED_ON:
+      if(value->type != LED) {
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+      args_no = 0;
+      if(nargs > args_no) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+      led_on(value);
+      break;
+
+    case BUILT_IN_LED_OFF:
+      if(value->type != LED) {
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+      args_no = 0;
+      if(nargs > args_no) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+      led_off(value);
+      break;
+    
+    default:
+      yyerror("Function does not exist: %d", builtin_function->function_type);
+      free(builtin_function);
+      free(newval);
+      break;
+  }
+
+  return result;
 }
 
 // Function to call custom functions
@@ -495,6 +688,7 @@ void calluser(struct user_function_call *foo) {
   // TODO: Implement user function call
 }
 
+// Function to create a new file
 int newfile(char *fn) {
   FILE *f;
 
@@ -518,6 +712,7 @@ int newfile(char *fn) {
   return 1;
 }
 
+// Function to check passed in file suffix
 int checkSuffix(const char *str, const char *suffix) {
     if (!str || !suffix)
         return 0;

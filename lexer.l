@@ -41,5 +41,7 @@
 "decimal"           { yylval.type = DECIMAL_TYPE; return TYPE; }
 "string"            { yylval.type = STRING_TYPE; return TYPE; }
 
+\n { return EOL; }
+
 . { yyerror("Mystery character %c\n", *yytext); exit(1); }
 %%

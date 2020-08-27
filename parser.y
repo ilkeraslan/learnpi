@@ -23,7 +23,9 @@ int yylex();
 %token <type> TYPE COMPLEX_TYPE COMPLEX_TYPE_NOPIN // TODO: change this
 %token <integer> INTEGER
 %token <str> NAME
-%token IF THEN ELSE ENDIF LOOP START UNTIL ENDLOOP
+%token <value> VALUE
+%token <function_id> BUILT_IN_FUNCTION
+%token IF THEN ELSE ENDIF LOOP START UNTIL ENDLOOP EOL
 
 %token <integer> ADDITION SUBTRACTION MULTIPLICATION DIVISION MODULUS OR_OPERATION AND_OPERATION NOT_OPERATION
 %token <integer> OPEN_PARANTHESIS CLOSE_PARANTHESIS OPEN_BRACKET CLOSE_BRACKET OPEN_BRACE CLOSE_BRACE DOT COMMA ASSIGN
@@ -47,27 +49,31 @@ learnpi: /* nothing */
    | learnpi error { yyerrok; yyparse(); }
 ;
 
-statement: IF exp THEN list ENDIF      { /* nothing */ }
-   | IF exp THEN list ELSE list ENDIF  { /* nothing */ }
-   | IF exp THEN list ELIF exp THEN list ELSE list ENDIF { /* nothing */ }
+statement: IF exp EOL list ENDIF      { /* nothing */ }
+   | IF exp EOL list ELSE list ENDIF  { /* nothing */ }
+   | IF exp EOL list ELIF exp EOL list ELSE list ENDIF { /* nothing */ }
    | WHILE exp list { /* nothing */ }
    | WHILE list DO exp { /* nothing */ }
    | exp ';'
 ;
 
-exp: exp COMPARISION exp         { /* nothing */ }
-   | exp '+' exp                 { /* nothing */ }
-   | exp '-' exp                 { /* nothing */ }
-   | exp '*' exp                 { /* nothing */ }
-   | exp '/' exp                 { /* nothing */ }
-   | '|' exp                     { /* nothing */ }
-   | exp AND_OPERATION exp       { /* nothing */ }
-   | exp OR_OPERATION exp        { /* nothing */ }
-   | '(' exp ')'                 { /* nothing */ }
-   | '-' exp %prec UMINUS        { /* nothing */ }
-   | NAME                        { /* nothing */ }
-   | NAME '(' explist ')'        { /* nothing */ }
-   | NAME '(' ')'                { /* nothing */ }
+exp: exp COMPARISION exp                     { $$ = new_comparision($2, $1, $3); }
+   | exp '+' exp                             { $$ = new_ast_with_children('+', $1, $3); }
+   | exp '-' exp                             { $$ = new_ast_with_children('-', $1, $3); }
+   | exp '*' exp                             { $$ = new_ast_with_children('*', $1, $3); }
+   | exp '/' exp                             { $$ = new_ast_with_children('/', $1, $3); }
+   | '|' exp                                 { $$ = new_ast_with_child(ABSOLUTE_VALUE, $2); }
+   | exp AND_OPERATION exp                   { $$ = new_ast_with_children(LOGICAL_AND, $1, $3); }
+   | exp OR_OPERATION exp                    { $$ = new_ast_with_children(LOGICAL_OR, $1, $3); }
+   | '(' exp ')'                             { $$ = $2; }
+   | '-' exp %prec UMINUS                    { $$ = new_ast_with_child(UNARY_MINUS, $2); }
+   | VALUE                                   { $$ = new_value($1); }
+   | NAME                                    { $$ = new_reference($1); }
+   | NAME BUILT_IN_FUNCTION '(' ')'          { $$ = new_builtin_function($2, $1, NULL); }
+   | NAME BUILT_IN_FUNCTION '(' explist ')'  { $$ = new_builtin_function($2, $1, $4); }
+   | BUILT_IN_FUNCTION '(' explist ')'       { $$ = new_builtin_function($1, NULL, $3); }
+   | NAME '(' explist ')'                    { $$ = newcall($1, $3); }
+   | NAME '(' ')'                            { $$ = newcall($1, NULL); }
 ;
 
 list: /* nothing */ { $$ = NULL; }
