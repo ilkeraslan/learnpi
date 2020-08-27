@@ -162,6 +162,9 @@ void define_function(char *function_name, struct symbol_list *symbol_list, struc
 // Function to create a new symbol list
 struct symbol_list *create_symbol_list(char *symbol, struct symbol_list *next);
 
+// Function to create a new control flow
+struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+
 // Function to evaluate an AST
 struct val *eval(struct ast *);
 

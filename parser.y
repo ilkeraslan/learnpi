@@ -32,8 +32,8 @@ int yylex();
 %nonassoc <function_id> COMPARISION
 %nonassoc UMINUS
 
-%type <ast> statement exp list action explist
-%type <symbol_list> sym_list
+%type <ast> statement exp list explist
+// %type <symbol_list> sym_list
 
 %start learnpi
 
@@ -48,11 +48,11 @@ learnpi: /* nothing */
    | learnpi error { yyerrok; yyparse(); }
 ;
 
-statement: IF exp EOL list ENDIF      { /* nothing */ }
-   | IF exp EOL list ELSE list ENDIF  { /* nothing */ }
-   | IF exp EOL list ELIF exp EOL list ELSE list ENDIF { /* nothing */ }
-   | WHILE exp list { /* nothing */ }
-   | WHILE list DO exp { /* nothing */ }
+statement: IF exp EOL list ENDIF                         { $$ = newflow(IF_STATEMENT, $2, $4, NULL); }
+   | IF exp EOL list ELSE list ENDIF                     { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
+   | IF exp EOL list ELIF exp EOL list ELSE list ENDIF   { $$ = newflow(IF_STATEMENT, $2, $4, $6, $8, $10); }
+   | WHILE exp list EOL                                  { $$ = newflow(LOOP_STATEMENT, $2, $3, NULL); }
+   | WHILE list DO exp EOL                               { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
 ;
 
 exp: exp COMPARISION exp                     { $$ = new_comparision($2, $1, $3); }
@@ -84,15 +84,12 @@ list: /* nothing */ { $$ = NULL; }
                }
 ;
 
-action: /* nothing */
-;
-
 explist: exp
- | exp ',' explist               { /* nothing */ }
+ | exp ',' explist   { $$ = new_ast_with_children(STATEMENT_LIST, $1, $3); }
 ;
 
-sym_list: NAME       { $$ = create_symbol_list($1, NULL); }
- | NAME ',' sym_list { $$ = create_symbol_list($1, $3); }
-;
+// sym_list: NAME       { $$ = create_symbol_list($1, NULL); }
+//  | NAME ',' sym_list { $$ = create_symbol_list($1, $3); }
+// ;
 
 %%

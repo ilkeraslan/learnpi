@@ -183,6 +183,13 @@ struct symbol_list *create_symbol_list(char *symbol, struct symbol_list *next) {
   return new_symbol_list; // TODO: implement newsymlist
 }
 
+// Function to create a new control flow
+struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr) {
+  // TODO
+  struct ast *ast = malloc(sizeof(struct ast));
+  return ast;
+}
+
 // Function to evaluate an AST
 struct val * eval(struct ast *abstract_syntax_tree) {
   struct symbol *s = NULL;
