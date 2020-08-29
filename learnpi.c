@@ -680,8 +680,8 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         free(newval);
         break;
       }
-      int res = led_off(value);
-      if(res != 0) {
+      int res2 = led_off(value);
+      if(res2 != 0) {
         yyerror("Bad GPIO level.");
       }
       break;
@@ -756,6 +756,8 @@ int main(int argc, char **argv) {
 
   if (gpioInitialise()<0) return 1;
 
+  printf("Learnpi");
+
 	symstack = calloc(1, sizeof(struct symtable_stack));
 	symstack->next = NULL;
 	symstack->symtab = NULL;
@@ -773,6 +775,8 @@ int main(int argc, char **argv) {
 	}
 
 	free_symbol_table_stack();
+
+  printf("Thanks for using learnpi.");
 
   return 0;
 }

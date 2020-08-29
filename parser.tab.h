@@ -63,19 +63,13 @@ extern int yydebug;
     START = 269,
     UNTIL = 270,
     EOL = 271,
-    ELIF = 272,
-    WHILE = 273,
-    DO = 274,
-    ADDITION = 275,
-    SUBTRACTION = 276,
-    MULTIPLICATION = 277,
-    DIVISION = 278,
-    MODULUS = 279,
-    OR_OPERATION = 280,
-    AND_OPERATION = 281,
-    NOT_OPERATION = 282,
-    COMPARISION = 283,
-    UMINUS = 284
+    WHILE = 272,
+    DO = 273,
+    OR_OPERATION = 274,
+    AND_OPERATION = 275,
+    NOT_OPERATION = 276,
+    CMP = 277,
+    UMINUS = 278
   };
 #endif
 
@@ -87,13 +81,13 @@ union YYSTYPE
 
   struct ast *ast;
   struct symbol_list *symbol_list;
-  struct value *value;
+  struct val *value;
   int integer;
   int function_id;
   char *str;
   int type;
 
-#line 97 "parser.tab.h"
+#line 91 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

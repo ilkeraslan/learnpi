@@ -12,7 +12,7 @@ int yylex();
 %union {
   struct ast *ast;
   struct symbol_list *symbol_list;
-  struct value *value;
+  struct val *value;
   int integer;
   int function_id;
   char *str;
@@ -24,15 +24,15 @@ int yylex();
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF THEN ELSE ENDIF START UNTIL EOL ELIF WHILE DO
+%token IF THEN ELSE ENDIF START UNTIL EOL WHILE DO
 
-%token <integer> ADDITION SUBTRACTION MULTIPLICATION DIVISION MODULUS OR_OPERATION AND_OPERATION NOT_OPERATION
+%token <integer> OR_OPERATION AND_OPERATION NOT_OPERATION
 
-%nonassoc <function_id> COMPARISION
+%nonassoc <function_id> CMP
 %nonassoc UMINUS
 
 %type <ast> statement exp list explist
-// %type <symbol_list> sym_list
+%type <symbol_list> sym_list
 
 %start learnpi
 
@@ -49,12 +49,11 @@ learnpi: /* nothing */
 
 statement: IF exp EOL list ENDIF                         { $$ = newflow(IF_STATEMENT, $2, $4, NULL); }
    | IF exp EOL list ELSE list ENDIF                     { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
-   | IF exp EOL list ELIF exp EOL list ELSE list ENDIF   { $$ = newflow(IF_STATEMENT, $2, $4, $6, $8, $10); }
    | WHILE exp list EOL                                  { $$ = newflow(LOOP_STATEMENT, $2, $3, NULL); }
    | WHILE list DO exp EOL                               { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
 ;
 
-exp: exp COMPARISION exp                     { $$ = new_comparision($2, $1, $3); }
+exp: exp CMP exp                             { $$ = new_comparision($2, $1, $3); }
    | exp '+' exp                             { $$ = new_ast_with_children('+', $1, $3); }
    | exp '-' exp                             { $$ = new_ast_with_children('-', $1, $3); }
    | exp '*' exp                             { $$ = new_ast_with_children('*', $1, $3); }
@@ -87,8 +86,8 @@ explist: exp
  | exp ',' explist   { $$ = new_ast_with_children(STATEMENT_LIST, $1, $3); }
 ;
 
-// sym_list: NAME       { $$ = create_symbol_list($1, NULL); }
-//  | NAME ',' sym_list { $$ = create_symbol_list($1, $3); }
-// ;
+sym_list: NAME       { $$ = create_symbol_list($1, NULL); }
+ | NAME ',' sym_list { $$ = create_symbol_list($1, $3); }
+;
 
 %%
