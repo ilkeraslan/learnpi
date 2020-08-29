@@ -1,8 +1,6 @@
-hello
-world
-pi
-if
-elif el if
-if(x = 5) {
-    
+x = 3
+if(x == 3) {
+    x = 5;
+} else {
+    x = 10;
 }
