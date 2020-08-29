@@ -38,12 +38,15 @@ int yylex();
 
 %%
 learnpi: /* nothing */
-   | learnpi statement {
-      struct value *value = eval($2);
+   | learnpi statement EOL {
+      struct val *value = eval($2);
       if(value) {
          treefree($2);
       }
     }
+   | learnpi NAME '(' sym_list ')' '=' list EOL {
+      dodef($2, $4, $7);
+   }
    | learnpi error { yyerrok; yyparse(); }
 ;
 
@@ -58,7 +61,7 @@ exp: exp CMP exp                             { $$ = new_comparision($2, $1, $3);
    | exp '-' exp                             { $$ = new_ast_with_children('-', $1, $3); }
    | exp '*' exp                             { $$ = new_ast_with_children('*', $1, $3); }
    | exp '/' exp                             { $$ = new_ast_with_children('/', $1, $3); }
-   | '|' exp                                 { $$ = new_ast_with_child(ABSOLUTE_VALUE, $2); }
+   | '|' exp                                 { $$ = new_ast_with_child('|', $2); }
    | exp AND_OPERATION exp                   { $$ = new_ast_with_children(LOGICAL_AND, $1, $3); }
    | exp OR_OPERATION exp                    { $$ = new_ast_with_children(LOGICAL_OR, $1, $3); }
    | '(' exp ')'                             { $$ = $2; }

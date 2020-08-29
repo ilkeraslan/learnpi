@@ -293,7 +293,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     case '/': 
       v = divide(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
       break;
-    case ABSOLUTE_VALUE: 
+    case '|': 
       v = get_absolute_value(eval(abstract_syntax_tree->l)); 
       break;
     case UNARY_MINUS: 
@@ -382,7 +382,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
 
     case BUILTIN_TYPE:
-      v = builtin_function_call((struct function *)abstract_syntax_tree);
+      v = builtin_function_call((struct builtin_function_call *)abstract_syntax_tree);
       break;
 
     case USER_CALL:
@@ -496,7 +496,7 @@ void treefree(struct ast *abstract_syntax_tree) {
       treefree(abstract_syntax_tree->r);
       break;
 
-    case ABSOLUTE_VALUE: 
+    case '|': 
     case UNARY_MINUS:
     case USER_CALL:
     case BUILTIN_TYPE:
@@ -715,6 +715,14 @@ struct ast *new_user_function(char *s, struct ast *argument_list) {
 // Function to call custom functions
 void calluser(struct user_function_call *foo) {
   // TODO: Implement user function call
+}
+
+void dodef(char *n, struct symbol_list *symbol_list, struct ast *function) {
+  struct symbol *name = (struct symbol *) n;
+  if(name->syms) name->syms = NULL;
+  if(name->func) treefree(name->func);
+  name->syms = symbol_list;
+  name->func = function;
 }
 
 // Function to create a new file

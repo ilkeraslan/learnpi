@@ -14,7 +14,6 @@ enum expression_type {
   COMPLEX_ASSIGNMENT,
   STATEMENT_LIST,
   UNARY_MINUS,
-  ABSOLUTE_VALUE,
   LOGICAL_AND,
   LOGICAL_OR,
   IF_STATEMENT,
@@ -191,5 +190,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
 // Function to call custom functions
 void calluser(struct user_function_call *user_function);
+
+void dodef(char *n, struct symbol_list *symbol_list, struct ast *function);
 
 #endif
