@@ -74,17 +74,8 @@ extern int yydebug;
     OR_OPERATION = 280,
     AND_OPERATION = 281,
     NOT_OPERATION = 282,
-    OPEN_PARANTHESIS = 283,
-    CLOSE_PARANTHESIS = 284,
-    OPEN_BRACKET = 285,
-    CLOSE_BRACKET = 286,
-    OPEN_BRACE = 287,
-    CLOSE_BRACE = 288,
-    DOT = 289,
-    COMMA = 290,
-    ASSIGN = 291,
-    COMPARISION = 292,
-    UMINUS = 293
+    COMPARISION = 283,
+    UMINUS = 284
   };
 #endif
 
@@ -102,7 +93,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 106 "parser.tab.h"
+#line 97 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -8,20 +8,21 @@
 %}
 
 %%
-"+"     { return ADDITION; }
-"-"     { return SUBTRACTION; }
-"*"     { return MULTIPLICATION; }
-"/"     { return DIVISION; }
-"%"     { return MODULUS; }
-"("     { return OPEN_PARANTHESIS; }
-")"     { return CLOSE_PARANTHESIS; }
-"["     { return OPEN_BRACKET; }
-"]"     { return CLOSE_BRACKET; }
-"{"     { return OPEN_BRACE; }
-"}"     { return CLOSE_BRACE; }
-"."     { return DOT; }
-","     { return COMMA; }
-"="     { return ASSIGN; }
+"+" |
+"-" |
+"*" |
+"/" |
+"%" |
+"(" |
+")" |
+"[" |
+"]" |
+"{" |
+"}" |
+"." |
+"," |
+"=" |
+"|"     { return yytext[0]; }
 
 "OR"|"or"     { return OR_OPERATION; }
 "AND"|"and"   { return AND_OPERATION; }
@@ -31,17 +32,24 @@
 ">"     { yylval.function_id = 1; return CMP; }
 "<"     { yylval.function_id = 2; return CMP; }
 "!="    { yylval.function_id = 3; return CMP; }
-"="     { yylval.function_id = 4; return CMP; }
+"=="    { yylval.function_id = 4; return CMP; }
 ">="    { yylval.function_id = 5; return CMP; }
 "<="    { yylval.function_id = 6; return CMP; }
 
+ /* Keywords */
+"if"    { return IF;}
+"then"  { return THEN; }
+"else"  { return ELSE; }
+"while" { return WHILE; }
+"do"    { return DO; }
+
  /* Primitive types */
 "bit"               { yylval.type = BIT_TYPE; return TYPE; }
-"integer"   		    { yylval.type = INTEGER_TYPE; return TYPE; }
+"integer"   		{ yylval.type = INTEGER_TYPE; return TYPE; }
 "decimal"           { yylval.type = DECIMAL_TYPE; return TYPE; }
 "string"            { yylval.type = STRING_TYPE; return TYPE; }
 
 \n { return EOL; }
 
-. { yyerror("Mystery character %c\n", *yytext); exit(1); }
+.   { yyerror("Mystery character %c\n", *yytext); }
 %%
