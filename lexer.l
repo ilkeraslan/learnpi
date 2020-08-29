@@ -50,7 +50,10 @@
 "string"            { yylval.type = STRING_TYPE; return TYPE; }
 
  /* Names */
-[a-zA-Z][a-zA-Z0-9]*   { yylval.str = lookup(yytext); return NAME; }
+[a-zA-Z][a-zA-Z0-9]*   {    struct symbol *helper = NULL;
+                            helper = lookup(yytext);
+                            yylval.str = (char *)&helper; 
+                            return NAME; }
 
 [0-9]+         { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 [0-9]+\.[0-9]+ { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }

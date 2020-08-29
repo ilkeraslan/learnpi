@@ -153,7 +153,7 @@ struct ast *new_reference(char *s) {
 }
 
 // Function to create an AST with comparision type
-struct ast *new_comparision(int type, struct ast *l, struct ast *r) {
+struct ast *new_comparison(int type, struct ast *l, struct ast *r) {
   struct ast *ast = malloc(sizeof(struct ast));
 
     if(!ast) {

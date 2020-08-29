@@ -1444,7 +1444,7 @@ yyreduce:
 
   case 10:
 #line 59 "parser.y"
-                                             { (yyval.ast) = new_comparision((yyvsp[-1].function_id), (yyvsp[-2].ast), (yyvsp[0].ast)); }
+                                             { (yyval.ast) = new_comparison((yyvsp[-1].function_id), (yyvsp[-2].ast), (yyvsp[0].ast)); }
 #line 1449 "parser.tab.c"
     break;
 

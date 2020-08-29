@@ -40,13 +40,13 @@ struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
     result->datavalue.GPIO_PIN = malloc(pin_no * sizeof(int));
 
     while(i < pin_no) {
-        if(pin[i]->datavalue.GPIO_PIN < 0 || pin[i]->datavalue.GPIO_PIN > 50) {
+        if(*pin[i]->datavalue.GPIO_PIN < 0 || *pin[i]->datavalue.GPIO_PIN > 50) {
             yyerror("invalid value %d for pin declaration", pin[i]->datavalue.GPIO_PIN);
             free(result);
             break;
         }
 
-        result->datavalue.GPIO_PIN[i] = pin[i]->datavalue.GPIO_PIN;
+        result->datavalue.GPIO_PIN[i] = *pin[i]->datavalue.GPIO_PIN;
         i =+ 1;
     }
     return result;

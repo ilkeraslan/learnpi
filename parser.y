@@ -56,7 +56,7 @@ statement: IF exp EOL list ENDIF                         { $$ = newflow(IF_STATE
    | WHILE list DO exp EOL                               { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
 ;
 
-exp: exp CMP exp                             { $$ = new_comparision($2, $1, $3); }
+exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); }
    | exp '+' exp                             { $$ = new_ast_with_children('+', $1, $3); }
    | exp '-' exp                             { $$ = new_ast_with_children('-', $1, $3); }
    | exp '*' exp                             { $$ = new_ast_with_children('*', $1, $3); }

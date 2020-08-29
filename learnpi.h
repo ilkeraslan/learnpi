@@ -143,6 +143,9 @@ struct ast *new_ast_with_children(int type, struct ast *l, struct ast *r);
 // Function to create a new reference
 struct ast *new_reference(char *s);
 
+// Function to create an AST with comparision type
+struct ast *new_comparison(int type, struct ast *l, struct ast *r);
+
 // Function to create a new value
 struct ast *new_value(struct val *value);
 
