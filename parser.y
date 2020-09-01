@@ -50,10 +50,11 @@ learnpi: /* nothing */
    | learnpi error { yyerrok; yyparse(); }
 ;
 
-statement: IF exp EOL list ENDIF                         { $$ = newflow(IF_STATEMENT, $2, $4, NULL); }
-   | IF exp EOL list ELSE list ENDIF                     { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
+statement: IF exp EOL list EOL                         { $$ = newflow(IF_STATEMENT, $2, $4, NULL); }
+   | IF exp EOL list ELSE list EOL                     { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
    | WHILE exp list EOL                                  { $$ = newflow(LOOP_STATEMENT, $2, $3, NULL); }
    | WHILE list DO exp EOL                               { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
+   | exp EOL
 ;
 
 exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); }
@@ -67,7 +68,8 @@ exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); 
    | '(' exp ')'                             { $$ = $2; }
    | '-' exp %prec UMINUS                    { $$ = new_ast_with_child(UNARY_MINUS, $2); }
    | VALUE                                   { $$ = new_value($1); }
-   | NAME                                    { $$ = new_reference($1); }
+   | NAME                                { $$ = new_reference($1); }
+   | NAME '=' exp                            { $$ = new_assignment($1, $3); }
    | NAME BUILT_IN_FUNCTION '(' ')'          { $$ = new_builtin_function($2, $1, NULL); } /* Node for builtin function without parameters*/
    | NAME BUILT_IN_FUNCTION '(' explist ')'  { $$ = new_builtin_function($2, $1, $4); } /* Node for builtin function with parameters */
    | BUILT_IN_FUNCTION '(' explist ')'       { $$ = new_builtin_function($1, NULL, $3); } /* Node for builtin function without name */

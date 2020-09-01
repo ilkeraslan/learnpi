@@ -7,7 +7,11 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
+
+#ifndef RPI_SIMULATION
 #include <pigpio.h>
+#endif
+
 #include "learnpi.h"
 #include "functions.h"
 
@@ -89,6 +93,22 @@ struct symbol *insert_symbol(char* sym) {
 
   yyerror("symbol table overflow\n");
   abort(); /* tried them all, table is full */
+}
+
+// Function for new variable agisnment
+struct ast * new_assignment(char *s, struct ast *v) {
+  struct symasgn *assignment = malloc(sizeof(struct symasgn));
+
+  if(!assignment) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  assignment->nodetype = ASSIGNMENT;
+  assignment->s = s;
+  assignment->v = v;
+
+  return (struct ast *)assignment;
 }
 
 // Function to create an AST with generic node type and one child
@@ -185,9 +205,19 @@ struct symbol_list *create_symbol_list(char *symbol, struct symbol_list *next) {
 
 // Function to create a new control flow
 struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr) {
-  // TODO
-  struct ast *ast = malloc(sizeof(struct ast));
-  return ast;
+  struct flow *flow = malloc(sizeof(struct flow));
+
+  if(!flow) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  flow->nodetype = nodetype;
+  flow->condition = cond;
+  flow->then_list = tl;
+  flow->else_list = tr;
+
+  return (struct ast *)flow;
 }
 
 // Function to evaluate an AST
@@ -762,9 +792,14 @@ int checkSuffix(const char *str, const char *suffix) {
 
 int main(int argc, char **argv) {
 
-  if (gpioInitialise()<0) return 1;
+  #ifdef RPI_SIMULATION
+    if (gpioInitialise()<0) return 1;
+    printf("Executing on PI.\n");
+  #else
+    printf("Executing locally.\n");
+  #endif
 
-  printf("Learnpi");
+  printf("Learnpi...\n");
 
 	symstack = calloc(1, sizeof(struct symtable_stack));
 	symstack->next = NULL;
@@ -784,7 +819,7 @@ int main(int argc, char **argv) {
 
 	free_symbol_table_stack();
 
-  printf("Thanks for using learnpi.");
+  printf("Thanks for using learnpi.\n");
 
   return 0;
 }

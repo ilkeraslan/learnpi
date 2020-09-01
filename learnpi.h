@@ -2,6 +2,7 @@
 #define LEARNPI_H
 
 #define NHASH 9997
+// #define RPI_SIMULATION 1
 #include <stdbool.h>
 #include "types.h"
 
@@ -78,6 +79,13 @@ struct symbol_reference {
   char *s;
 };
 
+// Structure for symbol asignment
+struct symasgn {
+  int nodetype;
+  char *s;
+  struct ast *v;
+};
+
 // Symbol table stack structure
 struct symtable_stack{
 	struct symbol * symtab;
@@ -133,6 +141,9 @@ struct symbol *lookup(char*);
 
 // Function to insert a symbol
 struct symbol *insert_symbol(char* sym);
+
+// Function for new variable agisnment
+struct ast * new_assignment(char *s, struct ast *v);
 
 // Function to create an AST with generic node type and one child
 struct ast *new_ast_with_child(int type, struct ast *l);
