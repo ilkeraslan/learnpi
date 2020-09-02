@@ -30,35 +30,26 @@ static unsigned symhash(char *sym) {
   return hash;
 }
 
-// Cerca il simbolo che identifica la variabile nella tabella contenente i simboli già dichiarati.
+// Function to lookup variables in symbol table
 struct symbol *lookup(char* sym) {
-  struct symbol * symtab;
-  struct symtable_stack * curr_scope = symstack;
-  struct symbol *sp;
-  int scount = NHASH;		// numero di simboli controllati
+  struct symbol *sp = &symtab[symhash(sym)%NHASH];
+  int scount = NHASH;		/* how many have we looked at */
+  while(--scount >= 0) {
+    if(sp->name && !strcmp(sp->name, sym)) { return sp; }
 
-  while(curr_scope && curr_scope->symtab) {
-    symtab = curr_scope->symtab;
-    sp = &symtab[symhash(sym)%NHASH];
-    
-    while(--scount >= 0) {
-      if(sp->name && !strcmp(sp->name, sym)) {
+    if(!sp->name) {		/* new entry */
+        sp->name = strdup(sym);
+        sp->value = NULL;
+        sp->func = NULL;
+        sp->syms = NULL;
         return sp;
-      }
-
-      // Caso in cui il simbolo non è ancora stato dichiarato, quindi si tratta di una entry nuova
-      if(!sp->name) {
-        break;
-      }
-
-      if(++sp >= symtab+NHASH) { 
-        sp = symtab; // prova la prossima entry
-      }
     }
-    curr_scope = curr_scope->next;
+
+    if(++sp >= symtab+NHASH) sp = symtab; /* try the next entry */
   }
 
-  return NULL;
+  yyerror("LOOKUP: symbol table overflow\n");
+  abort(); /* tried them all, table is full */
 }
 
 struct symbol *insert_symbol(char* sym) {
@@ -242,6 +233,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     break;
 
     case NEW_REFERENCE:
+      printf("Evaluating NEW REFERENCE...");
       s = lookup(((struct symbol_reference *)abstract_syntax_tree)->s);
 
       // Check if new reference is created correctly
@@ -252,6 +244,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
 
       v = s->value;
+      printf("Evaluated NEW REFERENCE...");
       break;
 
     case DELETION:

@@ -54,7 +54,7 @@ statement: IF exp EOL list EOL                         { $$ = newflow(IF_STATEME
    | IF exp EOL list ELSE list EOL                     { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
    | WHILE exp list EOL                                  { $$ = newflow(LOOP_STATEMENT, $2, $3, NULL); }
    | WHILE list DO exp EOL                               { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
-   | exp EOL
+   | exp ';'
 ;
 
 exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); }

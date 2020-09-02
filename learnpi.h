@@ -33,6 +33,9 @@ struct symbol {
   struct symbol_list *syms;
 };
 
+// Symbol table variable
+struct symbol symtab[NHASH];
+
 // Structure for value
 struct val {
     int type;

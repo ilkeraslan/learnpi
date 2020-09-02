@@ -22,6 +22,7 @@
 "." |
 "," |
 "=" |
+";" |
 "|"     { return yytext[0]; }
 
 "OR"|"or"     { return OR_OPERATION; }
@@ -50,15 +51,14 @@
 "string"            { yylval.type = STRING_TYPE; return TYPE; }
 
  /* Names */
-[a-zA-Z][a-zA-Z0-9]*   {    struct symbol *helper = NULL;
-                            helper = lookup(yytext);
-                            yylval.str = (char *)&helper; 
-                            return NAME; }
+[a-zA-Z][a-zA-Z0-9]*   { yylval.str = strdup(yytext); return NAME; }
 
 [0-9]+         { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 [0-9]+\.[0-9]+ { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }
 
-\n { return EOL; }
+
+\\\n { printf("c> "); } /* ignore line continuation */
+\n   { return EOL; }
 
 [ \t]   /* ignore white space */
 .   { yyerror("Mystery character %c\n", *yytext); }

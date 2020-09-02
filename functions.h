@@ -1,5 +1,8 @@
 #include "learnpi.h"
 
+int yylineno;
+int yyparse();
+
 void yyerror(char *s, ...);
 int get_value_type(struct val *value);
 

@@ -2,15 +2,19 @@
 #include "learnpi.h"
 #include "functions.h"
 #include <pigpio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-int yylineno;
-int yyparse();
-
 void yyerror(char *s, ...) {
-  fprintf(stderr, "Error: %d \n", yylineno);
+  printf("yyerror\n");
+  va_list ap;
+  va_start(ap, s);
+
+  fprintf(stderr, "%d: error: ", yylineno);
+  vfprintf(stderr, s, ap);
+  fprintf(stderr, "\n");
 }
 
 int get_value_type(struct val *value) {
