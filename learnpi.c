@@ -17,7 +17,7 @@
 
 extern int yydebug;
 extern FILE *yyin;
-char is_file = '0';
+int is_file = 0;
 
 // Hash a symbol using its string
 static unsigned symhash(char *sym) {
@@ -34,6 +34,7 @@ static unsigned symhash(char *sym) {
 struct symbol *lookup(char* sym) {
   struct symbol *sp = &symtab[symhash(sym)%NHASH];
   int scount = NHASH;		/* how many have we looked at */
+
   while(--scount >= 0) {
     if(sp->name && !strcmp(sp->name, sym)) { return sp; }
 
@@ -53,12 +54,12 @@ struct symbol *lookup(char* sym) {
 }
 
 struct symbol *insert_symbol(char* sym) {
-  struct symbol * symtab;
-  struct symtable_stack * curr_scope = symstack;
+  // struct symbol * symtab;
+  // struct symtable_stack * curr_scope = symstack;
   struct symbol *sp;
   int scount = NHASH;		// numero di simboli controllati
 
-  symtab = curr_scope->symtab;
+  // symtab = curr_scope->symtab;
   sp = &symtab[symhash(sym) % NHASH];
   while (--scount >= 0) {
     if (sp->name && !strcmp(sp->name, sym)) {
@@ -229,11 +230,13 @@ struct val * eval(struct ast *abstract_syntax_tree) {
 
   switch(abstract_syntax_tree->nodetype) {
     case CONSTANT:
+      printf("Evaluating CONSTANT...\n");
       v = ((struct constant_value *)abstract_syntax_tree)->v;
+      printf("Evaluated CONSTANT...\n");
     break;
 
     case NEW_REFERENCE:
-      printf("Evaluating NEW REFERENCE...");
+      printf("Evaluating NEW REFERENCE...\n");
       s = lookup(((struct symbol_reference *)abstract_syntax_tree)->s);
 
       // Check if new reference is created correctly
@@ -244,7 +247,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
 
       v = s->value;
-      printf("Evaluated NEW REFERENCE...");
+      printf("Evaluated NEW REFERENCE...\n");
       break;
 
     case DELETION:
@@ -559,34 +562,34 @@ void treefree(struct ast *abstract_syntax_tree) {
 }
 
 // Function to initialize symbol table stack
-void initialize_symbol_table_stack() {
-  // Initialize a new symbol table stack
-	struct symtable_stack * new_scope = calloc(1, sizeof(struct symtable_stack));
-	new_scope->next = symstack;
-	new_scope->symtab = calloc(NHASH, sizeof(struct symbol));
+// void initialize_symbol_table_stack() {
+//   // Initialize a new symbol table stack
+// 	struct symtable_stack * new_scope = calloc(1, sizeof(struct symtable_stack));
+// 	new_scope->next = symstack;
+// 	new_scope->symtab = calloc(NHASH, sizeof(struct symbol));
 
-  // Check if allocated space correctly
-	if(!new_scope->symtab){
-    yyerror("No memory.");
-    exit(0);
-	}
+//   // Check if allocated space correctly
+// 	if(!new_scope->symtab){
+//     yyerror("No memory.");
+//     exit(0);
+// 	}
 
-  // Assign the created symbol table stack reference
-	symstack = new_scope;
-}
+//   // Assign the created symbol table stack reference
+// 	symstack = new_scope;
+// }
 
 // Function to free symbol table stack
-void free_symbol_table_stack() {
-  // Get the symbol table stack reference
-	struct symtable_stack * inner = symstack;
+// void free_symbol_table_stack() {
+//   // Get the symbol table stack reference
+// 	struct symtable_stack * inner = symstack;
   
-  // Assign the next node to symbol stack 
-	symstack = symstack->next;
+//   // Assign the next node to symbol stack 
+// 	symstack = symstack->next;
 
-  // Free allocated memories
-	free(inner->symtab);
-	free(inner);
-}
+//   // Free allocated memories
+// 	free(inner->symtab);
+// 	free(inner);
+// }
 
 // Function to check if we have a primitive type
 bool is_primitive(int type) {
@@ -755,11 +758,11 @@ int newfile(char *fn) {
   if(strcmp(fn, "stdin")) {
     // Found files
     f = fopen(fn, "r");
-		is_file = '1';
+		is_file = 1;
   } else {
     // Use standard input
     f = stdin;
-		is_file = '0';
+		is_file = 0;
   }
 
   if(!f) {
@@ -794,23 +797,23 @@ int main(int argc, char **argv) {
 
   printf("Learnpi...\n");
 
-	symstack = calloc(1, sizeof(struct symtable_stack));
-	symstack->next = NULL;
-	symstack->symtab = NULL;
+	// symstack = calloc(1, sizeof(struct symtable_stack));
+	// symstack->next = NULL;
+	// symstack->symtab = NULL;
 
-	initialize_symbol_table_stack();
+	// initialize_symbol_table_stack();
 
 	newfile("stdin");
 
 	for(int i = 1; i < argc; i++) {
-		if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[i])) {
+		if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[1])) {
 			yyparse();
 		} else {
 			fprintf(stderr, "Not a valid file.\n");
 		}
 	}
 
-	free_symbol_table_stack();
+	// free_symbol_table_stack();
 
   printf("Thanks for using learnpi.\n");
 

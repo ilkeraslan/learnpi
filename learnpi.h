@@ -90,10 +90,10 @@ struct symasgn {
 };
 
 // Symbol table stack structure
-struct symtable_stack{
-	struct symbol * symtab;
-	struct symtable_stack * next;
-};
+// struct symtable_stack{
+// 	struct symbol * symtab;
+// 	struct symtable_stack * next;
+// };
 
 // Structure for variable declaration
 struct declare_symbol {
