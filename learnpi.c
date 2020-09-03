@@ -303,17 +303,17 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       s->value = v;
       break;
 
-    case '+': 
+    case '+':
       v = sum(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '-': 
-      v = subtract(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = subtract(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '*': 
-      v = multiply(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = multiply(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '/': 
-      v = divide(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = divide(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '|': 
       v = get_absolute_value(eval(abstract_syntax_tree->l)); 
@@ -337,7 +337,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         break;
     case '3':
       v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
-      // v->datavalue.bit = !v->datavalue.bit; TODO: define datavalue
       break;
     case '4': 
       v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
