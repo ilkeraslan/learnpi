@@ -50,6 +50,9 @@
 "decimal"           { yylval.type = DECIMAL_TYPE; return TYPE; }
 "string"            { yylval.type = STRING_TYPE; return TYPE; }
 
+"led_on"    { yylval.type = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
+"led_off"   { yylval.type = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
+
  /* Names */
 [a-zA-Z][a-zA-Z0-9]*   { yylval.str = strdup(yytext); return NAME; }
 
