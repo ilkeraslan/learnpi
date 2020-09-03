@@ -36,11 +36,15 @@ struct symbol *lookup(char* sym) {
   int scount = NHASH;		/* how many have we looked at */
 
   while(--scount >= 0) {
-    if(sp->name && !strcmp(sp->name, sym)) { return sp; }
+    if(sp->name && !strcmp(sp->name, sym)) { 
+      printf("Value already declared.\n");
+      return sp; 
+    }
 
     if(!sp->name) {		/* new entry */
         sp->name = strdup(sym);
         sp->value = NULL;
+        printf("Assigned NULL to value!\n");
         sp->func = NULL;
         sp->syms = NULL;
         return sp;
@@ -287,17 +291,9 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       v = eval(((struct assign_symbol *)abstract_syntax_tree)->v);
       s = lookup(((struct assign_symbol *)abstract_syntax_tree)->s);
 
-      // Check if symbol exists
+      //Check if symbol exists
       if(!s) {
         yyerror("Cannot find symbol %s.\n", ((struct assign_symbol *)abstract_syntax_tree)->s);
-        free(v);
-        free(abstract_syntax_tree);
-        return NULL;
-      }
-
-      // Check if we have primitive type
-      if(!is_primitive(s->value->type)) {
-        yyerror("cannot assign value to complex type");
         free(v);
         free(abstract_syntax_tree);
         return NULL;
@@ -593,8 +589,7 @@ void treefree(struct ast *abstract_syntax_tree) {
 
 // Function to check if we have a primitive type
 bool is_primitive(int type) {
-  // TODO: check primitive types here
-  return true;
+  return type == BIT_TYPE || type == INTEGER_TYPE || type == DECIMAL_TYPE || type == STRING_TYPE;
 }
 
 // Function to create a node for built in function in the AST

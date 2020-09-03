@@ -1526,7 +1526,7 @@ yyreduce:
 
   case 23:
 #line 72 "parser.y"
-                                             { (yyval.ast) = new_assignment((yyvsp[-2].str), (yyvsp[0].ast)); }
+                                             { (yyval.ast) = new_assignment((yyvsp[-2].str), (yyvsp[0].ast)); printf("%s\n%s\n",(yyvsp[-2].str), (yyvsp[0].ast)); }
 #line 1531 "parser.tab.c"
     break;
 
