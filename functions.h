@@ -20,6 +20,7 @@ struct val *calculate_logical_or(struct val *first, struct val *second);
 struct val *calculate_greater_than(struct val *first, struct val *second);
 struct val *calculate_less_than(struct val *first, struct val *second);
 struct val *calculate_equals(struct val *first, struct val *second);
+struct val *calculate_not_equals(struct val *first, struct val *second);
 struct val *calculate_greater_equal_than(struct val *first, struct val *second);
 struct val *calculate_less_equal_than(struct val *first, struct val *second);
 

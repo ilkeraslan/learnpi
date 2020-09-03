@@ -388,6 +388,47 @@ struct val *calculate_equals(struct val *first, struct val *second) {
     return result;
 }
 
+struct val *calculate_not_equals(struct val *first, struct val *second) {
+    struct val * result = malloc(sizeof(struct val));
+    int helper;
+
+    switch(get_value_type(first)) {
+        case INTEGER_TYPE:
+            if(get_value_type(second) == INTEGER_TYPE) {
+                result->datavalue.bit = first->datavalue.integer != second->datavalue.integer;
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
+                result->datavalue.decimal = first->datavalue.integer != second->datavalue.decimal;
+            }
+            break;
+        case DECIMAL_TYPE:
+            if(get_value_type(second) == INTEGER_TYPE) {
+                result->datavalue.decimal = first->datavalue.decimal != second->datavalue.integer;
+            } else if(get_value_type(second) == DECIMAL_TYPE) {
+                result->datavalue.bit = first->datavalue.decimal != second->datavalue.decimal;
+            }
+            break;
+        case STRING_TYPE:
+            if(get_value_type(second) == STRING_TYPE) {
+                // String comparision
+                helper = strcmp(first->datavalue.string, second->datavalue.string);
+
+                // Check if strings are equal
+                if(helper != 0) {
+                    result->datavalue.bit = 1;
+                } else {
+                    result->datavalue.bit = 0;
+                }
+            }
+            break;
+        default:
+            yyerror("Cannot calculate if not equals.");
+            free(result);
+    }
+
+    result->type = BIT_TYPE;
+    return result;
+}
+
 struct val *calculate_greater_equal_than(struct val *first, struct val *second) {
     struct val * result = malloc(sizeof(struct val));
     int helper;

@@ -319,7 +319,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       v = get_absolute_value(eval(abstract_syntax_tree->l)); 
       break;
     case UNARY_MINUS: 
-      v = change_sign(eval(abstract_syntax_tree->l)); 
+      v = change_sign(eval(abstract_syntax_tree->l));
       break;
 
     case LOGICAL_AND: 
@@ -329,23 +329,35 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       v = calculate_logical_or(eval(abstract_syntax_tree->l),eval(abstract_syntax_tree->r)); 
       break;
 
-    case '1': 
-      v = calculate_greater_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
-        break;
+    case '1':
+      v = calculate_greater_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
+      int a = v->datavalue.bit;
+      printf("Result: %d\n", a); 
+      break;
     case '2': 
-      v = calculate_less_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
-        break;
+      v = calculate_less_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
+            int b = v->datavalue.bit;
+      printf("Result: %d\n", b);  
+      break;
     case '3':
-      v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
+      v = calculate_not_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
+            int c = v->datavalue.bit;
+      printf("Result: %d\n", c); 
       break;
     case '4': 
       v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+            int d = v->datavalue.bit;
+      printf("Result: %d\n", d); 
       break;
     case '5': 
       v = calculate_greater_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+            int f = v->datavalue.bit;
+      printf("Result: %d\n", f); 
       break;
     case '6': 
       v = calculate_less_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+            int hh = v->datavalue.bit;
+      printf("Result: %d\n", hh); 
       break;
 
     case IF_STATEMENT:
