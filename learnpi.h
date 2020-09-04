@@ -151,6 +151,9 @@ struct ast *new_declaration(char *s, int type);
 // Function for new variable asignment
 struct ast * new_assignment(char *s, struct ast *v);
 
+// Function for new complex variable assignment
+struct ast *new_complex_assignment(char *s, int type, struct ast *l);
+
 // Function to create an AST with generic node type and one child
 struct ast *new_ast_with_child(int type, struct ast *l);
 

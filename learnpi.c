@@ -123,6 +123,23 @@ struct ast * new_assignment(char *s, struct ast *v) {
   return (struct ast *)assignment;
 }
 
+// Function for new complex variable assignment
+struct ast *new_complex_assignment(char *s, int type, struct ast *l) {
+  struct assign_and_declare_complex_symbol *complex_value = malloc(sizeof(struct assign_and_declare_complex_symbol));
+
+  if(!complex_value) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  complex_value->nodetype = COMPLEX_ASSIGNMENT;
+  complex_value->type = type;
+  complex_value->value = l;
+  complex_value->s = s;
+
+  return (struct ast *)complex_value;
+}
+
 // Function to create an AST with generic node type and one child
 struct ast *new_ast_with_child(int type, struct ast *l) {
   struct ast *ast = malloc(sizeof(struct ast));
