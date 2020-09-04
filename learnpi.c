@@ -331,33 +331,21 @@ struct val * eval(struct ast *abstract_syntax_tree) {
 
     case '1':
       v = calculate_greater_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
-      int a = v->datavalue.bit;
-      printf("Result: %d\n", a); 
       break;
     case '2': 
       v = calculate_less_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
-            int b = v->datavalue.bit;
-      printf("Result: %d\n", b);  
       break;
     case '3':
       v = calculate_not_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
-            int c = v->datavalue.bit;
-      printf("Result: %d\n", c); 
       break;
     case '4': 
       v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
-            int d = v->datavalue.bit;
-      printf("Result: %d\n", d); 
       break;
     case '5': 
       v = calculate_greater_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
-            int f = v->datavalue.bit;
-      printf("Result: %d\n", f); 
       break;
     case '6': 
       v = calculate_less_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
-            int hh = v->datavalue.bit;
-      printf("Result: %d\n", hh); 
       break;
 
     case IF_STATEMENT:
@@ -626,25 +614,19 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   struct symbol *variable = NULL;
   struct val *value = NULL;
 
-  int is_terminal = 0;
-
-  // Check if the function names are different
-  if(builtin_function->s && strcmp(builtin_function->s, "terminal")) {
+  // Check if function has a name, else pass in an empty string to lookup
+  if(builtin_function->s != NULL) {
     variable = lookup(builtin_function->s);
-    if(!variable) {
-      yyerror("variable %s not found.", builtin_function->s);
-      free(builtin_function->s);
-      free(builtin_function);
-      return NULL;
-    }
-    value = variable->value;
   } else {
-      is_terminal = 1;
+    variable = lookup("");
   }
-
-  if(builtin_function->function_type != BUILT_IN_DELAY && !value && !is_terminal) {
-    yyerror("cannot call function without complex type");
-    return NULL;
+  
+  // Evaluate the argument list to assign the value
+  variable->value = eval(builtin_function->argument_list);
+  value = variable->value;
+  value->type = LED; //TODO: get this dynamically
+  if(value == NULL) {
+    printf("Value is null after the assignment!\n");
   }
 
   struct ast *args = builtin_function->argument_list;
@@ -679,20 +661,35 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   
   switch(builtin_function->function_type) {
     case BUILT_IN_LED_ON:
+      if(value == NULL) {
+        printf("Value is null!\n");
+      } else {
+        printf("Value is NOT null!\n");
+      }
+
       if(value->type != LED) {
         yyerror("Operation not permitted.");
         free(builtin_function);
         free(newval);
         break;
       }
-      args_no = 0;
+      
+      args_no = 1;
       if(nargs > args_no) {
         yyerror("Too many arguments.");
         free(builtin_function);
         free(newval);
         break;
       }
-      int res = led_on(value);
+
+      #ifdef RPI_SIMULATION
+       // TODO: Check if can assign LED to this pin number
+        int res = led_on(value);
+      #else
+        printf("Simulated pin assignment.\n");
+        int res = 0;
+      #endif
+      
       if(res != 0) {
         yyerror("Bad GPIO level.");
       }

@@ -957,12 +957,12 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 #line 53 "lexer.l"
-{ yylval.type = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
+{ yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 54 "lexer.l"
-{ yylval.type = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
+{ yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 /* Names */
 case 37:
