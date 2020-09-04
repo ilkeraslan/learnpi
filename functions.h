@@ -29,5 +29,8 @@ struct val *create_integer_value(int integer_value);
 struct val *create_decimal_value(double decimal_value);
 struct val *create_string_value(char *string_value);
 
+struct val *create_led_value(struct val ** pin, int is_declaration);
+struct val *create_complex_value(struct val ** pin, int number_of_pins, int datatype);
+
 int led_on(struct val * value);
 int led_off(struct val * value);

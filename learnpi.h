@@ -145,7 +145,10 @@ struct symbol *lookup(char*);
 // Function to insert a symbol
 struct symbol *insert_symbol(char* sym);
 
-// Function for new variable agisnment
+// Function for new declaration
+struct ast *new_declaration(char *s, int type);
+
+// Function for new variable asignment
 struct ast * new_assignment(char *s, struct ast *v);
 
 // Function to create an AST with generic node type and one child

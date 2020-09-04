@@ -91,6 +91,22 @@ struct symbol *insert_symbol(char* sym) {
   abort(); /* tried them all, table is full */
 }
 
+// Function for new declaration
+struct ast *new_declaration(char *s, int type) {
+  struct declare_symbol *declaration = malloc(sizeof(struct declare_symbol));
+
+  if(!declaration) {
+    yyerror("out of space");
+    exit(0);
+  }
+  
+  declaration->nodetype = DECLARATION;
+  declaration->type = type;
+  declaration->s = s;
+  
+  return (struct ast *)declaration;
+}
+
 // Function for new variable agisnment
 struct ast * new_assignment(char *s, struct ast *v) {
   struct symasgn *assignment = malloc(sizeof(struct symasgn));
@@ -413,6 +429,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     case DECLARATION:
         declare_symbol = (struct declare_symbol *)abstract_syntax_tree;
         s = insert_symbol(declare_symbol->s);
+        printf("Inserted symbol.");
 
         // Control if variable is inserted as symbol
         if(!s) {
@@ -434,6 +451,18 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             break;
           case STRING_TYPE:
             s->value = create_string_value("");
+            break;
+          case LED:
+            s->value = create_led_value(NULL, 0);
+            break;
+          case BUTTON:
+            //s->value = create_button_value(NULL, 0);
+            break;
+          case KEYPAD:
+            break;
+          case BUZZER:
+            break;
+          case SERVO_MOTOR:
             break;
           default:
             yyerror("Type not recognized.");

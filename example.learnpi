@@ -1,1 +1,2 @@
-led_on(3)
+LED led
+LED led2 = 5

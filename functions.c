@@ -544,6 +544,53 @@ struct val *create_string_value(char *string_value) {
 }
 
 /*
+ * Function to create or declare a LED
+ * if it's a declaration, assigns 0 to GPIO_PIN
+ * else evaluates the assignment
+ */
+struct val *create_led_value(struct val ** pin, int is_declaration) {
+    struct val *led_val = malloc(sizeof(struct val));
+
+    if(is_declaration == 1) {
+        led_val->type = LED;
+        led_val->datavalue.GPIO_PIN = 0;
+    } else {
+        led_val = create_complex_value(pin, 1, LED);
+    }
+    
+    return led_val;
+}
+
+struct val *create_complex_value(struct val ** pin, int number_of_pins, int datatype) {
+    struct val *result = malloc(sizeof(struct val));
+    result->type = datatype;
+
+    if(number_of_pins > 0 && pin) {
+        result->datavalue.GPIO_PIN = malloc(number_of_pins * sizeof(int));
+        int current_pin;
+
+        for(int i = 0; i < number_of_pins; i++) {
+            if(!pin[i]) {
+                yyerror("No pin found.\n");
+                free(result);
+                return NULL;
+            }
+
+            current_pin = (int)pin[i]->datavalue.GPIO_PIN;
+
+            if(current_pin < 0 || current_pin > 50) {
+                yyerror("%d is not a valid pin number.", current_pin);
+                free(result);
+                break;
+            }
+            result->datavalue.GPIO_PIN[i] = (unsigned)current_pin;
+        }
+    }
+
+    return result;
+}
+
+/*
 * Sets the GPIO level to on.
 * gpio: 0-53
 * level: 0-1
