@@ -50,6 +50,13 @@
 "decimal"           { yylval.type = DECIMAL_TYPE; return TYPE; }
 "string"            { yylval.type = STRING_TYPE; return TYPE; }
 
+ /* Composed types */
+"LED"               { yylval.type = LED; return COMPLEX_TYPE; }
+"BUTTON" 			{ yylval.type = BUTTON; return COMPLEX_TYPE; }
+"KEYPAD" 			{ yylval.type = KEYPAD; return COMPLEX_TYPE; }
+"BUZZER" 			{ yylval.type = BUZZER; return COMPLEX_TYPE; }
+"SERVO_MOTOR" 		{ yylval.type = SERVO_MOTOR; return COMPLEX_TYPE; }
+
 "led_on"    { yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
 "led_off"   { yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
 

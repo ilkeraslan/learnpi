@@ -13,7 +13,11 @@ enum type {
     INTEGER_TYPE,
     DECIMAL_TYPE,
     STRING_TYPE,
-    LED
+    LED,
+    BUTTON,
+    KEYPAD,
+    BUZZER,
+    SERVO_MOTOR
 };
 
 #endif
