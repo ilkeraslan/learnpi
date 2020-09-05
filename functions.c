@@ -31,7 +31,13 @@ struct val *create_LED(struct val ** pin) {
 
     printf("Result type: %d\n", result->type);
 
-    int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
+      #ifdef RPI_SIMULATION
+       int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
+      #else
+        printf("Simulated gpioSetMode function.\n");
+        int currentMode = 0;
+      #endif
+    
     return result;
 }
 
@@ -47,8 +53,6 @@ struct val *create_COMPLEXTYPE(struct val ** pin, int pin_no, int datatype) {
     result->type = datatype;
     result->datavalue.GPIO_PIN = malloc(pin_no * sizeof(int));
 
-    printf("Data value: %u\n", result->datavalue.GPIO_PIN);
-
     while(i < pin_no) {
         current = (unsigned int)pin[i]->datavalue.GPIO_PIN;
         if(current < 0 || current > 50) {
@@ -57,7 +61,6 @@ struct val *create_COMPLEXTYPE(struct val ** pin, int pin_no, int datatype) {
             break;
         }
 
-        printf("I: %d\n", i);
         result->datavalue.GPIO_PIN[i] = current;
         i =+ 1;
     }
@@ -604,6 +607,7 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 * level: 0-1
 */
 int led_on(struct val * value) {
+    printf("Trying to set the led on...\n");
     return gpioWrite(value->datavalue.GPIO_PIN[0], 1);
 }
 

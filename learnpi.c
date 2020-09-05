@@ -225,8 +225,17 @@ void define_function(char *function_name, struct symbol_list *symbol_list, struc
 
 // Function to create a new symbol list
 struct symbol_list *create_symbol_list(char *symbol, struct symbol_list *next) {
-  struct symbol_list *new_symbol_list = NULL;
-  return new_symbol_list; // TODO: implement newsymlist
+  struct symbol_list *new_symbol_list = malloc(sizeof(struct symbol_list));
+
+  if(!new_symbol_list) {
+    yyerror("out of space");
+    exit(0);
+  }
+  
+  new_symbol_list->sym = symbol;
+  new_symbol_list->next = next;
+
+  return new_symbol_list;
 }
 
 // Function to create a new control flow
@@ -710,7 +719,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         int res = led_on(value);
       #else
         printf("Simulated pin assignment.\n");
-        int res = 0;
+        int res = 1;
       #endif
       
       if(res != 0) {
