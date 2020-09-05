@@ -58,12 +58,9 @@ struct symbol *lookup(char* sym) {
 }
 
 struct symbol *insert_symbol(char* sym) {
-  // struct symbol * symtab;
-  // struct symtable_stack * curr_scope = symstack;
   struct symbol *sp;
-  int scount = NHASH;		// numero di simboli controllati
+  int scount = NHASH;
 
-  // symtab = curr_scope->symtab;
   sp = &symtab[symhash(sym) % NHASH];
   while (--scount >= 0) {
     if (sp->name && !strcmp(sp->name, sym)) {
@@ -72,7 +69,7 @@ struct symbol *insert_symbol(char* sym) {
 			return NULL;
     }
 
-    // Caso in cui il simbolo non è ancora stato dichiarato, quindi si tratta di una entry nuova
+    // New entry
     if (!sp->name) {
       sp->name = strdup(sym);
       sp->value = NULL;
@@ -83,7 +80,7 @@ struct symbol *insert_symbol(char* sym) {
     }
 
     if (++sp >= symtab + NHASH) {
-      sp = symtab;	// prova la prossima entry
+      sp = symtab;
     }
   }
 
@@ -124,7 +121,7 @@ struct ast * new_assignment(char *s, struct ast *v) {
 }
 
 // Function for new complex variable assignment
-struct ast *new_complex_assignment(char *s, int type, struct ast *l) {
+struct ast *new_complex_assignment(char *s, int type, struct ast *value) {
   struct assign_and_declare_complex_symbol *complex_value = malloc(sizeof(struct assign_and_declare_complex_symbol));
 
   if(!complex_value) {
@@ -134,7 +131,7 @@ struct ast *new_complex_assignment(char *s, int type, struct ast *l) {
 
   complex_value->nodetype = COMPLEX_ASSIGNMENT;
   complex_value->type = type;
-  complex_value->value = l;
+  complex_value->value = value;
   complex_value->s = s;
 
   return (struct ast *)complex_value;
@@ -441,7 +438,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
 
     case USER_CALL:
       calluser((struct user_function_call *)abstract_syntax_tree);
-    break;
+      break;
 
     case DECLARATION:
         declare_symbol = (struct declare_symbol *)abstract_syntax_tree;
@@ -511,32 +508,42 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         return NULL;
       }
       s->value = v;
-    break;
+      break;
 
     case COMPLEX_ASSIGNMENT:
+      // Cast AST back to assign_and_declare_complex_symbol in order to access the fields
       assign_and_declare_complex_symbol = (struct assign_and_declare_complex_symbol *)abstract_syntax_tree;
+
+      // Get the value of assign_and_declare_complex_symbol struct
       args = assign_and_declare_complex_symbol->value;
 
+      // Declare an helper structure to memorize evaluated part of the assign_and_declare_complex_symbol structure
+      struct val ** newval = (struct val **)malloc(1 * sizeof(struct val)); // TODO: put argument number
+ 
       for(int i=0; args!=NULL; i++) {
-        // Create an helper structure
-        struct ast *helper = args->r;
-        struct val *evaluation_result;
-
-        // Evaluate the left node pointing the result
-        evaluation_result = eval(args->l);
+        if(args->nodetype == STATEMENT_LIST) {
+          newval[i] = eval(args->l);
+          args = args->r;
+        } else {
+          newval[i] = eval(args);
+          args = NULL;
+        }
+        
+        printf("Type: %d\n", newval[i]->type);
 
         // Switch the result
         switch(assign_and_declare_complex_symbol->type) {
           case LED:
-            v = create_LED(&evaluation_result);
+            printf("LED TYPE\n");
+            v = create_LED(newval);
             break;
         }
-
-        // Point to right node previosuly memorized in helper structure
-        args = helper;
       }
+
+      // Insert the symbol memorizing the value
+      s = insert_symbol(assign_and_declare_complex_symbol->s);
+      s->value = v;
       
-      // TODO: free memory
       break;
 
   default:
@@ -601,36 +608,6 @@ void treefree(struct ast *abstract_syntax_tree) {
   
   free(abstract_syntax_tree); /* always free the node itself */
 }
-
-// Function to initialize symbol table stack
-// void initialize_symbol_table_stack() {
-//   // Initialize a new symbol table stack
-// 	struct symtable_stack * new_scope = calloc(1, sizeof(struct symtable_stack));
-// 	new_scope->next = symstack;
-// 	new_scope->symtab = calloc(NHASH, sizeof(struct symbol));
-
-//   // Check if allocated space correctly
-// 	if(!new_scope->symtab){
-//     yyerror("No memory.");
-//     exit(0);
-// 	}
-
-//   // Assign the created symbol table stack reference
-// 	symstack = new_scope;
-// }
-
-// Function to free symbol table stack
-// void free_symbol_table_stack() {
-//   // Get the symbol table stack reference
-// 	struct symtable_stack * inner = symstack;
-  
-//   // Assign the next node to symbol stack 
-// 	symstack = symstack->next;
-
-//   // Free allocated memories
-// 	free(inner->symtab);
-// 	free(inner);
-// }
 
 // Function to check if we have a primitive type
 bool is_primitive(int type) {
@@ -845,13 +822,6 @@ int main(int argc, char **argv) {
   #endif
 
   printf("Learnpi...\n");
-
-	// symstack = calloc(1, sizeof(struct symtable_stack));
-	// symstack->next = NULL;
-	// symstack->symtab = NULL;
-
-	// initialize_symbol_table_stack();
-
 	newfile("stdin");
 
 	for(int i = 1; i < argc; i++) {
@@ -862,9 +832,6 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	// free_symbol_table_stack();
-
   printf("Thanks for using learnpi.\n");
-
   return 0;
 }

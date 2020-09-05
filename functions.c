@@ -25,32 +25,40 @@ int get_value_type(struct val *value) {
 	}
 }
 
-struct val *create_LED(struct val **pin) {
-    struct val * result;
+struct val *create_LED(struct val ** pin) {
+    struct val *result;
     result = create_COMPLEXTYPE(pin, 1, LED);
+
+    printf("Result type: %d\n", result->type);
+
     int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
     return result;
 }
 
-struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype) {
+struct val *create_COMPLEXTYPE(struct val ** pin, int pin_no, int datatype) {
     // Allocate memory 
     struct val *result = malloc(sizeof(struct val));
 
     // Local helper
     int i = 0;
+    unsigned int current;
 
     // Assign the argument datatype to result type    
     result->type = datatype;
     result->datavalue.GPIO_PIN = malloc(pin_no * sizeof(int));
 
+    printf("Data value: %u\n", result->datavalue.GPIO_PIN);
+
     while(i < pin_no) {
-        if(*pin[i]->datavalue.GPIO_PIN < 0 || *pin[i]->datavalue.GPIO_PIN > 50) {
+        current = (unsigned int)pin[i]->datavalue.GPIO_PIN;
+        if(current < 0 || current > 50) {
             yyerror("invalid value %d for pin declaration", pin[i]->datavalue.GPIO_PIN);
             free(result);
             break;
         }
 
-        result->datavalue.GPIO_PIN[i] = *pin[i]->datavalue.GPIO_PIN;
+        printf("I: %d\n", i);
+        result->datavalue.GPIO_PIN[i] = current;
         i =+ 1;
     }
     return result;
