@@ -108,6 +108,40 @@ struct val *create_BUZZER(struct val ** pin) {
     return result;
 }
 
+struct val *create_SERVO_MOTOR(struct val ** pin) {
+    struct val *result;
+    result = create_complex_value(pin, 1, BUZZER);
+    
+    int currentMode = -1;
+    int pwmStatus = -1;
+    int range = -1;
+    int frequency = -1;
+
+    // Set the first 4 pins to input mode and PULL_UP to HIGH
+    #ifdef RPI_SIMULATION
+        currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 2);
+        
+        range = gpioSetPWMrange(result->datavalue.GPIO_PIN[0], 2000); // Fully on
+        frequency = gpioSetPWMfrequency(24, 500);
+        pwmStatus = gpioPWM(result->datavalue.GPIO_PIN[0], 0); // 0 degrees as default
+    #else
+        printf("Simulated gpioSetMode and gpioSetPullUpDown functions after KEYPAD creation.\n");
+        currentMode = 2;
+        
+        range = 0;
+        frequency = 500;
+        pwmStatus = 0;
+    #endif
+
+    // Check errors upon writing pins
+    if(pwmStatus != 0) {
+        printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
+        return NULL;
+    }
+
+    return result;
+}
+
 struct val *create_COMPLEXTYPE(struct val ** pin, int pin_no, int datatype) {
     // Allocate memory 
     struct val *result = malloc(sizeof(struct val));
@@ -689,6 +723,20 @@ struct val *create_buzzer_value(struct val ** pin, int is_declaration) {
         result->datavalue.GPIO_PIN = 0;
     } else {
         result = create_complex_value(pin, 1, BUZZER);
+    }
+
+    return result;
+}
+
+struct val *create_servo_motor_value(struct val ** pin, int is_declaration) {
+    struct val * result = malloc(sizeof(struct val));
+    
+    // Check if declaration
+    if(is_declaration == 1) {
+        result->type = SERVO_MOTOR;
+        result->datavalue.GPIO_PIN = 0;
+    } else {
+        result = create_complex_value(pin, 1, SERVO_MOTOR);
     }
 
     return result;

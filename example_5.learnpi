@@ -1,2 +1,4 @@
 BUZZER buzzer
 BUZZER buzzer1 = 1
+SERVO_MOTOR servo
+SERVO_MOTOR servo1 = 2

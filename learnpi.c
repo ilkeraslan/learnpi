@@ -488,6 +488,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             s->value = create_buzzer_value(NULL, 0);
             break;
           case SERVO_MOTOR:
+            s->value = create_servo_motor_value(NULL, 0);
             break;
           default:
             yyerror("Type not recognized.");
@@ -568,10 +569,15 @@ struct val * eval(struct ast *abstract_syntax_tree) {
               v = create_KEYPAD(newval);
               break;
 
-            case BUZZER:
+          case BUZZER:
               printf("BUZZER TYPE detected.\n");
               v = create_BUZZER(newval);
-              break;            
+              break;
+
+          case SERVO_MOTOR:
+              printf("SERVO_MOTOR TYPE detected.\n");
+              v = create_SERVO_MOTOR(newval);
+              break;              
 
           default:
               printf("NO TYPE detected.\n");
