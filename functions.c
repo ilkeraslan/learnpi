@@ -49,11 +49,47 @@ struct val *create_BUTTON(struct val ** pin) {
         int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
         int pullUpLevel = gpioSetPullUpDown(result->datavalue.GPIO_PIN[0], PI_PUD_UP)
     #else
-        printf("Simulated gpioSetMode function after BUTTON creation.\n");
+        printf("Simulated gpioSetMode and gpioSetPullUpDown functions after BUTTON creation.\n");
         int currentMode = 0;
         int pullUpLevel = 2;
     #endif
     
+    return result;
+}
+
+struct val *create_KEYPAD(struct val ** pin) {
+    struct val *result;
+    result = create_complex_value(pin, 8, KEYPAD);
+    
+    int currentMode = -1;
+    int pullUpLevel = -1;
+    int writeResult = -1;
+
+    // Set the first 4 pins to input mode and PULL_UP to HIGH
+    #ifdef RPI_SIMULATION
+        for(int i = 0; i < 4; i++) {
+            currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
+            pullUpDnControl(result->datavalue.GPIO_PIN[i], PI_PUD_UP);
+        }
+
+        // Set the last 4 pins to output mode and write 1
+        for (int i = 4; i < 8; i++) {
+            currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
+            gpioWrite(result->datavalue.GPIO_PIN[0], 1);
+        }
+    #else
+        printf("Simulated gpioSetMode and gpioSetPullUpDown functions after KEYPAD creation.\n");
+        currentMode = 1;
+        pullUpLevel = 1;
+        writeResult = 0;
+    #endif
+
+    // Check errors upon writing pins
+    if(writeResult != 0) {
+        printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
+        return NULL;
+    }
+
     return result;
 }
 
@@ -606,6 +642,24 @@ struct val *create_button_value(struct val ** pin, int is_declaration) {
     return result;
 }
 
+/*
+ * Function to create or declare a KEYPAD
+ * if it's a declaration, assigns 0 to GPIO_PIN
+ * else evaluates the assignment
+ */
+struct val *create_keypad_value(struct val ** pin, int is_declaration) {
+    struct val * result = malloc(sizeof(struct val));
+
+    if(is_declaration == 1) {
+        result->type = KEYPAD;
+        result->datavalue.GPIO_PIN = 0;
+    } else {
+        result = create_complex_value(pin, 8, KEYPAD);
+    }
+    
+    return result;
+}
+
 struct val *create_complex_value(struct val ** pin, int number_of_pins, int datatype) {
     struct val *result = malloc(sizeof(struct val));
     result->type = datatype;
@@ -614,25 +668,27 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 
     if(number_of_pins > 0 && pin) {
         result->datavalue.GPIO_PIN = malloc(number_of_pins * sizeof(int));
+        printf("Datavalue.GPIO_PIN is: %d\n", *result->datavalue.GPIO_PIN);
         int current_pin;
 
         for(int i = 0; i < number_of_pins; i++) {
-            if(!pin[i]) {
-                yyerror("No pin found.\n");
+            //printf("Pin value is: %d\n", pin[i]->datavalue.GPIO_PIN);
+            if(pin[i] == NULL) {
+                yyerror("No pin found while creating complex value.\n");
                 free(result);
                 return NULL;
             }
 
-            current_pin = (int)pin[i]->datavalue.GPIO_PIN;
+            current_pin = pin[i]->datavalue.GPIO_PIN;
 
             if(current_pin < 0 || current_pin > 50) {
                 yyerror("%d is not a valid pin number.", current_pin);
                 free(result);
                 break;
             }
-            result->datavalue.GPIO_PIN[i] = (unsigned)current_pin;
+            result->datavalue.GPIO_PIN[i] = (unsigned int)current_pin;
 
-            printf("Value is: %d", current_pin);
+            printf("Current pin value is: %d\n", current_pin);
         }
     }
 

@@ -482,6 +482,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             s->value = create_button_value(NULL, 0);
             break;
           case KEYPAD:
+            s->value = create_keypad_value(NULL, 0);
             break;
           case BUZZER:
             break;
@@ -526,9 +527,17 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       // Get the value of assign_and_declare_complex_symbol struct
       args = assign_and_declare_complex_symbol->value;
 
+      // Get argument number
+      struct ast *helper = args;
+      int argument_number = 0;
+
+      while(helper != NULL) {
+          argument_number +=1;
+          helper = helper->r;
+      }
+
       // Declare an helper structure to memorize evaluated part of the assign_and_declare_complex_symbol structure
-      // TODO: put argument number
-      struct val ** newval = (struct val **)malloc(1 * sizeof(struct val)); 
+      struct val ** newval = (struct val **)malloc(argument_number * sizeof(struct val)); 
  
       for(int i=0; args!=NULL; i++) {
         if(args->nodetype == STATEMENT_LIST) {
@@ -544,14 +553,24 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         // Switch the result
         switch(assign_and_declare_complex_symbol->type) {
           case LED:
-            printf("LED TYPE detected.\n");
-            v = create_LED(newval);
-            break;
+              printf("LED TYPE detected.\n");
+              v = create_LED(newval);
+              break;
 
           case BUTTON:
-            printf("BUTTON TYPE detected.\n");
-            v = create_BUTTON(newval);
-            break;
+              printf("BUTTON TYPE detected.\n");
+              v = create_BUTTON(newval);
+              break;
+
+          case KEYPAD:
+              printf("KEYPAD TYPE detected.\n");
+              v = create_KEYPAD(newval);
+              break;
+
+          default:
+              printf("NO TYPE detected.\n");
+              v = NULL;
+              break;
         }
       }
 

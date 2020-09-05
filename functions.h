@@ -11,6 +11,7 @@ int get_value_type(struct val *value);
 struct val *create_LED(struct val **pin);
 struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype);
 struct val *create_BUTTON(struct val **pin);
+struct val *create_KEYPAD(struct val ** pin);
 
 struct val *sum(struct val *first, struct val *second);
 struct val *subtract(struct val *first, struct val *second);
@@ -34,6 +35,7 @@ struct val *create_string_value(char *string_value);
 
 struct val *create_led_value(struct val ** pin, int is_declaration);
 struct val *create_button_value(struct val ** pin, int is_declaration);
+struct val *create_keypad_value(struct val ** pin, int is_declaration);
 struct val *create_complex_value(struct val ** pin, int number_of_pins, int datatype);
 
 int led_on(struct val * value);
