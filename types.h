@@ -4,6 +4,7 @@
 enum built_in_function_types {
   BUILT_IN_LED_ON = 1,
   BUILT_IN_LED_OFF,
+  BUILT_IN_IS_BUTTON_PRESSED,
   BUILT_IN_DELAY
 };
 

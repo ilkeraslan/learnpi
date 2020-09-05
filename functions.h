@@ -34,3 +34,4 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 
 int led_on(struct val * value);
 int led_off(struct val * value);
+struct val *is_button_pressed(struct val * value);

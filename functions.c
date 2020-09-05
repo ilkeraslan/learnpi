@@ -620,3 +620,20 @@ int led_on(struct val * value) {
 int led_off(struct val * value) {
     return gpioWrite(value->datavalue.GPIO_PIN[0], 0);
 }
+
+/*
+ * Reads the GPIO level of the button.
+ * gpio: 0-53
+ * Returns the GPIO level if OK, otherwise PI_BAD_GPIO.
+ */
+struct val *is_button_pressed(struct val * value) {
+    struct val *result = malloc(sizeof(struct val));
+    result->type = BIT_TYPE;
+    result->datavalue.bit = 0;
+
+    if(gpioRead(value->datavalue.GPIO_PIN[0]) == 0) {
+        result->datavalue.bit = 1;
+    }
+    
+    return result;
+}

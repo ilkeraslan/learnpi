@@ -749,6 +749,10 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         yyerror("Bad GPIO level.");
       }
       break;
+
+    case BUILT_IN_IS_BUTTON_PRESSED:
+      printf("Button pressed function called.\n");
+      break;
     
     default:
       yyerror("Function does not exist: %d", builtin_function->function_type);
