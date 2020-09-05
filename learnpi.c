@@ -663,29 +663,30 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   }
 
   struct ast *args = builtin_function->argument_list;
-  int nargs = 0;
+  int number_of_arguments = 0;
 
   /* count the arguments */
   while(args) {
     args = args->r;
-    nargs++;
+    number_of_arguments++;
   }
+  printf("Number of agruments: %d\n", number_of_arguments);
 
   // Define a val structure to store the new value
-  struct val ** newval = (struct val **)malloc(nargs * sizeof(struct val));
+  struct val ** newval = (struct val **)malloc(number_of_arguments * sizeof(struct val));
 
   // Memorize the argument list
   args = builtin_function->argument_list;
 
   /* evaluate the arguments */
-  for(nargs = 0; args; nargs++) {
+  for(number_of_arguments = 0; args; number_of_arguments++) {
     if(args->nodetype == STATEMENT_LIST) {
       /* List node */
-      newval[nargs] = eval(args->l);
+      newval[number_of_arguments] = eval(args->l);
       args = args->r;
     } else {			
       /* End of the list */
-      newval[nargs] = eval(args);
+      newval[number_of_arguments] = eval(args);
       args = NULL;
     }
   }
@@ -694,12 +695,6 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   
   switch(builtin_function->function_type) {
     case BUILT_IN_LED_ON:
-      if(value == NULL) {
-        printf("Value is null!\n");
-      } else {
-        printf("Value is NOT null!\n");
-      }
-
       if(value->type != LED) {
         yyerror("Operation not permitted.");
         free(builtin_function);
@@ -708,7 +703,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       }
       
       args_no = 1;
-      if(nargs > args_no) {
+      if(number_of_arguments > args_no) {
         yyerror("Too many arguments.");
         free(builtin_function);
         free(newval);
@@ -719,7 +714,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
        // TODO: Check if can assign LED to this pin number
         int res = led_on(value);
       #else
-        printf("Simulated pin assignment.\n");
+        printf("Simulated led_on.\n");
         int res = 0;
       #endif
       
@@ -735,14 +730,21 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         free(newval);
         break;
       }
-      args_no = 0;
-      if(nargs > args_no) {
+      args_no = 1;
+      if(number_of_arguments > args_no) {
         yyerror("Too many arguments.");
         free(builtin_function);
         free(newval);
         break;
       }
-      int res2 = led_off(value);
+
+      #ifdef RPI_SIMULATION
+        int res2 = led_off(value);
+      #else
+        printf("Simulated led_off.\n");
+        int res2 = 0;
+      #endif
+
       if(res2 != 0) {
         yyerror("Bad GPIO level.");
       }
