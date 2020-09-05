@@ -93,6 +93,21 @@ struct val *create_KEYPAD(struct val ** pin) {
     return result;
 }
 
+struct val *create_BUZZER(struct val ** pin) {
+    struct val *result;
+    result = create_complex_value(pin, 1, BUZZER);
+
+    // Set the current mode to output
+    #ifdef RPI_SIMULATION
+        int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
+    #else
+        printf("Simulated gpioSetMode function after BUZZER creation.\n");
+        int currentMode = 0;
+    #endif
+    
+    return result;
+}
+
 struct val *create_COMPLEXTYPE(struct val ** pin, int pin_no, int datatype) {
     // Allocate memory 
     struct val *result = malloc(sizeof(struct val));
@@ -657,6 +672,25 @@ struct val *create_keypad_value(struct val ** pin, int is_declaration) {
         result = create_complex_value(pin, 8, KEYPAD);
     }
     
+    return result;
+}
+
+/*
+ * Function to create or declare a BUZZER
+ * if it's a declaration, assigns 0 to GPIO_PIN
+ * else evaluates the assignment
+ */
+struct val *create_buzzer_value(struct val ** pin, int is_declaration) {
+    struct val * result = malloc(sizeof(struct val));
+    
+    // Check if declaration
+    if(is_declaration == 1) {
+        result->type = BUZZER;
+        result->datavalue.GPIO_PIN = 0;
+    } else {
+        result = create_complex_value(pin, 1, BUZZER);
+    }
+
     return result;
 }
 

@@ -485,6 +485,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             s->value = create_keypad_value(NULL, 0);
             break;
           case BUZZER:
+            s->value = create_buzzer_value(NULL, 0);
             break;
           case SERVO_MOTOR:
             break;
@@ -566,6 +567,11 @@ struct val * eval(struct ast *abstract_syntax_tree) {
               printf("KEYPAD TYPE detected.\n");
               v = create_KEYPAD(newval);
               break;
+
+            case BUZZER:
+              printf("BUZZER TYPE detected.\n");
+              v = create_BUZZER(newval);
+              break;            
 
           default:
               printf("NO TYPE detected.\n");
