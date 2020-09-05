@@ -29,14 +29,13 @@ struct val *create_LED(struct val ** pin) {
     struct val *result;
     result = create_COMPLEXTYPE(pin, 1, LED);
 
-    printf("Result type: %d\n", result->type);
-
-      #ifdef RPI_SIMULATION
-       int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
-      #else
-        printf("Simulated gpioSetMode function.\n");
-        int currentMode = 0;
-      #endif
+    // Set the current mode to output
+    #ifdef RPI_SIMULATION
+    int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
+    #else
+    printf("Simulated gpioSetMode function after LED creation.\n");
+    int currentMode = 0;
+    #endif
     
     return result;
 }
@@ -605,6 +604,7 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 * Sets the GPIO level to on.
 * gpio: 0-53
 * level: 0-1
+* Returns 0 if OK, otherwise PI_BAD_GPIO or PI_BAD_LEVEL.
 */
 int led_on(struct val * value) {
     printf("Trying to set the led on...\n");
@@ -615,6 +615,7 @@ int led_on(struct val * value) {
 * Sets the GPIO level to off.
 * gpio: 0-53
 * level: 0-1
+* Returns 0 if OK, otherwise PI_BAD_GPIO or PI_BAD_LEVEL.
 */
 int led_off(struct val * value) {
     return gpioWrite(value->datavalue.GPIO_PIN[0], 0);

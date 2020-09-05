@@ -642,6 +642,7 @@ struct ast *new_builtin_function(int function_type, char *s, struct ast *argumen
 
 // Function to call built in functions
 struct val *builtin_function_call(struct builtin_function_call *builtin_function) {
+  printf("Executing built-in function call.\n");
   struct val *result = NULL;
   struct symbol *variable = NULL;
   struct val *value = NULL;
@@ -719,7 +720,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         int res = led_on(value);
       #else
         printf("Simulated pin assignment.\n");
-        int res = 1;
+        int res = 0;
       #endif
       
       if(res != 0) {

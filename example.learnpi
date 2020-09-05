@@ -1,1 +1,2 @@
 LED led2 = 5
+led_on(led2)
