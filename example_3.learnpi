@@ -1,1 +1,7 @@
-is_button_pressed(3)
+BUTTON button1
+BUTTON button2 = 2
+is_button_pressed(button2)
+LED led1
+LED led2 = 5
+led_on(led2)
+led_off(led2)

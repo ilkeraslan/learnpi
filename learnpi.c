@@ -479,7 +479,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             s->value = create_led_value(NULL, 0);
             break;
           case BUTTON:
-            //s->value = create_button_value(NULL, 0);
+            s->value = create_button_value(NULL, 0);
             break;
           case KEYPAD:
             break;
@@ -527,7 +527,8 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       args = assign_and_declare_complex_symbol->value;
 
       // Declare an helper structure to memorize evaluated part of the assign_and_declare_complex_symbol structure
-      struct val ** newval = (struct val **)malloc(1 * sizeof(struct val)); // TODO: put argument number
+      // TODO: put argument number
+      struct val ** newval = (struct val **)malloc(1 * sizeof(struct val)); 
  
       for(int i=0; args!=NULL; i++) {
         if(args->nodetype == STATEMENT_LIST) {
@@ -543,8 +544,13 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         // Switch the result
         switch(assign_and_declare_complex_symbol->type) {
           case LED:
-            printf("LED TYPE\n");
+            printf("LED TYPE detected.\n");
             v = create_LED(newval);
+            break;
+
+          case BUTTON:
+            printf("BUTTON TYPE detected.\n");
+            v = create_BUTTON(newval);
             break;
         }
       }
@@ -657,7 +663,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   // Evaluate the argument list to assign the value
   variable->value = eval(builtin_function->argument_list);
   value = variable->value;
-  value->type = LED; //TODO: get this dynamically
+
   if(value == NULL) {
     printf("Value is null after the assignment!\n");
   }
@@ -703,6 +709,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       }
       
       args_no = 1;
+
       if(number_of_arguments > args_no) {
         yyerror("Too many arguments.");
         free(builtin_function);
@@ -730,7 +737,9 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         free(newval);
         break;
       }
+
       args_no = 1;
+
       if(number_of_arguments > args_no) {
         yyerror("Too many arguments.");
         free(builtin_function);
@@ -751,7 +760,40 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       break;
 
     case BUILT_IN_IS_BUTTON_PRESSED:
-      printf("Button pressed function called.\n");
+      if(value->type != BUTTON) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      args_no = 1;
+
+      if(number_of_arguments > args_no) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      printf("Calling pigpio function.\n");
+
+      #ifdef RPI_SIMULATION
+        struct val *res3 = malloc(sizeof(struct val));
+        res3 = is_button_pressed(value);
+      #else
+        printf("Simulated is_button_pressed.\n");
+        struct val *res3 = malloc(sizeof(struct val));
+        res3->type = BIT_TYPE;
+        res3->datavalue.bit = 0; 
+      #endif
+
+      if(res3 == NULL) {
+        yyerror("Pin number is not permitted to be read.\n");
+      }
+
+      result = res3;
       break;
     
     default:

@@ -27,14 +27,31 @@ int get_value_type(struct val *value) {
 
 struct val *create_LED(struct val ** pin) {
     struct val *result;
-    result = create_COMPLEXTYPE(pin, 1, LED);
+    result = create_complex_value(pin, 1, LED);
 
     // Set the current mode to output
     #ifdef RPI_SIMULATION
-    int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
+        int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
     #else
-    printf("Simulated gpioSetMode function after LED creation.\n");
-    int currentMode = 0;
+        printf("Simulated gpioSetMode function after LED creation.\n");
+        int currentMode = 0;
+    #endif
+    
+    return result;
+}
+
+struct val *create_BUTTON(struct val ** pin) {
+    struct val *result;
+    result = create_complex_value(pin, 1, BUTTON);
+
+    // Set the current mode to output and PULL_UP to HIGH
+    #ifdef RPI_SIMULATION
+        int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
+        int pullUpLevel = gpioSetPullUpDown(result->datavalue.GPIO_PIN[0], PI_PUD_UP)
+    #else
+        printf("Simulated gpioSetMode function after BUTTON creation.\n");
+        int currentMode = 0;
+        int pullUpLevel = 2;
     #endif
     
     return result;
@@ -571,9 +588,29 @@ struct val *create_led_value(struct val ** pin, int is_declaration) {
     return led_val;
 }
 
+/*
+ * Function to create or declare a BUTTON
+ * if it's a declaration, assigns 0 to GPIO_PIN
+ * else evaluates the assignment
+ */
+struct val *create_button_value(struct val ** pin, int is_declaration) {
+    struct val * result = malloc(sizeof(struct val));
+
+    if(is_declaration == 1) {
+        result->type = BUTTON;
+        result->datavalue.GPIO_PIN = 0;
+    } else {
+        result = create_complex_value(pin, 1, BUTTON);
+    }
+    
+    return result;
+}
+
 struct val *create_complex_value(struct val ** pin, int number_of_pins, int datatype) {
     struct val *result = malloc(sizeof(struct val));
     result->type = datatype;
+
+    printf("Number of pins: %d\n", number_of_pins);
 
     if(number_of_pins > 0 && pin) {
         result->datavalue.GPIO_PIN = malloc(number_of_pins * sizeof(int));
@@ -594,9 +631,12 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
                 break;
             }
             result->datavalue.GPIO_PIN[i] = (unsigned)current_pin;
+
+            printf("Value is: %d", current_pin);
         }
     }
 
+    printf("Complex value creation completed.\n");
     return result;
 }
 
@@ -630,6 +670,11 @@ struct val *is_button_pressed(struct val * value) {
     struct val *result = malloc(sizeof(struct val));
     result->type = BIT_TYPE;
     result->datavalue.bit = 0;
+
+    // Check if pin number is correct
+    if(gpioRead(value->datavalue.GPIO_PIN[0]) == PI_BAD_GPIO) {
+        return NULL;
+    }
 
     if(gpioRead(value->datavalue.GPIO_PIN[0]) == 0) {
         result->datavalue.bit = 1;
