@@ -29,13 +29,21 @@ struct val *create_LED(struct val ** pin) {
     struct val *result;
     result = create_complex_value(pin, 1, LED);
 
+    int currentMode = -1;
+
     // Set the current mode to output
     #ifdef RPI_SIMULATION
-        int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
+        currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 1);
     #else
         printf("Simulated gpioSetMode function after LED creation.\n");
-        int currentMode = 0;
+        currentMode = 0;
     #endif
+
+    // Check errors
+    if(currentMode != 0) {
+        printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
+        return NULL;        
+    }
     
     return result;
 }
@@ -44,15 +52,24 @@ struct val *create_BUTTON(struct val ** pin) {
     struct val *result;
     result = create_complex_value(pin, 1, BUTTON);
 
+    int currentMode = -1;
+    int pullUpLevel = -1;
+
     // Set the current mode to output and PULL_UP to HIGH
     #ifdef RPI_SIMULATION
-        int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
-        int pullUpLevel = gpioSetPullUpDown(result->datavalue.GPIO_PIN[0], PI_PUD_UP)
+        currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
+        pullUpLevel = gpioSetPullUpDown(result->datavalue.GPIO_PIN[0], PI_PUD_UP)
     #else
         printf("Simulated gpioSetMode and gpioSetPullUpDown functions after BUTTON creation.\n");
-        int currentMode = 0;
-        int pullUpLevel = 2;
+        currentMode = 0;
+        pullUpLevel = 2;
     #endif
+
+    // Check errors
+    if(currentMode != 0 || pullUpLevel != 2) {
+        printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
+        return NULL;        
+    }
     
     return result;
 }
@@ -85,7 +102,7 @@ struct val *create_KEYPAD(struct val ** pin) {
     #endif
 
     // Check errors upon writing pins
-    if(writeResult != 0) {
+    if(writeResult != 0  || pullUpLevel != 1 || writeResult != 0 || currentMode != 1) {
         printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
         return NULL;
     }
@@ -97,13 +114,21 @@ struct val *create_BUZZER(struct val ** pin) {
     struct val *result;
     result = create_complex_value(pin, 1, BUZZER);
 
+    int currentMode = -1;
+
     // Set the current mode to output
     #ifdef RPI_SIMULATION
-        int currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
+        currentMode = gpioSetMode(result->datavalue.GPIO_PIN[0], 0);
     #else
         printf("Simulated gpioSetMode function after BUZZER creation.\n");
-        int currentMode = 0;
+        currentMode = 0;
     #endif
+
+    // Check errors
+    if(currentMode != 0) {
+        printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
+        return NULL;        
+    }
     
     return result;
 }
@@ -125,7 +150,7 @@ struct val *create_SERVO_MOTOR(struct val ** pin) {
         frequency = gpioSetPWMfrequency(24, 500);
         pwmStatus = gpioPWM(result->datavalue.GPIO_PIN[0], 0); // 0 degrees as default
     #else
-        printf("Simulated gpioSetMode and gpioSetPullUpDown functions after KEYPAD creation.\n");
+        printf("Simulated gpioSetMode, gpioSetPWMrange, gpioSetPWMfrequency and gpioPWM functions after KEYPAD creation.\n");
         currentMode = 2;
         
         range = 0;
@@ -134,7 +159,7 @@ struct val *create_SERVO_MOTOR(struct val ** pin) {
     #endif
 
     // Check errors upon writing pins
-    if(pwmStatus != 0) {
+    if(pwmStatus != 0 || currentMode != 2 || frequency != 500 || range != 0) {
         printf("PI_BAD_GPIO or PI_BAD_LEVEL!\n");
         return NULL;
     }
