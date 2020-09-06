@@ -57,9 +57,10 @@
 "BUZZER" 			{ yylval.type = BUZZER; return COMPLEX_TYPE; }
 "SERVO_MOTOR" 		{ yylval.type = SERVO_MOTOR; return COMPLEX_TYPE; }
 
-"led_on"    { yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
-"led_off"   { yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
+"led_on"            { yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
+"led_off"           { yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
 "is_button_pressed" { yylval.function_id = BUILT_IN_IS_BUTTON_PRESSED; return BUILT_IN_FUNCTION; }
+"get_pressed_key"   { yylval.function_id = BUILT_IN_GET_PRESSED_KEY; return BUILT_IN_FUNCTION; }
 
  /* Names */
 [a-zA-Z][a-zA-Z0-9]*   { yylval.str = strdup(yytext); return NAME; }

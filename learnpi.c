@@ -728,7 +728,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
     }
   }
 
-  int args_no = 0;
+  int expexted_number_of_argumen = 0;
   
   switch(builtin_function->function_type) {
     case BUILT_IN_LED_ON:
@@ -739,9 +739,9 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         break;
       }
       
-      args_no = 1;
+      expected_argument_numbers = 1;
 
-      if(number_of_arguments > args_no) {
+      if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
         free(newval);
@@ -769,9 +769,9 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         break;
       }
 
-      args_no = 1;
+      expected_argument_numbers = 1;
 
-      if(number_of_arguments > args_no) {
+      if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
         free(newval);
@@ -799,9 +799,9 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         break;
       }
 
-      args_no = 1;
+      expected_argument_numbers = 0;
 
-      if(number_of_arguments > args_no) {
+      if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
         free(newval);
@@ -825,6 +825,41 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       }
 
       result = res3;
+      break;
+
+    case BUILT_IN_GET_PRESSED_KEY:
+      if(value->type != KEYPAD) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      expected_argument_numbers = 0;
+
+      if(number_of_arguments > expected_argument_numbers) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      #ifdef RPI_SIMULATION
+        struct val *res4 = malloc(sizeof(struct val));
+        res4 = is_button_pressed(value);
+      #else
+        printf("Simulated get_pressed_key.\n");
+        struct val *res4 = malloc(sizeof(struct val));
+        res4->type = STRING_TYPE;
+        res4->datavalue.string = 'A'; 
+      #endif
+
+      if(res4 == NULL) {
+        yyerror("Cannot determine if key is pressed.\n");
+      }
+
+      result = res4;
       break;
     
     default:

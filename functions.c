@@ -810,7 +810,6 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 * Returns 0 if OK, otherwise PI_BAD_GPIO or PI_BAD_LEVEL.
 */
 int led_on(struct val * value) {
-    printf("Trying to set the led on...\n");
     return gpioWrite(value->datavalue.GPIO_PIN[0], 1);
 }
 
@@ -844,4 +843,79 @@ struct val *is_button_pressed(struct val * value) {
     }
     
     return result;
+}
+
+/*
+ * Reads the GPIO level of the keypad.
+ * gpio: 0-53
+ * Returns the pressed key as string value, else NO_KEY_PRESSED.
+ */
+struct val *get_pressed_key(struct val * value) {
+    struct val *result = malloc(sizeof(struct val));
+    result->type = STRING_TYPE;
+    result->datavalue.string[0] = read_last_pressed_key(value);
+
+    // Debounce for not to read 2 values at the same time
+    gpioDelay(200);
+
+    // Set the second part of the keypad values to LOW
+    for(int i = 4; i < 8; i++) {
+        gpioWrite(value->datavalue.GPIO_PIN[i], 0);
+    }
+
+    return result;  
+}
+
+/*
+ * Utility function to read yhe key from keypad.
+ * Standard keypads are contains characters in a 4x4 matrix form.
+ * Thus, each character in the keypad is mapped to a 2-D array.
+ * Returns the char read when pressed, else '-'
+ */
+char read_last_pressed_key(struct val * value) {
+  char pressedKey = '-';
+  char keys[4][4] = malloc(4*4*sizeof(char));
+  int column = -1;
+  int row = -1;
+  
+  keys[0][0] = '1';
+  keys[0][1] = '2';
+  keys[0][2] = '3';
+  keys[0][3] = 'A';
+  keys[1][0] = '4';
+  keys[1][1] = '5';
+  keys[1][2] = '6';
+  keys[1][3] = 'B';
+  keys[2][0] = '7';
+  keys[2][1] = '8';
+  keys[2][2] = '9';
+  keys[2][3] = 'C';
+  keys[3][0] = '*';
+  keys[3][1] = '0';
+  keys[3][2] = '#';
+  keys[3][3] = 'D';
+
+    for (int i = 4; i < 8; i++) {
+        // Set HIGH the second part of keypad pins
+        column = value->datavalue.GPIO_PIN[i];
+        digitalWrite(column, 1);
+
+        row = -1;
+
+        for (int i = 0; i < 4; i++) {
+            // Check if the first part of keypad pins value is HIGH
+            if (digitalRead(value->datavalue.GPIO_PIN[i]) == 1) {
+                row = i;
+                break;
+            }
+        }
+
+        if (row != -1 && pressedKey != '-') {
+            pressedKey = keys[row][i-4];
+            return pressedKey;
+        }
+    }
+
+   pressedKey = '-';
+   return pressedKey;
 }

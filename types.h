@@ -5,10 +5,11 @@ enum built_in_function_types {
   BUILT_IN_LED_ON = 1,
   BUILT_IN_LED_OFF,
   BUILT_IN_IS_BUTTON_PRESSED,
+  BUILT_IN_GET_PRESSED_KEY,
   BUILT_IN_DELAY
 };
 
-// Primitive types
+// Primitive and composed types
 enum type {
     BIT_TYPE,
     INTEGER_TYPE,

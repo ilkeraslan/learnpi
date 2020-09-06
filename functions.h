@@ -1,6 +1,7 @@
 #include "learnpi.h"
 
-#define PI_BAD_GPIO          -3 // GPIO not 0-53
+#define PI_BAD_GPIO         -3 // GPIO not 0-53
+#define NO_KEY_PRESSED      "NO_KEY_IS_PRESSED"
 
 int yylineno;
 int yyparse();
@@ -45,3 +46,5 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 int led_on(struct val * value);
 int led_off(struct val * value);
 struct val *is_button_pressed(struct val * value);
+struct val *get_pressed_key(struct val * value);
+char read_last_pressed_key(struct val * value);
