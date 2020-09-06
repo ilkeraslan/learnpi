@@ -728,7 +728,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
     }
   }
 
-  int expexted_number_of_argumen = 0;
+  int expected_argument_numbers = 0;
   
   switch(builtin_function->function_type) {
     case BUILT_IN_LED_ON:

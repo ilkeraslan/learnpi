@@ -873,38 +873,21 @@ struct val *get_pressed_key(struct val * value) {
  * Returns the char read when pressed, else '-'
  */
 char read_last_pressed_key(struct val * value) {
-  char pressedKey = '-';
-  char keys[4][4] = malloc(4*4*sizeof(char));
-  int column = -1;
-  int row = -1;
-  
-  keys[0][0] = '1';
-  keys[0][1] = '2';
-  keys[0][2] = '3';
-  keys[0][3] = 'A';
-  keys[1][0] = '4';
-  keys[1][1] = '5';
-  keys[1][2] = '6';
-  keys[1][3] = 'B';
-  keys[2][0] = '7';
-  keys[2][1] = '8';
-  keys[2][2] = '9';
-  keys[2][3] = 'C';
-  keys[3][0] = '*';
-  keys[3][1] = '0';
-  keys[3][2] = '#';
-  keys[3][3] = 'D';
+    char pressedKey = '-';
+    char keys[4][4] = {{'1', '2', '3', 'A'}, {'4', '5', '6', 'B'}, {'7', '8', '9', 'C'}, {'*', '0', '#', 'D'}};
+    int column = -1;
+    int row = -1;
 
     for (int i = 4; i < 8; i++) {
         // Set HIGH the second part of keypad pins
         column = value->datavalue.GPIO_PIN[i];
-        digitalWrite(column, 1);
+        gpioWrite(column, 1);
 
         row = -1;
 
         for (int i = 0; i < 4; i++) {
             // Check if the first part of keypad pins value is HIGH
-            if (digitalRead(value->datavalue.GPIO_PIN[i]) == 1) {
+            if (gpioRead(value->datavalue.GPIO_PIN[i]) == 1) {
                 row = i;
                 break;
             }
