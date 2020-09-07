@@ -24,11 +24,16 @@ int yylex();
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF THEN ELSE ENDIF START UNTIL EOL WHILE DO
+%token IF THEN ELSE EOL WHILE DO
 
 %token <integer> OR_OPERATION AND_OPERATION NOT_OPERATION
 
 %nonassoc <function_id> CMP
+%right '='
+%left '+' '-'
+%left '*' '/'
+%left AND_OPERATION OR_OPERATION NOT_OPERATION
+%nonassoc '|'
 %nonassoc UMINUS
 
 %type <ast> statement exp list explist
@@ -50,7 +55,7 @@ learnpi: /* nothing */
    | learnpi error { yyerrok; yyparse(); }
 ;
 
-statement: IF exp EOL list EOL               { $$ = newflow(IF_STATEMENT, $2, $4, NULL); }
+statement: IF '(' exp ')' '{' EOL list '}' EOL { $$ = newflow(IF_STATEMENT, $3, $7, NULL); }
    | IF exp EOL list ELSE list EOL           { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
    | WHILE exp list EOL                      { $$ = newflow(LOOP_STATEMENT, $2, $3, NULL); }
    | WHILE list DO exp EOL                   { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
@@ -84,7 +89,7 @@ list: /* nothing */ { $$ = NULL; }
                   if ($2 == NULL) {
                         $$ = $1;
                   } else {
-                        $$ = $1;
+                        $$ = new_ast_with_children(STATEMENT_LIST, $1, $2);
                   }
                }
 ;
