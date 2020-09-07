@@ -248,6 +248,7 @@ struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *
   }
 
   flow->nodetype = nodetype;
+  printf("Flow nodetype is: %d\n", nodetype);
   flow->condition = cond;
   flow->then_list = tl;
   flow->else_list = tr;
@@ -378,7 +379,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       v = calculate_not_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '4': 
-      v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
+      v = calculate_equals(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r));
       break;
     case '5': 
       v = calculate_greater_equal_than(eval(abstract_syntax_tree->l), eval(abstract_syntax_tree->r)); 
@@ -388,10 +389,12 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
 
     case IF_STATEMENT:
-      helper_value = (eval(((struct flow *)abstract_syntax_tree)->condition));
+      helper_value = eval(
+        ((struct flow *)abstract_syntax_tree)->condition
+      );
 
-      // Check if value type is 1
-      if(get_value_type(helper_value) != 1) {
+      // Check if value type is comparison
+      if(get_value_type(helper_value) != 0) {
         yyerror("invalid condition");
         free(abstract_syntax_tree);
         return NULL;
