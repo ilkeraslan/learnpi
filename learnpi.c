@@ -328,7 +328,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
 
     case ASSIGNMENT:
-      v = eval(((struct assign_symbol *)abstract_syntax_tree)->v);
       s = lookup(((struct assign_symbol *)abstract_syntax_tree)->s);
 
       //Check if symbol exists
@@ -339,8 +338,16 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         return NULL;
       }
 
+      // Evaluate the assignment
+      v = eval(((struct assign_symbol *)abstract_syntax_tree)->v);
+
       // Assign the symbol value to symbol
       s->value = v;
+
+      if(s->value->type == GENERIC_COMPLEX_TYPE) {
+        printf("Complex type detected after lookup!\n");
+      }
+
       break;
 
     case '+':
@@ -593,6 +600,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       s = insert_symbol(assign_and_declare_complex_symbol->s);
       s->value = v;
       
+      printf("Evaluated value is: %d\n", s->value->type);
       break;
 
   default:
@@ -802,7 +810,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         break;
       }
 
-      expected_argument_numbers = 0;
+      expected_argument_numbers = 1;
 
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");

@@ -82,18 +82,12 @@ struct symbol_reference {
   char *s;
 };
 
-// Structure for symbol asignment
+// Structure for symbol assignment
 struct symasgn {
   int nodetype;
   char *s;
   struct ast *v;
 };
-
-// Symbol table stack structure
-// struct symtable_stack{
-// 	struct symbol * symtab;
-// 	struct symtable_stack * next;
-// };
 
 // Structure for variable declaration
 struct declare_symbol {

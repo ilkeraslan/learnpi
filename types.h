@@ -19,7 +19,8 @@ enum type {
     BUTTON,
     KEYPAD,
     BUZZER,
-    SERVO_MOTOR
+    SERVO_MOTOR,
+    GENERIC_COMPLEX_TYPE
 };
 
 #endif
