@@ -836,7 +836,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         break;
       }
 
-      expected_argument_numbers = 0;
+      expected_argument_numbers = 1;
 
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
