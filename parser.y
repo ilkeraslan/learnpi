@@ -24,7 +24,7 @@ int yylex();
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF THEN ELSE EOL WHILE DO
+%token IF ELSE EOL WHILE DO
 
 %token <integer> OR_OPERATION AND_OPERATION NOT_OPERATION
 
@@ -55,8 +55,8 @@ learnpi: /* nothing */
    | learnpi error { yyerrok; yyparse(); }
 ;
 
-statement: IF '(' exp ')' '{' EOL list '}' EOL { $$ = newflow(IF_STATEMENT, $3, $7, NULL); }
-   | IF exp EOL list ELSE list EOL           { $$ = newflow(IF_STATEMENT, $2, $4, $6); }
+statement: IF '(' exp ')' '{' EOL list '}' EOL                 { $$ = newflow(IF_STATEMENT, $3, $7, NULL); }
+   | IF '(' exp ')' '{' EOL list '}' ELSE '{' EOL list '}' EOL { $$ = newflow(IF_STATEMENT, $3, $7, $12); }
    | WHILE exp list EOL                      { $$ = newflow(LOOP_STATEMENT, $2, $3, NULL); }
    | WHILE list DO exp EOL                   { $$ = newflow(LOOP_STATEMENT, $2, $4, NULL); }
    | COMPLEX_TYPE NAME '=' explist EOL       { $$ = new_complex_assignment($2, $1, $4);}

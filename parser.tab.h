@@ -57,16 +57,15 @@ extern int yydebug;
     VALUE = 263,
     BUILT_IN_FUNCTION = 264,
     IF = 265,
-    THEN = 266,
-    ELSE = 267,
-    EOL = 268,
-    WHILE = 269,
-    DO = 270,
-    OR_OPERATION = 271,
-    AND_OPERATION = 272,
-    NOT_OPERATION = 273,
-    CMP = 274,
-    UMINUS = 275
+    ELSE = 266,
+    EOL = 267,
+    WHILE = 268,
+    DO = 269,
+    OR_OPERATION = 270,
+    AND_OPERATION = 271,
+    NOT_OPERATION = 272,
+    CMP = 273,
+    UMINUS = 274
   };
 #endif
 
@@ -84,7 +83,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 88 "parser.tab.h"
+#line 87 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

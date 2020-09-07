@@ -424,8 +424,8 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       if(((struct flow *)abstract_syntax_tree)->then_list) {
         helper_value = (eval(((struct flow *)abstract_syntax_tree)->condition));
 
-        // Check if value type is 1
-        if(get_value_type(helper_value) != 1) {
+        // Check if value type is comparison
+        if(get_value_type(helper_value) != 0) {
           yyerror("invalid condition");
           free(abstract_syntax_tree);
           return NULL;

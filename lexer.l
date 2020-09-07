@@ -39,7 +39,6 @@
 
  /* Keywords */
 "if"    { return IF;}
-"then"  { return THEN; }
 "else"  { return ELSE; }
 "while" { return WHILE; }
 "do"    { return DO; }
@@ -70,7 +69,7 @@
 
 
 \\\n { printf("c> "); } /* ignore line continuation */
-\n   { return EOL; }
+\n+   { return EOL; }
 
 [ \t]   /* ignore white space */
 .   { yyerror("Mystery character %c\n", *yytext); }
