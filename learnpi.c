@@ -328,6 +328,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
 
     case ASSIGNMENT:
+      printf("Before the assignment node type is: %d\n", ((struct assign_symbol *)abstract_syntax_tree)->v->nodetype);
       s = lookup(((struct assign_symbol *)abstract_syntax_tree)->s);
 
       //Check if symbol exists

@@ -1,5 +1,6 @@
 x = 1
 while(x == 1) { 
+    BUTTON button = 3
+    is_button_pressed(button)
     x = 2
-    BUTTON button = 2
 }
