@@ -266,6 +266,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
   struct assign_and_declare_symbol *assign_and_declare_symbol = NULL;
   struct assign_and_declare_complex_symbol *assign_and_declare_complex_symbol = NULL;
   struct ast *args = NULL;
+  struct val *foo = NULL;
 
   // Return null if no AST is found
   if(!abstract_syntax_tree) {
@@ -291,6 +292,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
 
       v = s->value;
+      printf("New reference evaluation type is: %d\n", s->value->type);
       printf("Evaluated NEW REFERENCE...\n");
       break;
 
@@ -448,8 +450,15 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
   
     case STATEMENT_LIST:
-      eval(abstract_syntax_tree->l);
+      foo = eval(abstract_syntax_tree->l);
+      //eval(abstract_syntax_tree->l);
+      printf("Statement list nodetype is: %d.\n", abstract_syntax_tree->l->nodetype);
+      printf("Value type before second evaluation is: %d\n", foo->type);
       v = eval(abstract_syntax_tree->r);
+      if(foo->type == SERVO_MOTOR) {
+        v->type = SERVO_MOTOR;
+      }
+      printf("Evaluating statement list.\n");
       break;
 
     case BUILTIN_TYPE:
@@ -550,44 +559,44 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
 
       // Declare an helper structure to memorize evaluated part of the assign_and_declare_complex_symbol structure
-      struct val ** newval = (struct val **)malloc(argument_number * sizeof(struct val)); 
+      struct val ** argument_storage = (struct val **)malloc(argument_number * sizeof(struct val)); 
  
       for(int i=0; args!=NULL; i++) {
         if(args->nodetype == STATEMENT_LIST) {
-          newval[i] = eval(args->l);
+          argument_storage[i] = eval(args->l);
           args = args->r;
         } else {
-          newval[i] = eval(args);
+          argument_storage[i] = eval(args);
           args = NULL;
         }
         
-        printf("Type: %d\n", newval[i]->type);
+        printf("Type: %d\n", argument_storage[i]->type);
 
         // Switch the result
         switch(assign_and_declare_complex_symbol->type) {
           case LED:
               printf("LED TYPE detected.\n");
-              v = create_LED(newval);
+              v = create_LED(argument_storage);
               break;
 
           case BUTTON:
               printf("BUTTON TYPE detected.\n");
-              v = create_BUTTON(newval);
+              v = create_BUTTON(argument_storage);
               break;
 
           case KEYPAD:
               printf("KEYPAD TYPE detected.\n");
-              v = create_KEYPAD(newval);
+              v = create_KEYPAD(argument_storage);
               break;
 
           case BUZZER:
               printf("BUZZER TYPE detected.\n");
-              v = create_BUZZER(newval);
+              v = create_BUZZER(argument_storage);
               break;
 
           case SERVO_MOTOR:
               printf("SERVO_MOTOR TYPE detected.\n");
-              v = create_SERVO_MOTOR(newval);
+              v = create_SERVO_MOTOR(argument_storage);
               break;              
 
           default:
@@ -709,6 +718,8 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
   if(value == NULL) {
     printf("Value is null after the assignment!\n");
+  } else {
+    printf("Value is %d after the assignment!\n", value->type);
   }
 
   struct ast *args = builtin_function->argument_list;
@@ -722,7 +733,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   printf("Number of agruments: %d\n", number_of_arguments);
 
   // Define a val structure to store the new value
-  struct val ** newval = (struct val **)malloc(number_of_arguments * sizeof(struct val));
+  struct val ** argument_storage = (struct val **)malloc(number_of_arguments * sizeof(struct val));
 
   // Memorize the argument list
   args = builtin_function->argument_list;
@@ -731,11 +742,11 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   for(number_of_arguments = 0; args; number_of_arguments++) {
     if(args->nodetype == STATEMENT_LIST) {
       /* List node */
-      newval[number_of_arguments] = eval(args->l);
+      argument_storage[number_of_arguments] = eval(args->l);
       args = args->r;
     } else {			
       /* End of the list */
-      newval[number_of_arguments] = eval(args);
+      argument_storage[number_of_arguments] = eval(args);
       args = NULL;
     }
   }
@@ -747,7 +758,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(value->type != LED) {
         yyerror("Operation not permitted.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
       
@@ -756,7 +767,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -777,7 +788,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(value->type != LED) {
         yyerror("Operation not permitted.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -786,7 +797,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -807,7 +818,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         printf("Type is: %d\n", value->type);
         yyerror("Operation not permitted.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -816,7 +827,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -844,7 +855,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         printf("Type is: %d\n", value->type);
         yyerror("Operation not permitted.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -853,7 +864,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -879,7 +890,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         printf("Type is: %d\n", value->type);
         yyerror("Operation not permitted.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -888,7 +899,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -913,7 +924,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         printf("Type is: %d\n", value->type);
         yyerror("Operation not permitted.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -922,7 +933,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       if(number_of_arguments > expected_argument_numbers) {
         yyerror("Too many arguments.");
         free(builtin_function);
-        free(newval);
+        free(argument_storage);
         break;
       }
 
@@ -941,11 +952,79 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
       result = res6;
       break;
+
+    case BUILT_IN_MOVE_SERVO_TO_ANGLE:
+      if(value->type != SERVO_MOTOR) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      expected_argument_numbers = 2;
+
+      if(number_of_arguments != expected_argument_numbers) {
+        yyerror("Too many or too few arguments.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      struct val *res7 = malloc(sizeof(struct val));
+
+      #ifdef RPI_SIMULATION
+        res7 = move_servo_to_angle(value, argument_storage[0]);
+      #else
+        printf("Simulated move_servo_to_angle.\n");
+        res7 = 0; 
+      #endif
+
+      if(res7 != 0) {
+        yyerror("PI_BAD_DUTYCYCLE.");
+      }
+
+      result = res7;
+      break;
+
+    case BUILT_IN_MOVE_SERVO_INFINITELY:
+      if(value->type != SERVO_MOTOR) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      expected_argument_numbers = 1;
+
+      if(number_of_arguments != expected_argument_numbers) {
+        yyerror("Too many or too few arguments.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      struct val *res8 = malloc(sizeof(struct val));
+
+      #ifdef RPI_SIMULATION
+        res8 = move_servo_infinitely(value);
+      #else
+        printf("Simulated move_servo_infinitely.\n");
+        res8 = 0; 
+      #endif
+
+      if(res8 != 0) {
+        yyerror("PI_BAD_DUTYCYCLE.");
+      }
+
+      result = res8;
+      break;
     
     default:
       yyerror("Function does not exist: %d", builtin_function->function_type);
       free(builtin_function);
-      free(newval);
+      free(argument_storage);
       break;
   }
 

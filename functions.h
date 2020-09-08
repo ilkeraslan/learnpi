@@ -50,3 +50,5 @@ struct val *get_pressed_key(struct val * value);
 char read_last_pressed_key(struct val * value);
 int buzz_start(struct val * value);
 int buzz_stop(struct val * value);
+int move_servo_to_angle(struct val * value, int angle);
+int move_servo_infinitely(struct val * value);

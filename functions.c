@@ -135,7 +135,7 @@ struct val *create_BUZZER(struct val ** pin) {
 
 struct val *create_SERVO_MOTOR(struct val ** pin) {
     struct val *result;
-    result = create_complex_value(pin, 1, BUZZER);
+    result = create_complex_value(pin, 1, SERVO_MOTOR);
     
     int currentMode = -1;
     int pwmStatus = -1;
@@ -150,7 +150,7 @@ struct val *create_SERVO_MOTOR(struct val ** pin) {
         frequency = gpioSetPWMfrequency(24, 500);
         pwmStatus = gpioPWM(result->datavalue.GPIO_PIN[0], 0); // 0 degrees as default
     #else
-        printf("Simulated gpioSetMode, gpioSetPWMrange, gpioSetPWMfrequency and gpioPWM functions after KEYPAD creation.\n");
+        printf("Simulated gpioSetMode, gpioSetPWMrange, gpioSetPWMfrequency and gpioPWM functions after SERVO_MOTOR creation.\n");
         currentMode = 2;
         
         range = 0;
@@ -909,4 +909,48 @@ int buzz_start(struct val * value) {
 
 int buzz_stop(struct val * value) {
     return gpioWrite(value->datavalue.GPIO_PIN[0], 0);
+}
+
+/*
+ * Returns 0 if OK, otherwise PI_BAD_USER_GPIO or PI_BAD_DUTYCYCLE.
+ * The angle passed in as a parameter should be between 0 and 255.
+ */
+int move_servo_to_angle(struct val * value, int angle) {
+    int pwmStatus = -1;
+
+    // Sanity check for the angle if it's on limits
+    if(angle < 0 || angle > 255) {
+        printf("Angle should be between 0 and 255.\n");
+        return NULL;
+    }
+
+    #ifdef RPI_SIMULATION
+        pwmStatus = gpioPWM(result->datavalue.GPIO_PIN[0], range);
+    #else
+        printf("Simulated gpioPWM function in move_servo_to_angle function.\n");
+        pwmStatus = 0;
+    #endif
+
+    return pwmStatus;
+}
+
+/*
+ * Returns 0 if OK, otherwise PI_BAD_USER_GPIO or PI_BAD_DUTYCYCLE.
+ * Rotates 10 times to simulate the infinite movement.
+ */
+int move_servo_infinitely(struct val * value) {
+    int pwmStatus = -1;
+
+    #ifdef RPI_SIMULATION
+        int i = 0;
+        while(i < 10) {
+            pwmStatus = gpioPWM(result->datavalue.GPIO_PIN[0], 255);
+            i += 1;
+        }
+    #else
+        printf("Simulated gpioPWM function in move_servo_to_angle function.\n");
+        pwmStatus = 0;
+    #endif
+
+    return pwmStatus;
 }
