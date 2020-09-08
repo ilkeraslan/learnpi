@@ -902,3 +902,11 @@ char read_last_pressed_key(struct val * value) {
    pressedKey = '-';
    return pressedKey;
 }
+
+int buzz_start(struct val * value) {
+    return gpioWrite(value->datavalue.GPIO_PIN[0], 1);
+}
+
+int buzz_stop(struct val * value) {
+    return gpioWrite(value->datavalue.GPIO_PIN[0], 0);
+}

@@ -59,6 +59,8 @@
 "led_off"           { yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
 "is_button_pressed" { yylval.function_id = BUILT_IN_IS_BUTTON_PRESSED; return BUILT_IN_FUNCTION; }
 "get_pressed_key"   { yylval.function_id = BUILT_IN_GET_PRESSED_KEY; return BUILT_IN_FUNCTION; }
+"buzz_start"        { yylval.function_id = BUILT_IN_BUZZ_START; return BUILT_IN_FUNCTION; }
+"buzz_stop"         { yylval.function_id = BUILT_IN_BUZZ_STOP; return BUILT_IN_FUNCTION; }
 
  /* Names */
 [a-zA-Z][a-zA-Z0-9]*   { yylval.str = strdup(yytext); return NAME; }

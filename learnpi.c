@@ -873,6 +873,74 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
       result = res4;
       break;
+
+    case BUILT_IN_BUZZ_START:
+      if(value->type != BUZZER) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      expected_argument_numbers = 1;
+
+      if(number_of_arguments > expected_argument_numbers) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      struct val *res5 = malloc(sizeof(struct val));
+
+      #ifdef RPI_SIMULATION
+        res5 = buzz_start(value);
+      #else
+        printf("Simulated buzz_start.\n");
+        res5 = 0; 
+      #endif
+
+      if(res5 != 0) {
+        yyerror("Bad GPIO level.");
+      }
+
+      result = res5;
+      break;
+
+    case BUILT_IN_BUZZ_STOP:
+      if(value->type != BUZZER) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      expected_argument_numbers = 1;
+
+      if(number_of_arguments > expected_argument_numbers) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(newval);
+        break;
+      }
+
+      struct val *res6 = malloc(sizeof(struct val));
+
+      #ifdef RPI_SIMULATION
+        res6 = buzz_stop(value);
+      #else
+        printf("Simulated buzz_stop.\n");
+        res6 = 0; 
+      #endif
+
+      if(res6 != 0) {
+        yyerror("Bad GPIO level.");
+      }
+
+      result = res6;
+      break;
     
     default:
       yyerror("Function does not exist: %d", builtin_function->function_type);

@@ -48,3 +48,5 @@ int led_off(struct val * value);
 struct val *is_button_pressed(struct val * value);
 struct val *get_pressed_key(struct val * value);
 char read_last_pressed_key(struct val * value);
+int buzz_start(struct val * value);
+int buzz_stop(struct val * value);

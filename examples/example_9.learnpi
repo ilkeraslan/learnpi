@@ -1,0 +1,3 @@
+BUZZER buzzer = 8
+buzz_start(buzzer)
+buzz_stop(buzzer)
