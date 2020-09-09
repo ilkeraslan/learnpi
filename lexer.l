@@ -65,7 +65,7 @@
 "move_servo_infinitely" { yylval.function_id = BUILT_IN_MOVE_SERVO_INFINITELY; return BUILT_IN_FUNCTION; }
 
  /* Names */
-[a-zA-Z][a-zA-Z0-9]*   { yylval.str = strdup(yytext); return NAME; }
+[a-zA-Z][a-zA-Z0-9_]*   { yylval.str = strdup(yytext); return NAME; }
 
 [0-9]+         { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 [0-9]+\.[0-9]+ { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }
