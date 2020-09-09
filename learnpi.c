@@ -1060,6 +1060,40 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
       result = res8;
       break;
+
+    case BUILT_IN_SERVO_STOP:
+      if(value->type != SERVO_MOTOR) {
+        printf("Type is: %d\n", value->type);
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      expected_argument_numbers = 1;
+
+      if(number_of_arguments > expected_argument_numbers) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      struct val *res9 = malloc(sizeof(struct val));
+
+      #ifdef RPI_SIMULATION
+        res9 = servo_stop(value);
+      #else
+        printf("Simulated servo_stop.\n");
+        res9 = 0; 
+      #endif
+
+      if(res9 != 0) {
+        yyerror("Bad GPIO level.");
+      }
+
+      result = res9;
+      break;
     
     default:
       yyerror("Function does not exist: %d", builtin_function->function_type);

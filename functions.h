@@ -52,3 +52,4 @@ int buzz_start(struct val * value);
 int buzz_stop(struct val * value);
 int move_servo_to_angle(struct val * value, int angle);
 int move_servo_infinitely(struct val * value);
+int servo_stop(struct val * value);

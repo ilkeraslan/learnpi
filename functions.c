@@ -954,3 +954,10 @@ int move_servo_infinitely(struct val * value) {
 
     return pwmStatus;
 }
+
+/*
+ * Stops the servo motor.
+ */
+int servo_stop(struct val * value) {        
+    return gpioPWM(value->datavalue.GPIO_PIN[0], 0);
+}

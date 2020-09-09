@@ -1,2 +1,3 @@
 SERVO_MOTOR servo = 1
 move_servo_to_angle(servo, 50)
+servo_stop(servo)
