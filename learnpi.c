@@ -455,10 +455,50 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       printf("Statement list nodetype is: %d.\n", abstract_syntax_tree->l->nodetype);
       printf("Value type before second evaluation is: %d\n", foo->type);
       v = eval(abstract_syntax_tree->r);
-      if(foo->type == SERVO_MOTOR) {
-        v->type = SERVO_MOTOR;
+
+      // Assign type to value after evaluation in order not to lose the type information
+      switch (foo->type) {
+        case BIT_TYPE:
+          v->type = BIT_TYPE;
+          break;
+        
+        case INTEGER_TYPE:
+          v->type = INTEGER_TYPE;
+          break;
+
+        case DECIMAL_TYPE:
+          v->type = DECIMAL_TYPE;
+          break;
+
+        case STRING_TYPE:
+          v->type = STRING_TYPE;
+          break;
+
+        case LED:
+          v->type = LED;
+          break;
+
+        case BUTTON:
+          v->type = BUTTON;
+          break;
+
+        case KEYPAD:
+          v->type = KEYPAD;
+          break;
+
+        case BUZZER:
+          v->type = BUZZER;
+          break;
+
+        case SERVO_MOTOR:
+          v->type = SERVO_MOTOR;
+          break;
+      
+        default:
+        v->type = INTEGER_TYPE;
+          break;
       }
-      printf("Evaluating statement list.\n");
+      
       break;
 
     case BUILTIN_TYPE:

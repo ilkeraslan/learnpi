@@ -24,7 +24,7 @@ enum type {
     KEYPAD,
     BUZZER,
     SERVO_MOTOR,
-    GENERIC_COMPLEX_TYPE
+    GENERIC_COMPLEX_TYPE //TODO: check if we can remove
 };
 
 #endif
