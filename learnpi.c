@@ -248,7 +248,23 @@ struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *
   }
 
   flow->nodetype = nodetype;
-  printf("Flow nodetype is: %d\n", nodetype);
+  flow->condition = cond;
+  flow->then_list = tl;
+  flow->else_list = tr;
+
+  return (struct ast *)flow;
+}
+
+struct ast *new_for_flow(int nodetype, struct ast *initialization, struct ast *cond, struct ast *tl, struct ast *tr) {
+  struct for_flow *flow = malloc(sizeof(struct for_flow));
+
+  if(!flow) {
+    yyerror("out of space");
+    exit(0);
+  }
+
+  flow->nodetype = nodetype;
+  flow->initialization = initialization;
   flow->condition = cond;
   flow->then_list = tl;
   flow->else_list = tr;
@@ -267,6 +283,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
   struct assign_and_declare_complex_symbol *assign_and_declare_complex_symbol = NULL;
   struct ast *args = NULL;
   struct val *evaluation_helper = NULL;
+  struct val *initialization_helper = NULL;
 
   // Return null if no AST is found
   if(!abstract_syntax_tree) {
@@ -346,11 +363,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
 
       // Assign the symbol value to symbol
       s->value = v;
-
-      if(s->value->type == GENERIC_COMPLEX_TYPE) {
-        printf("Complex type detected after lookup!\n");
-      }
-
       break;
 
     case '+':
@@ -421,6 +433,40 @@ struct val * eval(struct ast *abstract_syntax_tree) {
         // Else, create an AST with else list
         if(((struct flow *)abstract_syntax_tree)->else_list) {
           v = eval(((struct flow *)abstract_syntax_tree)->else_list);
+        } else {
+          v = NULL;
+        }  
+      }
+      break;
+
+    case FOR_STATEMENT:
+      initialization_helper = eval(((struct for_flow *)abstract_syntax_tree)->initialization);
+      if(initialization_helper != NULL) {
+        printf("Initialization evaluation is not null.\n");
+      }
+
+      helper_value = eval(
+        ((struct for_flow *)abstract_syntax_tree)->condition
+      );
+
+      // Check if value type is comparison
+      if(get_value_type(helper_value) != 0) {
+        yyerror("invalid condition");
+        free(abstract_syntax_tree);
+        return NULL;
+      }
+
+      // Check if condition is met
+      if(helper_value->datavalue.bit != 0) {
+        if(((struct for_flow *)abstract_syntax_tree)->then_list) {
+          v = eval(((struct for_flow *)abstract_syntax_tree)->then_list);
+        } else {
+          v = NULL;
+        }   
+      } else {
+        // Else, create an AST with else list
+        if(((struct for_flow *)abstract_syntax_tree)->else_list) {
+          v = eval(((struct for_flow *)abstract_syntax_tree)->else_list);
         } else {
           v = NULL;
         }  

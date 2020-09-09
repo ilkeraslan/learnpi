@@ -24,7 +24,7 @@ int yylex();
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF ELSE EOL WHILE
+%token IF ELSE EOL WHILE FOR
 
 %token <integer> OR_OPERATION AND_OPERATION NOT_OPERATION
 
@@ -78,9 +78,13 @@ statement: IF '(' exp ')' '{' list '}' EOL                                    { 
    | WHILE '(' EOL exp ')' '{' list '}' EOL                                   { $$ = newflow(LOOP_STATEMENT, $4, $7, NULL); }
    | WHILE '(' exp ')' '{' EOL list '}' EOL                                   { $$ = newflow(LOOP_STATEMENT, $3, $7, NULL); }
    | WHILE '(' EOL exp ')' '{' EOL list '}' EOL                               { $$ = newflow(LOOP_STATEMENT, $4, $8, NULL); }
+   | FOR '(' exp ';' exp ';' exp ')' '{' EOL list '}' EOL                     { $$ = new_for_flow(FOR_STATEMENT, $3, $5, $7, $11); }
+   | TYPE NAME '=' explist ';'                                                { $$ = new_assignment($2, $4 ); }
+   | TYPE NAME '=' explist EOL                                                { $$ = new_assignment($2, $4 ); }
    | COMPLEX_TYPE NAME '=' explist EOL                                        { $$ = new_complex_assignment($2, $1, $4);}
    | COMPLEX_TYPE NAME EOL                                                    { $$ = new_declaration($2, $1); }
    | exp EOL
+   | exp
 ;
 
 exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); }

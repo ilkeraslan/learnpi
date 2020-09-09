@@ -19,6 +19,7 @@ enum expression_type {
   LOGICAL_OR,
   IF_STATEMENT,
   LOOP_STATEMENT,
+  FOR_STATEMENT,
   DECLARATION,
   DECLARATION_WITH_ASSIGNMENT,
   BUILTIN_TYPE,
@@ -71,6 +72,15 @@ struct assign_symbol {
 // Structure for flow control
 struct flow {
   int nodetype;
+  struct ast *condition;
+  struct ast *then_list;
+  struct ast *else_list;
+};
+
+// Structure for for_flow control
+struct for_flow {
+  int nodetype;
+  struct ast *initialization;
   struct ast *condition;
   struct ast *then_list;
   struct ast *else_list;
@@ -144,6 +154,12 @@ struct ast *new_declaration(char *s, int type);
 
 // Function for new variable asignment
 struct ast * new_assignment(char *s, struct ast *v);
+
+// Function to create a new control flow
+struct ast *newflow(int nodetype, struct ast *cond, struct ast *tl, struct ast *tr);
+
+// Function to create a new control for_flow
+struct ast *new_for_flow(int nodetype, struct ast *initialization, struct ast *cond, struct ast *tl, struct ast *tr);
 
 // Function for new complex variable assignment
 struct ast *new_complex_assignment(char *s, int type, struct ast *l);

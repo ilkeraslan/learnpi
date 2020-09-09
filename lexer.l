@@ -41,6 +41,7 @@
 "if"    { return IF;}
 "else"  { return ELSE; }
 "while" { return WHILE; }
+"for"   { return FOR; }
 
  /* Primitive types */
 "bit"               { yylval.type = BIT_TYPE; return TYPE; }
