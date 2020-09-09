@@ -266,7 +266,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
   struct assign_and_declare_symbol *assign_and_declare_symbol = NULL;
   struct assign_and_declare_complex_symbol *assign_and_declare_complex_symbol = NULL;
   struct ast *args = NULL;
-  struct val *foo = NULL;
+  struct val *evaluation_helper = NULL;
 
   // Return null if no AST is found
   if(!abstract_syntax_tree) {
@@ -450,14 +450,14 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       break;
   
     case STATEMENT_LIST:
-      foo = eval(abstract_syntax_tree->l);
+      evaluation_helper = eval(abstract_syntax_tree->l);
       //eval(abstract_syntax_tree->l);
       printf("Statement list nodetype is: %d.\n", abstract_syntax_tree->l->nodetype);
-      printf("Value type before second evaluation is: %d\n", foo->type);
+      printf("Value type before second evaluation is: %d\n", evaluation_helper->type);
       v = eval(abstract_syntax_tree->r);
 
       // Assign type to value after evaluation in order not to lose the type information
-      switch (foo->type) {
+      switch (evaluation_helper->type) {
         case BIT_TYPE:
           v->type = BIT_TYPE;
           break;
@@ -1088,7 +1088,7 @@ struct ast *new_user_function(char *s, struct ast *argument_list) {
 }
 
 // Function to call custom functions
-void calluser(struct user_function_call *foo) {
+void calluser(struct user_function_call *evaluation_helper) {
   // TODO: Implement user function call
 }
 
@@ -1147,13 +1147,18 @@ int main(int argc, char **argv) {
   printf("Learnpi...\n");
 	newfile("stdin");
 
-	for(int i = 1; i < argc; i++) {
-		if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[1])) {
-			yyparse();
-		} else {
-			fprintf(stderr, "Not a valid file.\n");
-		}
-	}
+  if(argc == 1) {
+      printf("%s", "Learnpi~€: ");
+      yyparse();
+  } else {
+    for(int i = 1; i < argc; i++) {
+      if(checkSuffix(argv[1], ".learnpi") == 1 && newfile(argv[1])) {
+        yyparse();
+      } else {
+        fprintf(stderr, "Not a valid file.\n");
+      }
+    }
+  }
 
   printf("Thanks for using learnpi.\n");
   return 0;
