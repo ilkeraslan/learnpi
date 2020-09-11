@@ -1009,3 +1009,10 @@ int move_servo_infinitely(struct val * value) {
 int servo_stop(struct val * value) {        
     return gpioPWM(value->datavalue.GPIO_PIN[0], 0);
 }
+
+/*
+ * Delays 1000 microseconds.
+ */
+void delay_pi() {
+    gpioDelay(1000);
+}

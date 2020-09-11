@@ -4,3 +4,4 @@ LED led = 5
 led_on(led)
 print(led)
 print(button)
+delay()

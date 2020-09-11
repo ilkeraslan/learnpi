@@ -1141,6 +1141,16 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
       result = res9;
       break;
+
+    case BUILT_IN_DELAY:
+      #ifdef RPI_SIMULATION
+        delay_pi();
+      #else
+        printf("Simulated delay.\n");
+      #endif
+
+      result = NULL;
+      break;
     
     default:
       yyerror("Function does not exist: %d", builtin_function->function_type);

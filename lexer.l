@@ -66,6 +66,7 @@
 "move_servo_to_angle"   { yylval.function_id = BUILT_IN_MOVE_SERVO_TO_ANGLE; return BUILT_IN_FUNCTION; }
 "move_servo_infinitely" { yylval.function_id = BUILT_IN_MOVE_SERVO_INFINITELY; return BUILT_IN_FUNCTION; }
 "servo_stop"            { yylval.function_id = BUILT_IN_SERVO_STOP; return BUILT_IN_FUNCTION; }
+"delay"                 { yylval.function_id = BUILT_IN_DELAY; return BUILT_IN_FUNCTION; }
 
  /* Names */
 [a-zA-Z][a-zA-Z0-9_]*   { yylval.str = strdup(yytext); return NAME; }

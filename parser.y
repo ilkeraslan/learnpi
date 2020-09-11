@@ -103,6 +103,7 @@ exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); 
    | NAME BUILT_IN_FUNCTION '(' ')'          { $$ = new_builtin_function($2, $1, NULL); } /* Node for builtin function without parameters*/
    | NAME BUILT_IN_FUNCTION '(' explist ')'  { $$ = new_builtin_function($2, $1, $4); } /* Node for builtin function with parameters */
    | BUILT_IN_FUNCTION '(' explist ')'       { $$ = new_builtin_function($1, NULL, $3); } /* Node for builtin function without name */
+   | BUILT_IN_FUNCTION '(' ')'               { $$ = new_builtin_function($1, NULL, NULL); } /* Node for builtin function without name and parameters */
    | NAME '(' ')'                            { $$ = new_user_function($1, NULL); } /* Node for user function call without parameters */
    | NAME '(' explist ')'                    { $$ = new_user_function($1, $3); } /* Node for user function call with parameters */
 ;
