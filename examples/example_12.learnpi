@@ -1,0 +1,4 @@
+LED led = 2
+BUTTON button = 3
+LED led = 5
+led_on(led)

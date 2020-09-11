@@ -44,7 +44,6 @@ struct symbol *lookup(char* sym) {
     if(!sp->name) {		/* new entry */
         sp->name = strdup(sym);
         sp->value = NULL;
-        printf("Assigned NULL to value!\n");
         sp->func = NULL;
         sp->syms = NULL;
         return sp;
@@ -54,37 +53,6 @@ struct symbol *lookup(char* sym) {
   }
 
   yyerror("LOOKUP: symbol table overflow\n");
-  abort(); /* tried them all, table is full */
-}
-
-struct symbol *insert_symbol(char* sym) {
-  struct symbol *sp;
-  int scount = NHASH;
-
-  sp = &symtab[symhash(sym) % NHASH];
-  while (--scount >= 0) {
-    if (sp->name && !strcmp(sp->name, sym)) {
-      yyerror("symbol %s already defined in this scope", sym);
-
-			return NULL;
-    }
-
-    // New entry
-    if (!sp->name) {
-      sp->name = strdup(sym);
-      sp->value = NULL;
-      sp->func = NULL;
-      sp->syms = NULL;
-
-      return sp;
-    }
-
-    if (++sp >= symtab + NHASH) {
-      sp = symtab;
-    }
-  }
-
-  yyerror("symbol table overflow\n");
   abort(); /* tried them all, table is full */
 }
 
@@ -216,7 +184,7 @@ struct ast *new_comparison(int type, struct ast *l, struct ast *r) {
 
 // Function to define a custom function
 void define_function(char *function_name, struct symbol_list *symbol_list, struct ast *function) {
-  struct symbol * custom_function = insert_symbol(function_name);
+  struct symbol * custom_function = lookup(function_name);
 
   // Assign symbol list and function
   custom_function->syms = symbol_list;
@@ -557,7 +525,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
 
     case DECLARATION:
         declare_symbol = (struct declare_symbol *)abstract_syntax_tree;
-        s = insert_symbol(declare_symbol->s);
+        s = lookup(declare_symbol->s);
         printf("Inserted symbol.");
 
         // Control if variable is inserted as symbol
@@ -619,7 +587,7 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
 
       // Insert the new declaration and do sanity check
-      struct symbol * s = insert_symbol(assign_and_declare_symbol->s);
+      struct symbol *s = lookup(assign_and_declare_symbol->s);
       if(!s) {
         free(assign_and_declare_symbol);
         free(v);
@@ -655,8 +623,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
           argument_storage[i] = eval(args);
           args = NULL;
         }
-        
-        printf("Type: %d\n", argument_storage[i]->type);
 
         // Switch the result
         switch(assign_and_declare_complex_symbol->type) {
@@ -693,8 +659,9 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       }
 
       // Insert the symbol memorizing the value
-      s = insert_symbol(assign_and_declare_complex_symbol->s);
+      s = lookup(assign_and_declare_complex_symbol->s);
       s->value = v;
+      s->name = assign_and_declare_complex_symbol->s;
       
       printf("Evaluated value is: %d\n", s->value->type);
       break;

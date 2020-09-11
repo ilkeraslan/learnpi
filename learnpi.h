@@ -146,9 +146,6 @@ struct user_function_call {
 // Lookup function
 struct symbol *lookup(char*);
 
-// Function to insert a symbol
-struct symbol *insert_symbol(char* sym);
-
 // Function for new declaration
 struct ast *new_declaration(char *s, int type);
 
