@@ -745,8 +745,22 @@ void treefree(struct ast *abstract_syntax_tree) {
     case IF_STATEMENT:
     case LOOP_STATEMENT: 
       free(((struct flow *)abstract_syntax_tree)->condition);
-      if(((struct flow *)abstract_syntax_tree)->then_list) free(((struct flow *)abstract_syntax_tree)->then_list);
-      if(((struct flow *)abstract_syntax_tree)->else_list) free(((struct flow *)abstract_syntax_tree)->else_list);
+      if(((struct flow *)abstract_syntax_tree)->then_list) {
+        free(((struct flow *)abstract_syntax_tree)->then_list);
+      }
+      if(((struct flow *)abstract_syntax_tree)->else_list) {
+        free(((struct flow *)abstract_syntax_tree)->else_list);
+      }
+      break;
+    
+    case FOR_STATEMENT: 
+      free(((struct for_flow *)abstract_syntax_tree)->condition);
+      if(((struct for_flow *)abstract_syntax_tree)->then_list) {
+        free(((struct for_flow *)abstract_syntax_tree)->then_list);
+      }
+      if(((struct for_flow *)abstract_syntax_tree)->else_list) {
+        free(((struct for_flow *)abstract_syntax_tree)->else_list);
+      }
       break;
 
     case DECLARATION_WITH_ASSIGNMENT: 
