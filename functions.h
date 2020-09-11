@@ -10,6 +10,7 @@ void yyerror(char *s, ...);
 int get_value_type(struct val *value);
 
 struct val *print_type(struct val *value);
+struct val *square_root(struct val *value);
 
 struct val *create_LED(struct val **pin);
 struct val *create_COMPLEXTYPE(struct val **pin, int pin_no, int datatype);

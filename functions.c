@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <math.h>
 
 void yyerror(char *s, ...) {
   printf("yyerror\n");
@@ -71,6 +73,19 @@ struct val *print_type(struct val *value) {
     }
 
     return result; 
+}
+
+struct val *square_root(struct val *value) {
+    struct val *result = malloc(sizeof(struct val));
+
+    result->type = DECIMAL_TYPE;
+    if(value->type == INTEGER_TYPE) {
+        result->datavalue.decimal = sqrt((double)(value->datavalue.integer));    
+    } else {
+        result->datavalue.decimal = sqrt(value->datavalue.decimal);
+    }
+    
+    return result;
 }
 
 struct val *create_LED(struct val ** pin) {

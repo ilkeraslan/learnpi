@@ -841,6 +841,27 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
       print_type(value);
       break;
 
+    case BUILT_IN_SQUARE_ROOT:
+      if(value->type != DECIMAL_TYPE && value->type != INTEGER_TYPE) {
+        yyerror("Operation not permitted.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      expected_argument_numbers = 1;
+
+      if(number_of_arguments > expected_argument_numbers) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      result = square_root(value);
+      printf("SQUARE ROOT result: %f\n", result->datavalue.decimal);
+      break;
+
     case BUILT_IN_LED_ON:
       if(value->type != LED) {
         yyerror("Operation not permitted.");

@@ -3,6 +3,7 @@
 
 enum built_in_function_types {
   BUILT_IN_PRINT = 1,
+  BUILT_IN_SQUARE_ROOT,
   BUILT_IN_LED_ON,
   BUILT_IN_LED_OFF,
   BUILT_IN_IS_BUTTON_PRESSED,
