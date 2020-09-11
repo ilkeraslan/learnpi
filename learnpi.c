@@ -821,6 +821,26 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
   int expected_argument_numbers = 0;
   
   switch(builtin_function->function_type) {
+    case BUILT_IN_PRINT:
+      if(!value) {
+        yyerror("Value is null.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      expected_argument_numbers = 1;
+
+      if(number_of_arguments > expected_argument_numbers) {
+        yyerror("Too many arguments.");
+        free(builtin_function);
+        free(argument_storage);
+        break;
+      }
+
+      print_type(value);
+      break;
+
     case BUILT_IN_LED_ON:
       if(value->type != LED) {
         yyerror("Operation not permitted.");

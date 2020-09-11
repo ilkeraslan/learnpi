@@ -25,6 +25,54 @@ int get_value_type(struct val *value) {
 	}
 }
 
+struct val *print_type(struct val *value) {
+    struct val *result = malloc(sizeof(struct val));
+
+    switch (value->type) {
+        case BIT_TYPE:
+            printf("Value has BIT_TYPE.\n");
+            break;
+
+        case INTEGER_TYPE:
+            printf("Value has INTEGER_TYPE.\n");
+            break;
+
+        case DECIMAL_TYPE:
+            printf("Value has DECIMAL_TYPE.\n");
+            break;
+
+        case STRING_TYPE:
+            printf("Value has STRING_TYPE.\n");
+            break;
+
+        case LED:
+            printf("Value has LED_TYPE.\n");
+            break;
+
+        case BUTTON:
+            printf("Value has BUTTON_TYPE.\n");
+            break;
+
+        case KEYPAD:
+            printf("Value has KEYPAD_TYPE.\n");
+            break;
+
+        case BUZZER:
+            printf("Value has BUZZER_TYPE.\n");
+            break;
+
+        case SERVO_MOTOR:
+            printf("Value has SERVO_MOTOR_TYPE.\n");
+            break;
+
+        default:
+            printf("Cannot detect the value type.\n");
+            break;
+    }
+
+    return result; 
+}
+
 struct val *create_LED(struct val ** pin) {
     struct val *result;
     result = create_complex_value(pin, 1, LED);

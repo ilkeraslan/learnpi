@@ -56,6 +56,7 @@
 "BUZZER" 			{ yylval.type = BUZZER; return COMPLEX_TYPE; }
 "SERVO_MOTOR" 		{ yylval.type = SERVO_MOTOR; return COMPLEX_TYPE; }
 
+"print"                 { yylval.function_id = BUILT_IN_PRINT; return BUILT_IN_FUNCTION; }
 "led_on"                { yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
 "led_off"               { yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
 "is_button_pressed"     { yylval.function_id = BUILT_IN_IS_BUTTON_PRESSED; return BUILT_IN_FUNCTION; }
