@@ -838,7 +838,6 @@ struct val *create_complex_value(struct val ** pin, int number_of_pins, int data
 
     if(number_of_pins > 0 && pin) {
         result->datavalue.GPIO_PIN = malloc(number_of_pins * sizeof(int));
-        printf("Datavalue.GPIO_PIN is: %d\n", *result->datavalue.GPIO_PIN);
         int current_pin;
 
         for(int i = 0; i < number_of_pins; i++) {
@@ -984,7 +983,7 @@ int move_servo_to_angle(struct val * value, int angle) {
     // Sanity check for the angle if it's on limits
     if(angle < 0 || angle > 255) {
         printf("Angle should be between 0 and 255.\n");
-        return NULL;
+        return -1;
     }
 
     #ifdef RPI_SIMULATION

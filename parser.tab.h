@@ -51,21 +51,20 @@ extern int yydebug;
   {
     TYPE = 258,
     COMPLEX_TYPE = 259,
-    COMPLEX_TYPE_NOPIN = 260,
-    INTEGER = 261,
-    NAME = 262,
-    VALUE = 263,
-    BUILT_IN_FUNCTION = 264,
-    IF = 265,
-    ELSE = 266,
-    EOL = 267,
-    WHILE = 268,
-    FOR = 269,
-    OR_OPERATION = 270,
-    AND_OPERATION = 271,
-    NOT_OPERATION = 272,
-    CMP = 273,
-    UMINUS = 274
+    INTEGER = 260,
+    NAME = 261,
+    VALUE = 262,
+    BUILT_IN_FUNCTION = 263,
+    IF = 264,
+    ELSE = 265,
+    EOL = 266,
+    WHILE = 267,
+    FOR = 268,
+    OR_OPERATION = 269,
+    AND_OPERATION = 270,
+    NOT_OPERATION = 271,
+    CMP = 272,
+    UMINUS = 273
   };
 #endif
 
@@ -83,7 +82,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 87 "parser.tab.h"
+#line 86 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

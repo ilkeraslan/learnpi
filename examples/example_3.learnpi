@@ -5,3 +5,5 @@ LED led1
 LED led2 = 5
 led_on(led2)
 led_off(led2)
+print(button1)
+print(button2)

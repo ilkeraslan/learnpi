@@ -19,7 +19,7 @@ int yylex();
   int type;
 }
 
-%token <type> TYPE COMPLEX_TYPE COMPLEX_TYPE_NOPIN
+%token <type> TYPE COMPLEX_TYPE
 %token <integer> INTEGER
 %token <str> NAME
 %token <value> VALUE

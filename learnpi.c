@@ -281,39 +281,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       printf("Evaluated NEW REFERENCE...\n");
       break;
 
-    case DELETION:
-      symbol = lookup(((struct symbol_reference *)abstract_syntax_tree)->s);
-      
-      // Check if symbol is created correctly
-      if(!symbol) {
-        yyerror("variable %s not found.", ((struct symbol_reference *)abstract_syntax_tree)->s);
-        free(abstract_syntax_tree);
-        return NULL;
-      }
-
-      // Check if trying to delete a function
-      if(symbol->func) {
-        yyerror("Function deletion is not permitted.");
-        free(abstract_syntax_tree);
-        return NULL;
-      }
-
-      // Delete the variable
-      if(symbol->name) {
-        free(symbol->name);
-        symbol->name = NULL;
-      }
-
-      // Delete the value
-      if(symbol->value) {
-        free(symbol->value);
-        symbol->value = NULL;
-      }
-
-      // Set the reference to NULL
-      symbol = NULL;
-      break;
-
     case ASSIGNMENT:
       printf("Before the assignment node type is: %d\n", ((struct assign_symbol *)abstract_syntax_tree)->v->nodetype);
       s = lookup(((struct assign_symbol *)abstract_syntax_tree)->s);
@@ -550,19 +517,19 @@ struct val * eval(struct ast *abstract_syntax_tree) {
             s->value = create_string_value("");
             break;
           case LED:
-            s->value = create_led_value(NULL, 0);
+            s->value = create_led_value(NULL, 1);
             break;
           case BUTTON:
-            s->value = create_button_value(NULL, 0);
+            s->value = create_button_value(NULL, 1);
             break;
           case KEYPAD:
-            s->value = create_keypad_value(NULL, 0);
+            s->value = create_keypad_value(NULL, 1);
             break;
           case BUZZER:
-            s->value = create_buzzer_value(NULL, 0);
+            s->value = create_buzzer_value(NULL, 1);
             break;
           case SERVO_MOTOR:
-            s->value = create_servo_motor_value(NULL, 0);
+            s->value = create_servo_motor_value(NULL, 1);
             break;
           default:
             yyerror("Type not recognized.");
@@ -663,7 +630,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
       s->value = v;
       s->name = assign_and_declare_complex_symbol->s;
       
-      printf("Evaluated value is: %d\n", s->value->type);
       break;
 
   default:
@@ -701,7 +667,6 @@ void treefree(struct ast *abstract_syntax_tree) {
 
     case CONSTANT: 
     case NEW_REFERENCE: 
-    case DELETION: 
     case DECLARATION:
       break;
 
@@ -797,7 +762,6 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
     args = args->r;
     number_of_arguments++;
   }
-  printf("Number of agruments: %d\n", number_of_arguments);
 
   // Define a val structure to store the new value
   struct val ** argument_storage = (struct val **)malloc(number_of_arguments * sizeof(struct val));
