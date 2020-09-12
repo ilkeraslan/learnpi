@@ -35,7 +35,7 @@ int yylex();
 %nonassoc '|'
 %nonassoc UMINUS
 
-%type <ast> statement exp list explist
+%type <ast> statement control_flow loop_flow exp list explist
 %type <symbol_list> sym_list
 
 %start learnpi
@@ -52,11 +52,21 @@ learnpi: /* nothing */
    | learnpi error EOL { yyerrok; yyparse(); }
 ;
 
-statement: IF '(' EOL exp EOL ')' '{' EOL list EOL '}' ELSE '{' EOL list EOL '}'  { $$ = newflow(IF_STATEMENT, $4, $9, $15); }
-   | IF '(' EOL exp EOL ')' '{' EOL list '}' ELSE '{' EOL list EOL '}'            { $$ = newflow(IF_STATEMENT, $4, $9, $14); }
-   | IF '(' EOL exp EOL ')' '{' EOL list '}' ELSE '{' EOL list '}'                { $$ = newflow(IF_STATEMENT, $4, $9, $14); }
+statement: control_flow EOL
+   | loop_flow EOL
+   | TYPE NAME '=' explist ';'                                                    { $$ = new_assignment($2, $4 ); }
+   | TYPE NAME '=' explist EOL                                                    { $$ = new_assignment($2, $4 ); }
+   | TYPE NAME EOL                                                                { $$ = new_declaration($2, $1); }
+   | COMPLEX_TYPE NAME '=' explist EOL                                            { $$ = new_complex_assignment($2, $1, $4);}
+   | COMPLEX_TYPE NAME EOL                                                        { $$ = new_declaration($2, $1); }
+   | exp EOL
+;
+
+control_flow: IF '(' EOL exp EOL ')' '{' EOL list EOL '}' ELSE '{' EOL list EOL '}'   { $$ = newflow(IF_STATEMENT, $4, $9, $15); }
+   | IF '(' EOL exp EOL ')' '{' EOL list '}' ELSE '{' EOL list EOL '}'           { $$ = newflow(IF_STATEMENT, $4, $9, $14); }
+   | IF '(' EOL exp EOL ')' '{' EOL list '}' ELSE '{' EOL list '}'               { $$ = newflow(IF_STATEMENT, $4, $9, $14); }
    | IF '(' EOL exp ')' '{' EOL list '}' EOL ELSE '{' EOL list EOL '}'            { $$ = newflow(IF_STATEMENT, $4, $8, $14); }
-   | IF '(' EOL exp ')' '{' EOL list '}' EOL ELSE '{' EOL list '}'                { $$ = newflow(IF_STATEMENT, $4, $8, $14); }
+   | IF '(' EOL exp ')' '{' EOL list '}' EOL ELSE '{' EOL list '}'               { $$ = newflow(IF_STATEMENT, $4, $8, $14); }
    | IF '(' EOL exp ')' '{' EOL list '}' ELSE '{' EOL list EOL '}'                { $$ = newflow(IF_STATEMENT, $4, $8, $13); }
    | IF '(' EOL exp ')' '{' EOL list '}' ELSE '{' EOL list '}'                    { $$ = newflow(IF_STATEMENT, $4, $8, $13); }
    | IF '(' EOL exp ')' '{' EOL list EOL '}'                                      { $$ = newflow(IF_STATEMENT, $4, $8, NULL); }
@@ -64,26 +74,22 @@ statement: IF '(' EOL exp EOL ')' '{' EOL list EOL '}' ELSE '{' EOL list EOL '}'
    | IF '(' exp EOL ')' '{' EOL list '}' EOL ELSE '{' EOL list EOL '}'            { $$ = newflow(IF_STATEMENT, $3, $8, $14); }
    | IF '(' exp EOL ')' '{' EOL list '}' EOL ELSE '{' EOL list '}'                { $$ = newflow(IF_STATEMENT, $3, $8, $14); }
    | IF '(' exp EOL ')' '{' EOL list EOL '}'                                      { $$ = newflow(IF_STATEMENT, $3, $8, NULL); }
-   | IF '(' exp EOL ')' '{' EOL list '}'                                          { $$ = newflow(IF_STATEMENT, $3, $8, NULL); }
-   | IF '(' exp ')' '{' EOL list EOL '}'                                          { $$ = newflow(IF_STATEMENT, $3, $7, NULL); }
+   | IF '(' exp EOL ')' '{' EOL list '}'                                         { $$ = newflow(IF_STATEMENT, $3, $8, NULL); }
+   | IF '(' exp ')' '{' EOL list EOL '}'                                         { $$ = newflow(IF_STATEMENT, $3, $7, NULL); }
    | IF '(' exp ')' '{' EOL list '}' EOL ELSE '{' EOL list EOL '}'                { $$ = newflow(IF_STATEMENT, $3, $7, $13); }
-   | IF '(' exp ')' '{' EOL list '}' EOL ELSE '{' EOL list '}'                    { $$ = newflow(IF_STATEMENT, $3, $7, $13); }
+   | IF '(' exp ')' '{' EOL list '}' EOL ELSE '{' EOL list '}'                   { $$ = newflow(IF_STATEMENT, $3, $7, $13); }
    | IF '(' exp ')' '{' EOL list '}' ELSE '{' EOL list EOL '}'                    { $$ = newflow(IF_STATEMENT, $3, $7, $12); }
    | IF '(' exp ')' '{' EOL list '}' ELSE '{' EOL list '}'                        { $$ = newflow(IF_STATEMENT, $3, $7, $12); }
    | IF '(' exp ')' '{' EOL list '}'                                              { $$ = newflow(IF_STATEMENT, $3, $7, NULL); }
    | IF '(' exp ')' '{' list '}'                                                  { $$ = newflow(IF_STATEMENT, $3, $6, NULL); }
-   | WHILE '(' EOL exp EOL ')' '{' EOL list EOL '}'                               { $$ = newflow(LOOP_STATEMENT, $4, $9, NULL); }
+;
+
+loop_flow: WHILE '(' EOL exp EOL ')' '{' EOL list EOL '}'                               { $$ = newflow(LOOP_STATEMENT, $4, $9, NULL); }
    | WHILE '(' EOL exp ')' '{' EOL list EOL '}'                                   { $$ = newflow(LOOP_STATEMENT, $4, $8, NULL); }
    | WHILE '(' exp ')' '{' EOL list EOL '}'                                       { $$ = newflow(LOOP_STATEMENT, $3, $7, NULL); }
    | WHILE '(' exp ')' '{' EOL list '}'                                           { $$ = newflow(LOOP_STATEMENT, $3, $7, NULL); }
    | WHILE '(' exp ')' '{' list '}'                                               { $$ = newflow(LOOP_STATEMENT, $3, $6, NULL); }
    | FOR '(' exp ';' exp ';' exp ')' '{' EOL list '}'                             { $$ = new_for_flow(FOR_STATEMENT, $3, $5, $7, $11); }
-   | TYPE NAME '=' explist ';'                                                    { $$ = new_assignment($2, $4 ); }
-   | TYPE NAME '=' explist EOL                                                    { $$ = new_assignment($2, $4 ); }
-   | TYPE NAME EOL                                                                { $$ = new_declaration($2, $1); }
-   | COMPLEX_TYPE NAME '=' explist EOL                                            { $$ = new_complex_assignment($2, $1, $4);}
-   | COMPLEX_TYPE NAME EOL                                                        { $$ = new_declaration($2, $1); }
-   | exp EOL
 ;
 
 exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); }
@@ -119,7 +125,7 @@ explist: exp
    | exp ',' explist   { $$ = new_ast_with_children(STATEMENT_LIST, $1, $3); }
 ;
 
-sym_list: NAME       { $$ = create_symbol_list($1, NULL); }
+sym_list: NAME         { $$ = create_symbol_list($1, NULL); }
    | NAME ',' sym_list { $$ = create_symbol_list($1, $3); }
 ;
 
