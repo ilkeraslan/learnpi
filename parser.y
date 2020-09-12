@@ -24,16 +24,14 @@ int yylex();
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF ELSE EOL WHILE FOR 
-%token FUN
-
+%token IF ELSE EOL WHILE FOR FUN
 %token <integer> OR_OPERATION AND_OPERATION NOT_OPERATION
 
 %nonassoc <function_id> CMP
 %right '='
+%left AND_OPERATION OR_OPERATION NOT_OPERATION
 %left '+' '-'
 %left '*' '/'
-%left AND_OPERATION OR_OPERATION NOT_OPERATION
 %nonassoc '|'
 %nonassoc UMINUS
 
@@ -44,7 +42,7 @@ int yylex();
 
 %%
 learnpi: /* nothing */
-   | learnpi statement EOL {
+   | learnpi statement {
       struct val *value = eval($2);
       if(value) {
          treefree($2);
@@ -81,10 +79,11 @@ statement: IF '(' EOL exp EOL ')' '{' EOL list EOL '}' ELSE '{' EOL list EOL '}'
    | WHILE '(' exp ')' '{' list '}'                                               { $$ = newflow(LOOP_STATEMENT, $3, $6, NULL); }
    | FOR '(' exp ';' exp ';' exp ')' '{' EOL list '}'                             { $$ = new_for_flow(FOR_STATEMENT, $3, $5, $7, $11); }
    | TYPE NAME '=' explist ';'                                                    { $$ = new_assignment($2, $4 ); }
-   | TYPE NAME '=' explist                                                        { $$ = new_assignment($2, $4 ); }
-   | COMPLEX_TYPE NAME '=' explist                                                { $$ = new_complex_assignment($2, $1, $4);}
-   | COMPLEX_TYPE NAME                                                            { $$ = new_declaration($2, $1); }
-   | exp
+   | TYPE NAME '=' explist EOL                                                       { $$ = new_assignment($2, $4 ); }
+   | TYPE NAME EOL                                                                    { $$ = new_declaration($2, $1); }
+   | COMPLEX_TYPE NAME '=' explist EOL                                               { $$ = new_complex_assignment($2, $1, $4);}
+   | COMPLEX_TYPE NAME EOL                                                            { $$ = new_declaration($2, $1); }
+   | exp EOL
 ;
 
 exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); }
@@ -107,13 +106,6 @@ exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); 
 ;
 
 list: /* nothing */ { $$ = NULL; }
-   | statement EOL list {
-                  if ($3 == NULL) {
-                        $$ = $1;
-                  } else {
-                        $$ = new_ast_with_children(STATEMENT_LIST, $1, $3);
-                  }
-               }
    | statement list {
                   if ($2 == NULL) {
                         $$ = $1;

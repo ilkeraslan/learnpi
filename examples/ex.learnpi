@@ -3,4 +3,4 @@ square_root(25.0)
 square_root(25)
 LED led = 2
 square_root(led)
-6 | 4
+|-4
