@@ -39,7 +39,7 @@ struct symbol symtab[NHASH];
 // Structure for value
 struct val {
     int type;
-    union datavalue { // TODO: change this
+    union datavalue {
         int bit;
         int integer;
         double decimal;

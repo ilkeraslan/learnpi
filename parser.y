@@ -24,7 +24,8 @@ int yylex();
 %token <str> NAME
 %token <value> VALUE
 %token <function_id> BUILT_IN_FUNCTION
-%token IF ELSE EOL WHILE FOR
+%token IF ELSE EOL WHILE FOR 
+%token FUN
 
 %token <integer> OR_OPERATION AND_OPERATION NOT_OPERATION
 
@@ -49,9 +50,7 @@ learnpi: /* nothing */
          treefree($2);
       }
     }
-   | learnpi NAME '(' sym_list ')' '=' list EOL {
-      dodef($2, $4, $7);
-   }
+   | learnpi FUN NAME '(' sym_list ')' '=' list EOL { dodef($3, $5, $8); }
    | learnpi error { yyerrok; yyparse(); }
 ;
 

@@ -60,11 +60,12 @@ extern int yydebug;
     EOL = 266,
     WHILE = 267,
     FOR = 268,
-    OR_OPERATION = 269,
-    AND_OPERATION = 270,
-    NOT_OPERATION = 271,
-    CMP = 272,
-    UMINUS = 273
+    FUN = 269,
+    OR_OPERATION = 270,
+    AND_OPERATION = 271,
+    NOT_OPERATION = 272,
+    CMP = 273,
+    UMINUS = 274
   };
 #endif
 
@@ -82,7 +83,7 @@ union YYSTYPE
   char *str;
   int type;
 
-#line 86 "parser.tab.h"
+#line 87 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -245,7 +245,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
   struct symbol *s = NULL;
   struct val *v = NULL;
   struct val *helper_value = NULL;
-  struct symbol *symbol = NULL;
   struct declare_symbol *declare_symbol = NULL;
   struct assign_and_declare_symbol *assign_and_declare_symbol = NULL;
   struct assign_and_declare_complex_symbol *assign_and_declare_complex_symbol = NULL;
@@ -1149,14 +1148,14 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
 
 // Function to create a node for user defined function in the AST
 struct ast *new_user_function(char *s, struct ast *argument_list) {
-  struct builtin_function_call *ast = malloc(sizeof(struct builtin_function_call));
+  struct user_function_call *ast = malloc(sizeof(struct user_function_call));
   
   if(!ast) {
     yyerror("No space.");
     exit(0);
   }
 
-  ast->nodetype = BUILTIN_TYPE;
+  ast->nodetype = USER_CALL;
   ast->argument_list = argument_list;
   ast->s = s;
 
@@ -1164,8 +1163,79 @@ struct ast *new_user_function(char *s, struct ast *argument_list) {
 }
 
 // Function to call custom functions
-void calluser(struct user_function_call *evaluation_helper) {
-  // TODO: Implement user function call
+void calluser(struct user_function_call *user_function) {
+    struct symbol *user_function_call = lookup(user_function->s); /* function name */
+    struct symbol_list *sl; /* dummy arguments */
+    struct ast *args = user_function->argument_list; /* actual arguments */
+    struct val **oldval, **newval; /* saved arg values */
+    int nargs;
+    int i;
+
+    if(!user_function) {
+      yyerror("Call to undefined function", user_function->s);
+      return;
+    }
+
+    /* count the arguments */
+    sl = (struct symbol_list *)user_function->argument_list;
+    for(nargs = 0; sl; sl = sl->next)
+    nargs++;
+
+    /* prepare to save them */
+    oldval = (struct val **)malloc(nargs * sizeof(struct val));
+    newval = (struct val **)malloc(nargs * sizeof(struct val));
+
+    if(!oldval || !newval) {
+      yyerror("Out of space in %s", user_function->s);
+    }
+
+    /* evaluate the arguments */
+    for(i = 0; i < nargs; i++) {
+      if(!args) {
+        yyerror("Too few args in call to %s", user_function->s);
+        free(oldval); 
+        free(newval);
+        return;
+      }
+    }
+
+    if(args->nodetype == STATEMENT_LIST) { 
+      /* if this is a list node */
+      newval[i] = eval(args->l);
+      args = args->r;
+    } else {
+      /* if it's the end of the list */
+      newval[i] = eval(args);
+      args = NULL;
+    }
+
+    /* save old values of dummies, assign new ones */
+    sl = (struct symbol_list *)user_function->argument_list;
+    for(i = 0; i < nargs; i++) {
+      struct symbol *s = lookup(sl->sym);
+      if(s == NULL) {
+        s = lookup(sl->sym);
+      }
+
+      oldval[i] = s->value;
+      s->value = newval[i];
+      sl = sl->next;
+    }
+
+    /* evaluate the function */
+    eval(user_function_call->func);
+
+    /* put the dummies back */
+    sl = user_function_call->syms;
+    for(i = 0; i < nargs; i++) {
+      struct symbol *s = lookup(sl->sym);
+
+      s->value = oldval[i];
+      sl = sl->next;
+    }
+
+    free(newval);
+    free(oldval);
 }
 
 void dodef(char *n, struct symbol_list *symbol_list, struct ast *function) {
