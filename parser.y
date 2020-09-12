@@ -48,7 +48,7 @@ learnpi: /* nothing */
          treefree($2);
       }
     }
-   | learnpi FUN NAME '(' sym_list ')' '=' list EOL { dodef($3, $5, $8); }
+   | learnpi FUN NAME '(' sym_list ')' '=' list { dodef($3, $5, $8); }
    | learnpi error EOL { yyerrok; yyparse(); }
 ;
 
@@ -79,10 +79,10 @@ statement: IF '(' EOL exp EOL ')' '{' EOL list EOL '}' ELSE '{' EOL list EOL '}'
    | WHILE '(' exp ')' '{' list '}'                                               { $$ = newflow(LOOP_STATEMENT, $3, $6, NULL); }
    | FOR '(' exp ';' exp ';' exp ')' '{' EOL list '}'                             { $$ = new_for_flow(FOR_STATEMENT, $3, $5, $7, $11); }
    | TYPE NAME '=' explist ';'                                                    { $$ = new_assignment($2, $4 ); }
-   | TYPE NAME '=' explist EOL                                                       { $$ = new_assignment($2, $4 ); }
-   | TYPE NAME EOL                                                                    { $$ = new_declaration($2, $1); }
-   | COMPLEX_TYPE NAME '=' explist EOL                                               { $$ = new_complex_assignment($2, $1, $4);}
-   | COMPLEX_TYPE NAME EOL                                                            { $$ = new_declaration($2, $1); }
+   | TYPE NAME '=' explist EOL                                                    { $$ = new_assignment($2, $4 ); }
+   | TYPE NAME EOL                                                                { $$ = new_declaration($2, $1); }
+   | COMPLEX_TYPE NAME '=' explist EOL                                            { $$ = new_complex_assignment($2, $1, $4);}
+   | COMPLEX_TYPE NAME EOL                                                        { $$ = new_declaration($2, $1); }
    | exp EOL
 ;
 
