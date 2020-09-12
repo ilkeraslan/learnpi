@@ -104,6 +104,13 @@ exp: exp CMP exp                             { $$ = new_comparison($2, $1, $3); 
 ;
 
 list: /* nothing */ { $$ = NULL; }
+   | statement EOL list {
+                  if ($3 == NULL) {
+                        $$ = $1;
+                  } else {
+                        $$ = new_ast_with_children(STATEMENT_LIST, $1, $3);
+                  }
+               }
    | statement list {
                   if ($2 == NULL) {
                         $$ = $1;
