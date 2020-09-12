@@ -474,12 +474,12 @@ struct val *calculate_greater_than(struct val *first, struct val *second) {
             if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer > second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
-                result->datavalue.decimal = first->datavalue.integer > second->datavalue.decimal;
+                result->datavalue.bit = first->datavalue.integer > second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
             if(get_value_type(second) == INTEGER_TYPE) {
-                result->datavalue.decimal = first->datavalue.decimal > second->datavalue.integer;
+                result->datavalue.bit = first->datavalue.decimal > second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal > second->datavalue.decimal;
             }
@@ -515,12 +515,12 @@ struct val *calculate_less_than(struct val *first, struct val *second) {
             if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer < second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
-                result->datavalue.decimal = first->datavalue.integer < second->datavalue.decimal;
+                result->datavalue.bit = first->datavalue.integer < second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
             if(get_value_type(second) == INTEGER_TYPE) {
-                result->datavalue.decimal = first->datavalue.decimal < second->datavalue.integer;
+                result->datavalue.bit = first->datavalue.decimal < second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal < second->datavalue.decimal;
             }
@@ -556,12 +556,12 @@ struct val *calculate_equals(struct val *first, struct val *second) {
             if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer == second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
-                result->datavalue.decimal = first->datavalue.integer == second->datavalue.decimal;
+                result->datavalue.bit = first->datavalue.integer == second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
             if(get_value_type(second) == INTEGER_TYPE) {
-                result->datavalue.decimal = first->datavalue.decimal == second->datavalue.integer;
+                result->datavalue.bit = first->datavalue.decimal == second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal == second->datavalue.decimal;
             }
@@ -597,12 +597,12 @@ struct val *calculate_not_equals(struct val *first, struct val *second) {
             if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer != second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
-                result->datavalue.decimal = first->datavalue.integer != second->datavalue.decimal;
+                result->datavalue.bit = first->datavalue.integer != second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
             if(get_value_type(second) == INTEGER_TYPE) {
-                result->datavalue.decimal = first->datavalue.decimal != second->datavalue.integer;
+                result->datavalue.bit = first->datavalue.decimal != second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal != second->datavalue.decimal;
             }
@@ -638,12 +638,12 @@ struct val *calculate_greater_equal_than(struct val *first, struct val *second) 
             if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer >= second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
-                result->datavalue.decimal = first->datavalue.integer >= second->datavalue.decimal;
+                result->datavalue.bit = first->datavalue.integer >= second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
             if(get_value_type(second) == INTEGER_TYPE) {
-                result->datavalue.decimal = first->datavalue.decimal >= second->datavalue.integer;
+                result->datavalue.bit = first->datavalue.decimal >= second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal >= second->datavalue.decimal;
             }
@@ -679,12 +679,12 @@ struct val *calculate_less_equal_than(struct val *first, struct val *second) {
             if(get_value_type(second) == INTEGER_TYPE) {
                 result->datavalue.bit = first->datavalue.integer <= second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
-                result->datavalue.decimal = first->datavalue.integer <= second->datavalue.decimal;
+                result->datavalue.bit = first->datavalue.integer <= second->datavalue.decimal;
             }
             break;
         case DECIMAL_TYPE:
             if(get_value_type(second) == INTEGER_TYPE) {
-                result->datavalue.decimal = first->datavalue.decimal <= second->datavalue.integer;
+                result->datavalue.bit = first->datavalue.decimal <= second->datavalue.integer;
             } else if(get_value_type(second) == DECIMAL_TYPE) {
                 result->datavalue.bit = first->datavalue.decimal <= second->datavalue.decimal;
             }

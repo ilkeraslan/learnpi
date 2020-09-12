@@ -1,1 +1,2 @@
 fun myfun (a) = 3
+fun your_fun(a, b) = a/b
