@@ -25,11 +25,12 @@
 ";" |
 "|"     { return yytext[0]; }
 
+ /* Logical operators */
 "OR"|"or"     { return OR_OPERATION; }
 "AND"|"and"   { return AND_OPERATION; }
 "NOT"|"not"   { return NOT_OPERATION; }
 
- /* Comparision operators */
+ /* Comparison operators */
 ">"     { yylval.function_id = 1; return CMP; }
 "<"     { yylval.function_id = 2; return CMP; }
 "!="    { yylval.function_id = 3; return CMP; }
@@ -57,6 +58,7 @@
 "BUZZER" 			{ yylval.type = BUZZER; return COMPLEX_TYPE; }
 "SERVO_MOTOR" 		{ yylval.type = SERVO_MOTOR; return COMPLEX_TYPE; }
 
+ /* Built-in functions */
 "print"                 { yylval.function_id = BUILT_IN_PRINT; return BUILT_IN_FUNCTION; }
 "square_root"           { yylval.function_id = BUILT_IN_SQUARE_ROOT; return BUILT_IN_FUNCTION; }
 "led_on"                { yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
@@ -73,6 +75,7 @@
  /* Names */
 [a-zA-Z][a-zA-Z0-9_]*   { yylval.str = strdup(yytext); return NAME; }
 
+ /* Values */
 [0-9]+         { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 [0-9]+\.[0-9]+ { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }
 
