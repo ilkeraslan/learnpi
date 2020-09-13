@@ -1,0 +1,8 @@
+LED led = 17
+BUTTON button = 5
+
+if(is_button_pressed(button)) {
+    led_on(led)
+} else {
+    led_off(led)
+}
