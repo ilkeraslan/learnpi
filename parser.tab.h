@@ -51,21 +51,20 @@ extern int yydebug;
   {
     TYPE = 258,
     COMPLEX_TYPE = 259,
-    INTEGER = 260,
-    NAME = 261,
-    VALUE = 262,
-    BUILT_IN_FUNCTION = 263,
-    IF = 264,
-    ELSE = 265,
-    EOL = 266,
-    WHILE = 267,
-    FOR = 268,
-    FUN = 269,
-    OR_OPERATION = 270,
-    AND_OPERATION = 271,
-    NOT_OPERATION = 272,
-    CMP = 273,
-    UMINUS = 274
+    NAME = 260,
+    VALUE = 261,
+    BUILT_IN_FUNCTION = 262,
+    IF = 263,
+    ELSE = 264,
+    EOL = 265,
+    WHILE = 266,
+    FOR = 267,
+    FUN = 268,
+    OR_OPERATION = 269,
+    AND_OPERATION = 270,
+    NOT_OPERATION = 271,
+    CMP = 272,
+    UMINUS = 273
   };
 #endif
 
@@ -78,12 +77,11 @@ union YYSTYPE
   struct ast *ast;
   struct symbol_list *symbol_list;
   struct val *value;
-  int integer;
   int function_id;
   char *str;
   int type;
 
-#line 87 "parser.tab.h"
+#line 85 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -2,18 +2,9 @@ x=5
 y=2
 
 if(x==5) {
-
-
-
-x = 1
-y = 3
-LED led = 1
+LED led = 1 
 } else {
 x = 0
 y = 3
 LED led = 1
-
-
-
-
 }

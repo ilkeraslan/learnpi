@@ -1,3 +1,9 @@
-fun myfun (a) = a / 2
-fun yourfun(b) = b * 2
-fun ourfun(c) = c + 1
+fun myfun (a) = { 
+    a / 2
+    LED led = 17
+    led_on(led)
+}
+
+fun yourfun() = {
+    2 * 2
+}
