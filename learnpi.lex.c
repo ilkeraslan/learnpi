@@ -942,229 +942,232 @@ YY_RULE_SETUP
 #line 26 "lexer.l"
 { return yytext[0]; }
 	YY_BREAK
+/* Logical operators */
 case 17:
 YY_RULE_SETUP
-#line 28 "lexer.l"
+#line 29 "lexer.l"
 { return OR_OPERATION; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 29 "lexer.l"
+#line 30 "lexer.l"
 { return AND_OPERATION; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 30 "lexer.l"
+#line 31 "lexer.l"
 { return NOT_OPERATION; }
 	YY_BREAK
-/* Comparision operators */
+/* Comparison operators */
 case 20:
 YY_RULE_SETUP
-#line 33 "lexer.l"
+#line 34 "lexer.l"
 { yylval.function_id = 1; return CMP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 34 "lexer.l"
+#line 35 "lexer.l"
 { yylval.function_id = 2; return CMP; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 35 "lexer.l"
+#line 36 "lexer.l"
 { yylval.function_id = 3; return CMP; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 36 "lexer.l"
+#line 37 "lexer.l"
 { yylval.function_id = 4; return CMP; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 37 "lexer.l"
+#line 38 "lexer.l"
 { yylval.function_id = 5; return CMP; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 38 "lexer.l"
+#line 39 "lexer.l"
 { yylval.function_id = 6; return CMP; }
 	YY_BREAK
 /* Keywords */
 case 26:
 YY_RULE_SETUP
-#line 41 "lexer.l"
+#line 42 "lexer.l"
 { return IF;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 42 "lexer.l"
+#line 43 "lexer.l"
 { return ELSE; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 43 "lexer.l"
+#line 44 "lexer.l"
 { return WHILE; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 44 "lexer.l"
+#line 45 "lexer.l"
 { return FOR; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 45 "lexer.l"
+#line 46 "lexer.l"
 { return FUN; }
 	YY_BREAK
 /* Primitive types */
 case 31:
 YY_RULE_SETUP
-#line 48 "lexer.l"
+#line 49 "lexer.l"
 { yylval.type = BIT_TYPE; return TYPE; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 49 "lexer.l"
+#line 50 "lexer.l"
 { yylval.type = INTEGER_TYPE; return TYPE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 50 "lexer.l"
+#line 51 "lexer.l"
 { yylval.type = DECIMAL_TYPE; return TYPE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 51 "lexer.l"
+#line 52 "lexer.l"
 { yylval.type = STRING_TYPE; return TYPE; }
 	YY_BREAK
 /* Composed types */
 case 35:
 YY_RULE_SETUP
-#line 54 "lexer.l"
+#line 55 "lexer.l"
 { yylval.type = LED; return COMPLEX_TYPE; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 55 "lexer.l"
+#line 56 "lexer.l"
 { yylval.type = BUTTON; return COMPLEX_TYPE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 56 "lexer.l"
+#line 57 "lexer.l"
 { yylval.type = KEYPAD; return COMPLEX_TYPE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 57 "lexer.l"
+#line 58 "lexer.l"
 { yylval.type = BUZZER; return COMPLEX_TYPE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 58 "lexer.l"
+#line 59 "lexer.l"
 { yylval.type = SERVO_MOTOR; return COMPLEX_TYPE; }
 	YY_BREAK
+/* Built-in functions */
 case 40:
 YY_RULE_SETUP
-#line 60 "lexer.l"
+#line 62 "lexer.l"
 { yylval.function_id = BUILT_IN_PRINT; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 61 "lexer.l"
+#line 63 "lexer.l"
 { yylval.function_id = BUILT_IN_SQUARE_ROOT; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 62 "lexer.l"
+#line 64 "lexer.l"
 { yylval.function_id = BUILT_IN_LED_ON; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 63 "lexer.l"
+#line 65 "lexer.l"
 { yylval.function_id = BUILT_IN_LED_OFF; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 64 "lexer.l"
+#line 66 "lexer.l"
 { yylval.function_id = BUILT_IN_IS_BUTTON_PRESSED; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 65 "lexer.l"
+#line 67 "lexer.l"
 { yylval.function_id = BUILT_IN_GET_PRESSED_KEY; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 66 "lexer.l"
+#line 68 "lexer.l"
 { yylval.function_id = BUILT_IN_BUZZ_START; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 67 "lexer.l"
+#line 69 "lexer.l"
 { yylval.function_id = BUILT_IN_BUZZ_STOP; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 68 "lexer.l"
+#line 70 "lexer.l"
 { yylval.function_id = BUILT_IN_MOVE_SERVO_TO_ANGLE; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 69 "lexer.l"
+#line 71 "lexer.l"
 { yylval.function_id = BUILT_IN_MOVE_SERVO_INFINITELY; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 70 "lexer.l"
+#line 72 "lexer.l"
 { yylval.function_id = BUILT_IN_SERVO_STOP; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 71 "lexer.l"
+#line 73 "lexer.l"
 { yylval.function_id = BUILT_IN_DELAY; return BUILT_IN_FUNCTION; }
 	YY_BREAK
 /* Names */
 case 52:
 YY_RULE_SETUP
-#line 74 "lexer.l"
+#line 76 "lexer.l"
 { yylval.str = strdup(yytext); return NAME; }
 	YY_BREAK
+/* Values */
 case 53:
 YY_RULE_SETUP
-#line 76 "lexer.l"
+#line 79 "lexer.l"
 { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 77 "lexer.l"
+#line 80 "lexer.l"
 { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 80 "lexer.l"
+#line 83 "lexer.l"
 { printf("c> "); } /* ignore line continuation */
 	YY_BREAK
 case 56:
 /* rule 56 can match eol */
 YY_RULE_SETUP
-#line 81 "lexer.l"
+#line 84 "lexer.l"
 { return EOL; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 86 "lexer.l"
 /* ignore white space */
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 84 "lexer.l"
+#line 87 "lexer.l"
 { yyerror("Mystery character %c\n", *yytext); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 85 "lexer.l"
+#line 88 "lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1168 "learnpi.lex.c"
+#line 1171 "learnpi.lex.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2181,5 +2184,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 85 "lexer.l"
+#line 88 "lexer.l"
 

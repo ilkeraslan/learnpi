@@ -1517,31 +1517,31 @@ yyreduce:
 
   case 9:
 #line 56 "parser.y"
-                                                                                  { (yyval.ast) = new_assignment((yyvsp[-3].str), (yyvsp[-1].ast) ); }
+                                         { (yyval.ast) = new_assignment((yyvsp[-3].str), (yyvsp[-1].ast) ); }
 #line 1522 "parser.tab.c"
     break;
 
   case 10:
 #line 57 "parser.y"
-                                                                                  { (yyval.ast) = new_assignment((yyvsp[-3].str), (yyvsp[-1].ast) ); }
+                                         { (yyval.ast) = new_assignment((yyvsp[-3].str), (yyvsp[-1].ast) ); }
 #line 1528 "parser.tab.c"
     break;
 
   case 11:
 #line 58 "parser.y"
-                                                                                  { (yyval.ast) = new_declaration((yyvsp[-1].str), (yyvsp[-2].type)); }
+                                         { (yyval.ast) = new_declaration((yyvsp[-1].str), (yyvsp[-2].type)); }
 #line 1534 "parser.tab.c"
     break;
 
   case 12:
 #line 59 "parser.y"
-                                                                                  { (yyval.ast) = new_complex_assignment((yyvsp[-3].str), (yyvsp[-4].type), (yyvsp[-1].ast));}
+                                         { (yyval.ast) = new_complex_assignment((yyvsp[-3].str), (yyvsp[-4].type), (yyvsp[-1].ast));}
 #line 1540 "parser.tab.c"
     break;
 
   case 13:
 #line 60 "parser.y"
-                                                                                  { (yyval.ast) = new_declaration((yyvsp[-1].str), (yyvsp[-2].type)); }
+                                         { (yyval.ast) = new_declaration((yyvsp[-1].str), (yyvsp[-2].type)); }
 #line 1546 "parser.tab.c"
     break;
 
@@ -1565,13 +1565,13 @@ yyreduce:
 
   case 18:
 #line 67 "parser.y"
-                                                                                              { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-14].ast), (yyvsp[-10].ast), (yyvsp[-2].ast)); }
+                                                                                      { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-14].ast), (yyvsp[-10].ast), (yyvsp[-2].ast)); }
 #line 1570 "parser.tab.c"
     break;
 
   case 19:
 #line 68 "parser.y"
-                                                                                          { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-13].ast), (yyvsp[-9].ast), (yyvsp[-2].ast)); }
+                                                                                      { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-13].ast), (yyvsp[-9].ast), (yyvsp[-2].ast)); }
 #line 1576 "parser.tab.c"
     break;
 
@@ -1619,13 +1619,13 @@ yyreduce:
 
   case 27:
 #line 76 "parser.y"
-                                                                                          { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-13].ast), (yyvsp[-9].ast), (yyvsp[-2].ast)); }
+                                                                                      { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-13].ast), (yyvsp[-9].ast), (yyvsp[-2].ast)); }
 #line 1624 "parser.tab.c"
     break;
 
   case 28:
 #line 77 "parser.y"
-                                                                                          { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-7].ast), (yyvsp[-3].ast), NULL); }
+                                                                                      { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-7].ast), (yyvsp[-3].ast), NULL); }
 #line 1630 "parser.tab.c"
     break;
 
@@ -1655,7 +1655,7 @@ yyreduce:
 
   case 33:
 #line 82 "parser.y"
-                                                                                  { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-4].ast), (yyvsp[-1].ast), NULL); }
+                                                                                      { (yyval.ast) = newflow(IF_STATEMENT, (yyvsp[-4].ast), (yyvsp[-1].ast), NULL); }
 #line 1660 "parser.tab.c"
     break;
 
@@ -1806,12 +1806,12 @@ yyreduce:
   case 58:
 #line 113 "parser.y"
                     {
-                        if ((yyvsp[0].ast) == NULL) {
-                              (yyval.ast) = (yyvsp[-1].ast);
-                        } else {
-                              (yyval.ast) = new_ast_with_children(STATEMENT_LIST, (yyvsp[-1].ast), (yyvsp[0].ast));
-                        }
-                     }
+            if ((yyvsp[0].ast) == NULL) {
+                  (yyval.ast) = (yyvsp[-1].ast);
+            } else {
+                  (yyval.ast) = new_ast_with_children(STATEMENT_LIST, (yyvsp[-1].ast), (yyvsp[0].ast));
+            }
+         }
 #line 1816 "parser.tab.c"
     break;
 

@@ -1,0 +1,16 @@
+decimal i = 3.0
+decimal k = 5.0
+integer a = 6
+integer b = 2
+
+c = a + b
+d = a - b
+e = a * b
+f = a / b
+
+square_root(25.0)
+square_root(25)
+|-4
+
+LED led = 2
+square_root(led)

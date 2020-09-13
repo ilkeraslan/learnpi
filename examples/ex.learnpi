@@ -1,6 +1,7 @@
 decimal i = 3.0
 square_root(25.0)
 square_root(25)
+|-4
+
 LED led = 2
 square_root(led)
-|-4
