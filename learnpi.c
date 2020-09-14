@@ -261,7 +261,6 @@ struct val * eval(struct ast *abstract_syntax_tree) {
     case CONSTANT:
       printf("Evaluating CONSTANT...\n");
       v = ((struct constant_value *)abstract_syntax_tree)->v;
-      printf("Evaluated CONSTANT...\n");
     break;
 
     case NEW_REFERENCE:

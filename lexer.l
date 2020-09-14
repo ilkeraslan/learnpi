@@ -1,4 +1,6 @@
 %option noyywrap nodefault yylineno
+%option stack
+%x string_state
 %{
 #include <pigpio.h>
 #include "parser.tab.h"
@@ -78,6 +80,10 @@
  /* Values */
 [0-9]+         { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 [0-9]+\.[0-9]+ { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }
+\"                    { yy_push_state(string_state); }
+\"\"                  { yylval.value = create_string(""); return VALUE; }
+<string_state>[^\"]*  { yylval.value = create_string(yytext); return VALUE; }
+<string_state>\"      { yy_pop_state(); }
 
 
 \\\n { printf("c> "); } /* ignore line continuation */
