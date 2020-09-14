@@ -1,0 +1,26 @@
+LED led = 5
+SERVO_MOTOR servo_motor = 9
+BUZZER buzzer = 21
+
+for(i = 0; i < 3; i = i + 1) {
+    led_on(led)
+    delay()
+    led_off(led)
+}
+
+for(i = 0; i < 3; i = i + 1) {
+    buzz_start(buzzer)
+    delay()
+    buzz_stop(buzzer)
+    delay()
+    move_servo_to_angle(100)
+    delay()
+    move_servo_to_angle(100)
+    delay()
+    move_servo_to_angle(100)
+    delay()
+    buzz_start(buzzer)
+    delay()
+    buzz_stop(buzzer)
+    delay()
+}
