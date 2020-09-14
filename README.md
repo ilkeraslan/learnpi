@@ -2,7 +2,9 @@
 
 A language to learn programming with RaspberryPi.
 
-*Disclaimer:* The functionality on the target machine is experimental for the time being. I take no responsability for the electronic issues that may take place during the execution. However, a simulation mode is available by default as you can execute LearnPi on your machine and it will write the simulation results to standard output.
+**Disclaimer: The functionality on the target machine is experimental for the time being. I take no responsability for the electronic issues that may take place during the execution. However, a simulation mode is available by default as you can execute LearnPi on your machine and it will write the simulation results to standard output.**
+
+## Compilation and Execution
 
 To compile:
 ```
@@ -22,6 +24,8 @@ For example, the following command should be able to run your specified program:
 ./learnpi example.learnpi
 ```
 
+## Grammar
+
 Each `learnpi` file should end with an EOL (end of line) in order to be executed. Learnpi uses EOL to recognize each statement or expression.
 The following is considered a valid `learnpi` program:
 ```
@@ -33,3 +37,9 @@ if(is_button_pressed(button)) {
 }
 
 ```
+
+## Credits
+
+- https://github.com/westes/flex/
+- https://www.gnu.org/software/bison/
+- https://github.com/joan2937/pigpio

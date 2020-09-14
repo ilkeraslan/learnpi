@@ -6,11 +6,11 @@ lex.yy.c: lexer.l
 	flex lexer.l
 
 
+-----
 
 
-
-	learnpi:	parser.tab.o lex.yy.o
-			gcc -Wall -pthread -o learnpi lex.yy.o parser.tab.o functions.c -lpigpio -lrt
+learnpi:	parser.tab.o lex.yy.o
+		gcc -Wall -pthread -o learnpi lex.yy.o parser.tab.o functions.c -lpigpio -lrt
 
 parser.tab.o:	parser.tab.c
 				gcc -c parser.tab.c
@@ -24,7 +24,7 @@ lex.yy.o:	lex.yy.c parser.tab.h
 lex.yy.c:	lexer.l parser.tab.c
 			flex lexer.l
 
-
+-----
 
 
 learnpi: lexer.l parser.y functions.c functions.h learnpi.c learnpi.h
