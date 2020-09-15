@@ -256,13 +256,6 @@ struct val *create_COMPLEXTYPE(struct val ** pin, int pin_no, int datatype) {
     return result;
 }
 
-struct val *create_string(char * value) {
-    struct val * result = malloc(sizeof(struct val));
-	result->type = STRING_TYPE;
-    result->datavalue.string = strdup(value);
-    return result;
-}
-
 struct val *sum(struct val *first, struct val *second) {
     struct val *result = malloc(sizeof(struct val));
 

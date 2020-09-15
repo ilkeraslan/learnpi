@@ -1164,13 +1164,13 @@ YY_RULE_SETUP
 case 56:
 YY_RULE_SETUP
 #line 84 "lexer.l"
-{ yylval.value = create_string(""); return VALUE; }
+{ yylval.value = create_string_value(""); return VALUE; }
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
 #line 85 "lexer.l"
-{ yylval.value = create_string(yytext); return VALUE; }
+{ yylval.value = create_string_value(yytext); return VALUE; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP

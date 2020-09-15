@@ -689,8 +689,6 @@ extern int yywrap ( void );
 
 #ifndef YY_NO_UNPUT
     
-    static void yyunput ( int c, char *buf_ptr  );
-    
 #endif
 
 #ifndef yytext_ptr
@@ -717,8 +715,6 @@ static int input ( void );
     static void yy_push_state ( int _new_state );
     
     static void yy_pop_state ( void );
-    
-    static int yy_top_state ( void );
     
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
@@ -857,7 +853,7 @@ YY_DECL
 	{
 #line 12 "lexer.l"
 
-#line 861 "learnpi.lex.c"
+#line 857 "learnpi.lex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1165,13 +1161,13 @@ YY_RULE_SETUP
 case 56:
 YY_RULE_SETUP
 #line 84 "lexer.l"
-{ yylval.value = create_string(""); return VALUE; }
+{ yylval.value = create_string_value(""); return VALUE; }
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
 #line 85 "lexer.l"
-{ yylval.value = create_string(yytext); return VALUE; }
+{ yylval.value = create_string_value(yytext); return VALUE; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
@@ -1205,7 +1201,7 @@ YY_RULE_SETUP
 #line 94 "lexer.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1209 "learnpi.lex.c"
+#line 1205 "learnpi.lex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(string_state):
 	yyterminate();
@@ -1541,47 +1537,6 @@ static int yy_get_next_buffer (void)
 }
 
 #ifndef YY_NO_UNPUT
-
-    static void yyunput (int c, char * yy_bp )
-{
-	char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		int number_to_move = (yy_n_chars) + 2;
-		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = (int) YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-    if ( c == '\n' ){
-        --yylineno;
-    }
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
-}
 
 #endif
 
@@ -2044,11 +1999,6 @@ YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len )
 		YY_FATAL_ERROR( "start-condition stack underflow" );
 
 	BEGIN((yy_start_stack)[(yy_start_stack_ptr)]);
-}
-
-    static int yy_top_state  (void)
-{
-    	return (yy_start_stack)[(yy_start_stack_ptr) - 1];
 }
 
 #ifndef YY_EXIT_FAILURE

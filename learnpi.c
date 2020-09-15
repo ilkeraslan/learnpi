@@ -963,7 +963,7 @@ struct val *builtin_function_call(struct builtin_function_call *builtin_function
         printf("Simulated get_pressed_key.\n");
         struct val *res4 = malloc(sizeof(struct val));
         res4->type = STRING_TYPE;
-        res4->datavalue.string = 'A'; 
+        res4->datavalue.string = strdup("A"); 
       #endif
 
       if(res4 == NULL) {

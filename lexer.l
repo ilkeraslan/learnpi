@@ -1,4 +1,4 @@
-%option noyywrap nodefault yylineno
+%option noyywrap nodefault yylineno nounput noyy_top_state
 %option stack
 %x string_state
 %{
@@ -81,8 +81,8 @@
 [0-9]+         { yylval.value = create_integer_value(atoi(yytext)); return VALUE; }
 [0-9]+\.[0-9]+ { yylval.value = create_decimal_value(atof(yytext)); return VALUE; }
 \"                    { yy_push_state(string_state); }
-\"\"                  { yylval.value = create_string(""); return VALUE; }
-<string_state>[^\"]*  { yylval.value = create_string(yytext); return VALUE; }
+\"\"                  { yylval.value = create_string_value(""); return VALUE; }
+<string_state>[^\"]*  { yylval.value = create_string_value(yytext); return VALUE; }
 <string_state>\"      { yy_pop_state(); }
 
 
