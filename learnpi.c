@@ -260,7 +260,25 @@ struct val * eval(struct ast *abstract_syntax_tree) {
   switch(abstract_syntax_tree->nodetype) {
     case CONSTANT:
       printf("Evaluating CONSTANT...\n");
-      v = ((struct constant_value *)abstract_syntax_tree)->v;
+      evaluation_helper = ((struct constant_value *)abstract_syntax_tree)->v;
+      switch(evaluation_helper->type) {
+          case BIT_TYPE:
+            v = create_bit_value(evaluation_helper->datavalue.bit);
+            printf("CONSTANT value is: %d\n", v->datavalue.bit);
+            break;
+          case INTEGER_TYPE:
+            v = create_integer_value(evaluation_helper->datavalue.integer);
+            printf("CONSTANT value is: %d\n", v->datavalue.integer);
+            break;
+          case DECIMAL_TYPE:
+            v = create_decimal_value(evaluation_helper->datavalue.decimal);
+            printf("CONSTANT value is: %f\n", v->datavalue.decimal);
+            break;
+          case STRING_TYPE:
+            v = create_string_value(evaluation_helper->datavalue.string);
+            printf("CONSTANT value is: %s\n", v->datavalue.string);
+            break;
+      }
     break;
 
     case NEW_REFERENCE:
